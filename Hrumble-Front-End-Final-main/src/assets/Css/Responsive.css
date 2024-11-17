@@ -1,0 +1,122 @@
+@media screen and (max-width: 576px) {
+
+  
+  .experience .ant-select-selector{
+    width: 215px !important;
+  }
+  .input_search .ant-select{
+     width: 100%;
+  }
+  .action_head_left {
+    width: 100%;
+  }
+
+  .action_head_right {
+    width: 100%;
+    text-align: end;
+    justify-content: flex-end;
+  }
+  .header_name{
+    font-size: 10px;
+  }
+}
+/* @media screen and (max-width: 610px) {
+  .experience .ant-select-selector{
+    width: 115px !important;
+  }
+
+} */
+
+@media screen and (max-width: 1236px) {
+  .zive-jobDetail-info{
+    grid-template-columns: repeat(1,1fr);
+    max-width: 100%;
+  }
+  .zive-jobDetail-card-2{
+    grid-template-columns: repeat(1,1fr);
+    display: grid !important;
+  }
+}
+
+@media screen and (max-width:480px) {
+  .input_search{
+    width: 100%;
+  }
+  .header_name{
+    font-size: 7px;
+  }
+}
+
+@media screen and (max-width: 300px) {
+  
+ 
+}
+
+@media screen and (max-width:821) {
+  .col_2_820{
+    display: grid !important;
+    grid-template-columns: repeat(1,2fr);
+  }
+}
+
+@media screen and (max-width:821) {
+  .col_2_820{
+    display: grid !important;
+    grid-template-columns: repeat(1,2fr);
+  }
+}
+
+@media screen and (max-width: 812px) {
+  .zive-jobDetail-info{
+    gap: 20px;
+    grid-template-columns: repeat(1,1fr);
+    display: grid !important;
+    font-size: 13px;
+  }
+  .zive-jobDetail-card1-label{
+    font-size: 13px;
+  }
+  .zive-assignemployee-piechart{
+    display: flex;
+    flex-wrap: wrap;
+  }
+}
+
+@media screen and (max-width: 700px) {
+  .zive-jobDetail-info{
+    grid-template-columns: repeat(1,1fr);
+    max-width: 100%;
+  }
+  .zive-jobDetail-card-2{
+    grid-template-columns: repeat(1,1fr);
+    display: grid !important;
+  }
+}
+
+@media screen and (max-width: 375px) {
+  .zive-jobDetail-info{
+    max-width: 100%;
+  }
+  .zive-jobDetail-skills-width{
+    display: flex;
+    flex-wrap: wrap;
+  }
+}
+
+@media screen and (max-width: 850px) {
+  body{
+    font-size: 10px !important;
+  }
+  .zive-assignemployee-piechart{
+    max-width: 400px;
+  }
+  .zive-project-piechart{
+    max-width: 400px;
+  }
+  .zive-client-piechart{
+    max-width: 400px;
+  }
+  .zive-dashboard-clientbar{
+    max-width: 400px;
+  }
+}

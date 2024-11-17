@@ -1,0 +1,11 @@
+# Step 1: Use NGINX as a lightweight server
+FROM nginx:alpine
+
+# Add custom NGINX configuration if needed
+COPY nginx.conf /etc/nginx/nginx.conf
+
+# Expose port 80
+EXPOSE 80
+
+# Start NGINX server
+CMD ["nginx", "-g", "daemon off;"]
