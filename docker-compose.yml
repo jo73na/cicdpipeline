@@ -95,8 +95,8 @@ services:
     networks:
       - proxy-network-prod
     ports:
-      - "9001:9000"  # Expose Portainer web UI on port 9001 (changed port)
-      - "9444:9443"  # Expose Portainer secured UI on port 9444 (changed port)
+      - "9100:9000"  # Expose Portainer web UI on port 9001 (changed port)
+  # Expose Portainer secured UI on port 9444 (changed port)
     volumes:
       - /opt/portainer:/data:rw  # Volume to store Portainer data
       - /var/run/docker.sock:/var/run/docker.sock:rw  # Docker socket for management
