@@ -1,4 +1,4 @@
-name: Pull Changes via SSH
+name: Deploy Application via Docker Compose
 
 on:
   push:
@@ -6,35 +6,46 @@ on:
       - main
 
 jobs:
-  run_pull:
-    name: Run Pull
+  deploy:
+    name: Deploy with Docker Compose
     runs-on: ubuntu-latest
 
     steps:
+      # Step 1: Install SSH keys and configure SSH
       - name: Install SSH Keys
         run: |
           install -m 600 -D /dev/null ~/.ssh/id_rsa
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           ssh-keyscan -H "${{ secrets.SSH_HOST }}" >> ~/.ssh/known_hosts
 
+      # Step 2: Clone or Pull the Repository on the Server
       - name: Clone or Pull Repository
         run: |
           ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "
             # Check if the repository is already cloned
-            if [ ! -d ${{ secrets.WORK_DIR }}/.git ]; then
-              # Clone the repository if not present
-              git clone https://github.com/jo73na/cicdpipeline.git ${{ secrets.WORK_DIR }} &&
-              cd ${{ secrets.WORK_DIR }} &&
-              git checkout main
+            if [ ! -d ~/cicdpipeline_new/.git ]; then
+              git clone https://github.com/jo73na/cicdpipeline.git ~/cicdpipeline_new
             else
-              # If repository exists, pull the latest changes
-              cd ${{ secrets.WORK_DIR }} &&
-              git fetch --all &&
-              git checkout main &&
-              git pull
+              cd ~/cicdpipeline_new && git fetch --all && git pull
             fi
           "
 
-      - name: Cleanup
+      # Step 3: Run Docker Compose on the Server
+      - name: Run Docker Compose
+        run: |
+          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "
+            cd ~/cicdpipeline_new &&
+            # Make sure Docker Compose is installed
+            if ! command -v docker-compose &> /dev/null; then
+              echo 'Docker Compose could not be found. Installing...'
+              sudo curl -L 'https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)' -o /usr/local/bin/docker-compose
+              sudo chmod +x /usr/local/bin/docker-compose
+            fi
+            # Run docker-compose up to start the services defined in the docker-compose.yml
+            sudo docker-compose up -d
+          "
+
+      # Step 4: Cleanup SSH Keys
+      - name: Cleanup SSH Keys
         run: |
           rm -rf ~/.ssh
