@@ -30,25 +30,34 @@ jobs:
             fi
           "
 
-      # Step 3: Run Docker Compose on the Server
+      # Step 3: Clean Up Volumes and Containers
+      - name: Clean Up Docker Resources
+        run: |
+          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "
+            # Remove any unused volumes
+            sudo docker volume prune -f &&
+            # Stop and remove containers for the application
+            cd ~/cicdpipeline_new &&
+            sudo docker-compose down --volumes --remove-orphans
+          "
+
+      # Step 4: Build and Deploy the Application
       - name: Run Docker Compose
         run: |
           ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "
             cd ~/cicdpipeline_new &&
-            # Make sure Docker Compose is installed
+            # Ensure Docker Compose is installed
             if ! command -v docker-compose &> /dev/null; then
-              echo 'Docker Compose could not be found. Installing...'
+              echo 'Installing Docker Compose...'
               sudo curl -L 'https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)' -o /usr/local/bin/docker-compose
               sudo chmod +x /usr/local/bin/docker-compose
-            fi
-            # Run docker-compose up to start the services defined in the docker-compose.yml
-            #sudo docker-compose build --no-cache && sudo docker-compose up -d
-            sudo docker volume prune -f  &&
-            sudo docker-compose build --no-cache  &&
+            fi &&
+            # Build and start containers
+            sudo docker-compose build --no-cache &&
             sudo docker-compose up -d
           "
 
-      # Step 4: Cleanup SSH Keys
+      # Step 5: Cleanup SSH Keys
       - name: Cleanup SSH Keys
         run: |
           rm -rf ~/.ssh
