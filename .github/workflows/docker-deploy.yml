@@ -17,23 +17,20 @@ jobs:
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           ssh-keyscan -H "${{ secrets.SSH_HOST }}" >> ~/.ssh/known_hosts
 
-      - name: Debug Repository State
+      - name: Clone or Pull Repository
         run: |
           ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "
-            cd ${{ secrets.WORK_DIR }} &&
-            git branch -a &&
-            git status
-          "
-
-      - name: Clone or Update Repository
-        run: |
-          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "
+            # Check if the repository is already cloned
             if [ ! -d ${{ secrets.WORK_DIR }}/.git ]; then
-              git clone git@${{ secrets.SSH_HOST }}:repo-name.git ${{ secrets.WORK_DIR }}
+              # Clone the repository if not present
+              git clone https://github.com/jo73na/cicdpipeline.git ${{ secrets.WORK_DIR }} &&
+              cd ${{ secrets.WORK_DIR }} &&
+              git checkout main
             else
+              # If repository exists, pull the latest changes
               cd ${{ secrets.WORK_DIR }} &&
               git fetch --all &&
-              git checkout ${{ secrets.MAIN_BRANCH }} &&
+              git checkout main &&
               git pull
             fi
           "
