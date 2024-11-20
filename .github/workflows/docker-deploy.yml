@@ -42,7 +42,7 @@ jobs:
               sudo chmod +x /usr/local/bin/docker-compose
             fi
             # Run docker-compose up to start the services defined in the docker-compose.yml
-            sudo docker-compose up -d
+            sudo docker-compose build --no-cache && sudo docker-compose up -d
           "
 
       # Step 4: Cleanup SSH Keys
