@@ -13,20 +13,29 @@ jobs:
     steps:
       - name: Install SSH Keys
         run: |
-          # Securely install SSH private key
           install -m 600 -D /dev/null ~/.ssh/id_rsa
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-
-          # Add SSH host to known_hosts
           ssh-keyscan -H "${{ secrets.SSH_HOST }}" >> ~/.ssh/known_hosts
 
-      - name: Connect and Pull
+      - name: Debug Repository State
         run: |
           ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "
-            cd ${{ secrets.WORK_DIR }} && 
-            git checkout ${{ secrets.MAIN_BRANCH }} && 
-            git pull
+            cd ${{ secrets.WORK_DIR }} &&
+            git branch -a &&
+            git status
+          "
+
+      - name: Clone or Update Repository
+        run: |
+          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "
+            if [ ! -d ${{ secrets.WORK_DIR }}/.git ]; then
+              git clone git@${{ secrets.SSH_HOST }}:repo-name.git ${{ secrets.WORK_DIR }}
+            else
+              cd ${{ secrets.WORK_DIR }} &&
+              git fetch --all &&
+              git checkout ${{ secrets.MAIN_BRANCH }} &&
+              git pull
+            fi
           "
 
       - name: Cleanup
