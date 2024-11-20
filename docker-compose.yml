@@ -80,7 +80,7 @@ services:
       zivelogin-network-prod:
         ipv4_address: 192.168.1.200  # Static IP for NGINX container
     ports:
-     - "80:80"  # Expose port 80 on the host to port 80 on the container
+     - "8080:80"  # Change 80 to an available port  # Expose port 80 on the host to port 80 on the container
     depends_on:
       - zivelogin-backend
       - zivelogin-frontend
