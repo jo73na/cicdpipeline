@@ -38,7 +38,7 @@ services:
   # MongoDB Service
   zivelogin-mongo:
     image: mongo:latest
-    container_name: zivelogin-mongo
+    container_name: zivelogin-mongo-new  # Changed the container name to avoid conflict
     restart: unless-stopped
     networks:
       - zivelogin-network-prod
@@ -87,16 +87,16 @@ services:
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
 
-  # Portainer Service
-  portainer:
+  # Portainer Service (with a unique name to avoid conflict)
+  portainer_new:  # Changed container name here
     image: portainer/portainer-ce:latest
-    container_name: portainer
+    container_name: portainer_new  # Changed container name to avoid conflict
     restart: unless-stopped
     networks:
       - proxy-network-prod
     ports:
-      - "9000:9000"  # Expose Portainer web UI on port 9000
-      - "9443:9443"  # Expose Portainer secured UI on port 9443
+      - "9001:9000"  # Expose Portainer web UI on port 9001 (changed port)
+      - "9444:9443"  # Expose Portainer secured UI on port 9444 (changed port)
     volumes:
       - /opt/portainer:/data:rw  # Volume to store Portainer data
       - /var/run/docker.sock:/var/run/docker.sock:rw  # Docker socket for management
