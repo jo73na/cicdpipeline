@@ -1,10 +1,13 @@
 const mongoose = require("mongoose");
 const admin_schema = {
-  name: String,
+  name: { type: String, required: true },
   phone_number: { type: Number, },
   email_id: { type: String, required: true, unique: true },
   role:{type:String,default:"HR"},
   password: { type: String, required: true },
+  hashedOtp: { type: String },
+  otpExpiresAt: { type: Date },
+  otp_verified: { type: Boolean, default: false },
   created_at: { type: Date, default: Date.now( ) },
   permission:{ type:mongoose.Schema.Types.ObjectId, ref:"roles"},
   status: { type: Boolean, default: true },

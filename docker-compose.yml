@@ -28,10 +28,25 @@ services:
       MONGO_URL: mongodb://zivedbadmin:Co1mbat0re9091@zivelogin-mongo:27017/master?authSource=admin
       PORT: 8080
       JWT_SECRET: mysecret123
+# Gmail Configuration
       SMPT_HOST: smtp.googlemail.com
       SMPT_PORT: 587
       SMPT_PASSWORD: nfyunxrmdsgxmlmp
       SMPT_MAIL: devlopsdemo@gmail.com
+      GMAIL_SMTP_HOST: smtp.gmail.com
+      GMAIL_SMTP_PORT: 465
+      GMAIL_USER: devlopsdemo@gmail.com
+      GMAIL_PASSWORD: nfyunxrmdsgxmlmp
+# Outlook Configuration
+      OUTLOOK_SMTP_HOST: smtp-mail.outlook.com
+      OUTLOOK_SMTP_PORT: 587
+# Common Email Settings
+      EMAIL_FROM: "No Reply <devlopsdemo@gmail.com>"
+      ADMIN_EMAIL: sangeeth@technoladders.com
+
+
+
+
     depends_on:
       - zivelogin-mongo
 

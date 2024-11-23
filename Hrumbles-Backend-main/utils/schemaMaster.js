@@ -37,6 +37,8 @@ const importListSchema = require("../models/list")
 const importSpacesSchema = require("../models/space")
 const importSpaceListSchema = require("../models/spaceList")
 const importExpenseOthersSchema = require("../models/expenceothers")
+const import_AddJob_schema = require("../models/addjob")
+const importsignup_schema = require("../models/signup")
 
 
 
@@ -79,6 +81,8 @@ const createListSchema = mongoose.Schema(importListSchema, version);
 const createSpaceSchema = mongoose.Schema(importSpacesSchema, version);
 const createSpaceListSchema = mongoose.Schema(importSpaceListSchema, version);
 const createExpenseOthersSchema = mongoose.Schema(importExpenseOthersSchema, version);
+const create_AddJob_schema = mongoose.Schema(import_AddJob_schema, version)
+const createSignUpSchema = mongoose.Schema(importsignup_schema, version);
 
 
 //Creating Model
@@ -120,6 +124,8 @@ const createListModel = mongoose.model("lists", createListSchema);
 const createSpaceModel = mongoose.model("spaces", createSpaceSchema);
 const createSpaceListModel = mongoose.model("spaceLists", createSpaceListSchema);
 const createExpenseOtherstModel = mongoose.model("expenseothers", createExpenseOthersSchema);
+const create_AddJob_model = mongoose.model("addjob", create_AddJob_schema);
+const createSignUpmodel = mongoose.model("signup", createSignUpSchema);
 
 
 module.exports = {
@@ -158,4 +164,6 @@ module.exports = {
   spaces:createSpaceModel,
   spaceList:createSpaceListModel,
   expenseothers:createExpenseOtherstModel,
+  addjob:create_AddJob_model,
+  signup:createSignUpmodel,
 };

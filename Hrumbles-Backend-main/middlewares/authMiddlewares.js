@@ -15,6 +15,7 @@ const authAdmin = asyncHandler(async (req, res, next)=>{
           req.user = admin_check;
           req.body.created_by = admin_check._id;
           req.body.company_id =admin_check?.company_id;
+          console.log(`Request received: ${req.method} ${req.url}`);
           next();
         }
         else {

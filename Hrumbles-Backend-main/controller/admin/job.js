@@ -18,271 +18,132 @@ const methods ={authAdmin}
 
 
 //create
- methods.add =asyncHandler(async (req, res) => {
-    if(req?.user) {
-      req.body.created_by=req?.user?._id
-      req.body.company_id=req.user?.company_id
-    }
-  try {
-
-
-    let added=await crud.insertOne(job, req.body) 
-    
-    let update =await crud.updateById(clients, req.body?.client_id[0],{updatedAt:new Date()},{ new: true })
-     await JobCreateSendMail(added)
-     if(req.body.job_location&&req.body.job_location?.length>0){
-    
-        Promise.all(req.body.job_location.map( async(item)=>{
-          let dataexist= await locations.find({name:item})
-         
-          if(dataexist?.length ==0){
-             await locations.create({name:item})
-          }
-        }))
-     } 
-     if(req.body.skils&&req.body.skils?.length>0){
-    
-       Promise.all(req.body.skils.map( async(item)=>{
-        let dataexist= await skils.find({name:item})
-        
-        if(dataexist?.length ==0){
-           let created= await crud.insertOne(skils, {name:item}) 
-           console.log("bb",created)
-        }
-      }))
-   }
-   if(req.body.end_client&&req.body.end_client?.length>0){
-    console.log("____________im WorkingSkill")
-     Promise.all(req.body.end_client.map( async(item)=>{
-      let dataexist= await endclients.find({name:item})
-      
-      if(dataexist?.length ==0){
-         let created= await crud.insertOne(endclients, {name:item,client_id:req.body.client_id[0]}) 
-         console.log("bb",created)
-      }
-    }))
- }
-
-    success(res, 201, true, "Create Successfully", );
-  } catch (err) {
-    throw new Error(err);
+methods.add = asyncHandler(async (req, res) => {
+  if (req?.user) {
+    req.body.created_by = req.user._id;
+    req.body.company_id = req.user.company_id;
   }
-})
 
+  try {
+    // Insert job data
+    const added = await crud.insertOne(job, req.body);
 
-router.post('/',methods.authAdmin, methods.add )
+    // Update client data if client_id exists
+    if (Array.isArray(req.body.client_id) && req.body.client_id.length > 0) {
+      await crud.updateById(clients, req.body.client_id[0], { updatedAt: new Date() }, { new: true });
+    }
 
+    // Send email notification
+    await JobCreateSendMail(added);
 
+    // Insert job locations if not existing
+    if (Array.isArray(req.body.job_location)) {
+      await Promise.all(req.body.job_location.map(async (item) => {
+        if (item) {
+          const dataExist = await locations.findOne({ name: item });
+          if (!dataExist) {
+            await locations.create({ name: item });
+          }
+        }
+      }));
+    }
 
+    // Insert skills if not existing
+    if (Array.isArray(req.body.skils)) {
+      await Promise.all(req.body.skils.map(async (item) => {
+        if (item) {
+          const skillExist = await skils.findOne({ name: item });
+          if (!skillExist) {
+            await skils.create({ name: item });
+          }
+        }
+      }));
+    }
 
+    // Insert end clients if not existing
+    if (Array.isArray(req.body.end_client)) {
+      await Promise.all(req.body.end_client.map(async (item) => {
+        if (item) {
+          const dataExist = await endclients.findOne({ name: item });
+          if (!dataExist) {
+            await crud.insertOne(endclients, { name: item, client_id: req.body.client_id?.[0] });
+          }
+        }
+      }));
+    }
 
-//getall
-methods.getAll=asyncHandler(async (req, res) => {
-  let company_id=req?.user?.company_id|| null;
+    success(res, 201, true, "Created Successfully");
+  } catch (err) {
+    console.error("Error in adding job:", err);
+    throw new Error(err.message);
+  }
+});
+
+router.post('/', methods.authAdmin, methods.add);
+
+// Get All Jobs
+methods.getAll = asyncHandler(async (req, res) => {
+  const company_id = req?.user?.company_id || null;
+
+  // Create indexes for faster queries
   const createIndexes = async () => {
     await mongoose.connection.collection('jobs').createIndex({ status: 1 });
     await mongoose.connection.collection('jobs').createIndex({ job_title: 1 });
     await mongoose.connection.collection('totallogs').createIndex({ job_id: 1 });
     await mongoose.connection.collection('clients').createIndex({ _id: 1 });
-    // await mongoose.connection.collection('admins').createIndex({ _id: 1 });
   };
-
   await createIndexes();
 
+  let filter = {};
+  if (req.query.status) filter.status = { $in: req.query.status };
+  if (req.query.job_title) {
+    filter.$or = [
+      { job_title: { $regex: new RegExp(req.query.job_title, 'i') } },
+      { job_id: { $regex: new RegExp(req.query.job_title, 'i') } }
+    ];
+  }
+  if (req.query.client_id) filter.client_id = req.query.client_id;
+  if (req.query.created_by) filter.created_by = req.query.created_by;
+  if (company_id) filter.company_id = company_id;
 
-  let filter={}
-  if(req.query.status ){
-    filter.status ={ $in: req?.query?.status }
-  }
-  if(req.query.job_title){
-    filter.job_title = { $regex: new RegExp(req.query.job_title, 'i') }
-    filter.job_id = { $regex: new RegExp(req.query.job_title, 'i') }
-  }
-  if(req.query.client_id){
-    filter.client_id = req.query.client_id
-    // filter. = { $regex: new RegExp(req.query.job_title, 'i') }
-  }
-  if(req.query.created_by){
-    filter.created_by = req.query.created_by
-    // filter. = { $regex: new RegExp(req.query.job_title, 'i') }
-  }
-  if(company_id){
-    filter.company_id = company_id
-    // filter. = { $regex: new RegExp(req.query.job_title, 'i') }
-  }
-  if(req.user?.role == "Client"){
-        filter.client_id =  { $in: [new mongoose.Types.ObjectId(req.user?.client_id)]}
-    
-  }
- 
-  if(company_id == null ){
-  
-    req?.user?.role == "Vendor" ?
-    
-        filter.assign = { $in: [new mongoose.Types.ObjectId(req.user?._id)]}
-        // job_id : { $regex: new RegExp(req?.query?.job_title, 'i') }
-     
-         
-        
-
-     
-     :
-   
-        // filtercompany_id = { $eq: req.user?.company_id},
-        // job_id : { $regex: new RegExp(req?.query?.job_title, 'i') }
-
-       
-   
- 
-   
-    
-    filter.company_id = company_id
-    // filter. = { $regex: new RegExp(req.query.job_title, 'i') }
+  // Adjust filters based on user role
+  if (req.user?.role === "Client") {
+    filter.client_id = { $in: [new mongoose.Types.ObjectId(req.user.client_id)] };
+  } else if (req.user?.role === "Vendor" && !company_id) {
+    filter.assign = { $in: [new mongoose.Types.ObjectId(req.user._id)] };
   }
 
-  
-
-  let aggregate = [
-   
-    {
-      ...(req?.user?.role =="Vendor" ?
-      {$lookup: {
-        from: "totallogs",
-        localField: "assign",
-        foreignField: "created_by",
-        as: "screening"
-      }}
-      :
-      {$lookup: {
-        from: "totallogs",
-        localField: "_id",
-        foreignField: "job_id",
-        as: "screening"
-      }})
-
-    },
-   
+  const aggregate = [
     {
       $lookup: {
-        from: "clients",
-        localField: "client_id",
-        foreignField: "_id",
-        as: "Clients"
+        from: "totallogs",
+        localField: req.user?.role === "Vendor" ? "assign" : "_id",
+        foreignField: req.user?.role === "Vendor" ? "created_by" : "job_id",
+        as: "screening"
       }
     },
-    {
-      $lookup: {
-        from: "admins",
-        localField: "created_by",
-        foreignField: "_id",
-        as: "done_by"
-      }
-    },
-    {
-      $sort: {
-        createdAt: -1, // Sorting in descending order
-      }
-    }
+    { $lookup: { from: "clients", localField: "client_id", foreignField: "_id", as: "Clients" } },
+    { $lookup: { from: "admins", localField: "created_by", foreignField: "_id", as: "done_by" } },
+    { $sort: { createdAt: -1 } }
   ];
-  
-   if(req?.query?.status){
-      aggregate.unshift({
-        $match: {
-          status: { $in: req?.query?.status },
-          ...(req?.query?.client_id && {client_id: { $in: [new mongoose.Types.ObjectId(req?.query?.client_id)] }}),
-          ...(req?.user?.role == "Client" && {client_id: { $in: [new mongoose.Types.ObjectId(req?.user?.client_id)] }}),
-          ...(req?.query?.created_by && {created_by:new mongoose.Types.ObjectId(req?.query?.created_by)}),
-        
-        }
-      })
-   }
-   if (req?.query?.job_title) {
-    aggregate.unshift({
-      $match: {
-        job_title: { $regex: new RegExp(req?.query?.job_title, 'i') },
-        // job_id : { $regex: new RegExp(req?.query?.job_title, 'i') }
 
-      },
-    });
-  }
   if (company_id) {
-    aggregate.unshift({
-      $match: {
-        company_id: { $eq: req.user?.company_id},
-        // job_id : { $regex: new RegExp(req?.query?.job_title, 'i') }
-
-      },
-    });
+    aggregate.unshift({ $match: { company_id } });
   }
 
-  if(company_id == null ){
-     if (req.user?.role != "SuperAdmin" ){
-       console.log("kkkkk",req.user?._id)
-       aggregate.unshift({
-        $match: {
-          assign: { $in: [req.user?._id]},
-          // job_id : { $regex: new RegExp(req?.query?.job_title, 'i') }
-  
-        },
-      })
-     }
-     else{
-      aggregate.unshift({
-        $match: {
-          company_id: { $eq: req.user?.company_id},
-          // job_id : { $regex: new RegExp(req?.query?.job_title, 'i') }
-  
-        },
-      });
-     }
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  aggregate.push({ $skip: (page - 1) * limit }, { $limit: limit });
 
-     
-  
-    }
-   
-   
-    const page = parseInt(req.query.page)||1;
-    const limit = parseInt(req.query.limit)||10;
-    aggregate.push(
-      { $skip: (page - 1) * limit },
-      { $limit: limit }
-    );
-  
-  let data =await job.aggregate(aggregate)
-  const totalCount = await job.countDocuments(filter); 
-
-
-
-
-//   let query = {};
-
-// if (req?.query?.status) {
-//   query.status = req.query.status;
-// }
-
-// const page = parseInt(req.query.page) || 1;
-// const limit = parseInt(req.query.limit) || 10;
-
-// let data = await job
-//   .find(query)
-
-//   .populate({
-//     path: "client_id",
-  
-//   })
-//   .populate({
-//     path: "created_by",
-   
-//   })
-//   .skip((page - 1) * limit)
-//   .limit(limit);
+  const data = await job.aggregate(aggregate);
+  const totalCount = await job.countDocuments(filter);
 
   try {
-    success(res, 200, true, "Get Successfully", {total:totalCount,data:data});
+    success(res, 200, true, "Get Successfully", { total: totalCount, data });
   } catch (err) {
     throw new Error(err);
-  } 
-})
+  }
+});
  router.get('/', authAdmin,methods.getAll ); 
 
  methods.AssignjobFetch=asyncHandler(async (req, res) => {
@@ -319,13 +180,12 @@ methods.getAll=asyncHandler(async (req, res) => {
   
  
 ]
-   if(req?.query?.status){
-      aggregate.unshift({
-        $match: {
-          status: { $eq: req?.query?.status }
-        }
-      })
-   }
+if (req?.query?.status) {
+  aggregate.unshift({
+    $match: { status: { $in: req?.query?.status } }
+  });
+}
+
    
    
   
@@ -441,24 +301,25 @@ methods.edit =asyncHandler(async (req, res) => {
   if (!check) throw new Error('Data not Found!')
   try {
 let updateDate=await crud.updateById(job, id, req.body, { new: true })
-if(req.body.locations&&req.body.job_location?.length>0){
-  Promise.all(req.body.job_location.map( async(item)=>{
-    let dataexist= await locations.find({name:item})
-    if(dataexist.length==0){
-       await locations.create({name:item})
+if (Array.isArray(req.body.job_location) && req.body.job_location.length > 0) {
+  await Promise.all(req.body.job_location.map(async (item) => {
+    const dataExist = await locations.findOne({ name: item });
+    if (!dataExist) {
+      await locations.create({ name: item });
     }
-  }))
-} 
-if(req.body.skils&&req.body.skils?.length>0){
- Promise.all(req.body.skils.map( async(item)=>{
-  let dataexist= await skils.find({name:item})
-   
-  if(dataexist?.length ==0){
-     let created= await crud.insertOne(skils, {name:item}) 
-     console.log("bb",created)
-  }
-}))
+  }));
 }
+
+
+if (req.body.skils && req.body.skils.length > 0) {
+  await Promise.all(req.body.skils.map(async (item) => {
+    const skillExist = await skils.findOne({ name: item });
+    if (!skillExist) {
+      await skils.create({ name: item });
+    }
+  }));
+}
+
     success(res, 200, true, 'Update Successfully',updateDate );
   } catch (err) {
     throw new Error(err);

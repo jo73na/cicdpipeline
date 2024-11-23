@@ -74,17 +74,24 @@ class crud_service {
      }
    };
 
-   this.getOneDocument = async (model, query, projection, extension) => {
-     try {
-       let queryObj = model.findOne(query, projection, extension.options);
-       if (extension.populate) queryObj = queryObj.populate(extension.populate);
-       const res = await queryObj.exec();
-       return res;
-     } catch (err) {
-       throw err;
-     }
-   };
-
+   this.getOneDocument = async (model, query, projection = {}, extension = {}) => {
+    try {
+      // Ensure extension.options is defined
+      const options = extension.options || {};
+      
+      let queryObj = model.findOne(query, projection, options);
+      
+      if (extension.populate) {
+        queryObj = queryObj.populate(extension.populate);
+      }
+  
+      const res = await queryObj.exec();
+      return res;
+    } catch (err) {
+      console.error("Error in getOneDocument:", err);
+      throw err;
+    }
+  };
    this.getOneDocumentById = async (model, id, projection, extension) => {
      try {
        let queryObj = model.findById(id, projection, extension.options);
