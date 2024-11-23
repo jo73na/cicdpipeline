@@ -4,13 +4,13 @@ import ViewJobContext from '../../Providers/ViewJob';
 import Edit from "/images/Edit.svg"
 import Pdf_file  from "/images/Pdffile.svg"
 import {MailTwoTone,PhoneTwoTone} from "@ant-design/icons"
-import { BASE } from '../../Utils/api';
+// import { BASE } from '../../Utils/api';
 import { useNavigate } from 'react-router-dom';
 import CookieUtil from '../../Utils/Cookies';
 import { useForm } from 'antd/es/form/Form';
 
 
-
+const BASE = import.meta.env.VITE_BASE_URL; 
 
 
 const BasicInfo =()=> { 

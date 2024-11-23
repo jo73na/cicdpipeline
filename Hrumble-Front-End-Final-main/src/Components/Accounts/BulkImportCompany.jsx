@@ -4,8 +4,10 @@ import { UploadOutlined } from '@ant-design/icons';
 import { Button, Form,message} from 'antd';
 import { useState,useContext } from 'react';
 import CandidateContext from '../../Providers/Candidate';
-import { BASE } from '../../Utils/api';
+// import { BASE } from '../../Utils/api';
 import SalesandMargettingContext from '../../Providers/SalesandMargetting';
+
+const BASE = import.meta.env.VITE_BASE_URL; 
 
 export default function BulkImportCompany() {
     const[upload,setUpload]=useState("")

@@ -2,9 +2,11 @@ import{ useEffect, useState} from 'react';
 import axios from 'axios';
 // import { FaqApi } from '../../api';
 import Context from './index';
-import { BASE_URL } from '../../Utils/api';
+// import { BASE_URL } from '../../Utils/api';
 import  dayjs  from 'dayjs';
 import CookieUtil from '../../Utils/Cookies';
+
+const BASE_URL = import.meta.env.VITE_BASE_URL; 
 
 const PBFProvider =(props) => {
     const [clients, setClients] = useState([]);

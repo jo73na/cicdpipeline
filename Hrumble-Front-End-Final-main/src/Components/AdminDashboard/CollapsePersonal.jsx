@@ -2,7 +2,9 @@ import { Button, Form, Input, Upload, message } from 'antd'
 import React, { useContext, useEffect, useState } from 'react'
 import EmployeeContext from '../../Providers/EmployeeProvider'
 import { MinusCircleOutlined, PlusOutlined, UploadOutlined, CloudUploadOutlined} from '@ant-design/icons';
-import { BASE } from '../../Utils/api'
+// import { BASE } from '../../Utils/api'
+
+const BASE = import.meta.env.VITE_BASE_URL; 
 
 const CollapsePersonal = () => {
 

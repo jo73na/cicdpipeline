@@ -11,7 +11,9 @@ import ExpenseGrap from './ExpenseGrap';
 import Loader from './../../../Utils/Loader';
 import moment from 'moment';
 
-import { BASE } from '../../../Utils/api';
+// import { BASE } from '../../../Utils/api';
+
+const BASE = import.meta.env.VITE_BASE_URL; 
 
 const ExpenseTable = () => {
  const {expence,handleAddExpense,handleFinishExpence,fetchExpence,expencegraph,Loading} =useContext(InvoiceExpenceContext)

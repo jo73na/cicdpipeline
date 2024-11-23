@@ -67,7 +67,8 @@ services:
     volumes:
       - ./frontend/dist:/dist
     environment:
-      VITE_BASE_URL: "https://apiv1.technoladders.com/api/v1"
+      VITE_BASE: "https://62.72.51.159:5001/"
+      VITE_BASE_URL: "https://62.72.51.159:5001/api/v1"
     depends_on:
       - zivelogin-backend
 

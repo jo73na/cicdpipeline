@@ -24,6 +24,7 @@ const Nav = ({ title, onClick: ClickToAddEvent, onClick2, onClick3 }) => {
             onClick={() => ClickToAddEvent()}
           /> 
         <SideBar />
+        
     </Fragment>
   );
 };

@@ -1,4 +1,4 @@
-import { Checkbox, Collapse, Select, Switch, Table, Tabs, Timeline } from 'antd'
+import { Checkbox, Collapse, Select, Switch, Table, Tabs, Timeline, Typography, Row, Col } from 'antd'
 import { useContext, useEffect } from 'react'
 import EmployeeContext from '../../Providers/EmployeeProvider'
 import { EditTwoTone, ClockCircleOutlined } from '@ant-design/icons';
@@ -9,8 +9,10 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import CookieUtil from '../../Utils/Cookies';
 import EmployeeInfoPage from '../AdminDashboard/EmployeeInfoPage';
 import EmployeeDoc from './EmployeeDoc';
-import { BASE } from '../../Utils/api';
+// import { BASE } from '../../Utils/api';
 import { LeftOutlined } from '@ant-design/icons';
+
+const BASE = import.meta.env.VITE_BASE_URL; 
 
 const EmployeeDetailinfo = () => {
 
@@ -19,6 +21,7 @@ const EmployeeDetailinfo = () => {
   console.log("educationExperiD",employeeComplete)
 
   const navigate = useNavigate();
+  const { Title, Text } = Typography;
 
   const items = [
     {
@@ -94,39 +97,50 @@ const EmployeeDetailinfo = () => {
   return (
     <div>
        <div className='profileInfo-editIcon-size'> <LeftOutlined className="back" onClick={() => navigate(-1)} /><label className='info-backText'> {`${employeeComplete?.basic?.firstname} ${employeeComplete?.basic?.lastname}`} </label></div>
+ 
+
        <div className="row p_t_5">
-                    <div className="col-lg-12">
-                        <div className="card card-profile">
-							<div className="admin-user">
-								<div className="img-wrraper">                              
-									<div className="">
-                  {
-                    employeeComplete?.basic?.display_profile_file ? (
-                      <img src={`${BASE}${employeeComplete?.basic?.display_profile_file}`} className='rounded-circle' />
-                    ) : (
-                    <img src={Avatar} alt="Avatar" className='profileInfo-img profile-img' />
-                    ) }
-									{/* <Link to={"/edit-profile"} className="icon-wrapper"><i className="fa-solid fa-pencil"></i></Link> */}
-								</div>
-								<div className='profileInfo-content'>
-                        <h5 className="card-title mb-1 profileInfo-employeeName">{`${employeeComplete?.basic?.firstname} ${employeeComplete?.basic?.lastname}`}</h5>
-                        <p className="card-text text-muted mb-1">{employeeComplete?.basic?.designation}</p>
-                        {/* <p className="card-text text-muted mb-1">Employee Id: {employeeComplete?.basic?.employee_id}</p> */}
-                        <div className=''>
-                        <div className='d-flex f_w_w g_30 p_t_10 info-heading-bold'>
-                        <p className=''>Birthday: <span className='info-email'>{moment(employeeComplete?.basic?.dob).format("DD/MM/YYYY") || "-"}</span></p>
-                        <p className=''>Gender: <span className='info-email'>{employeeComplete?.basic?.gender || "-"}</span> </p>
-                        </div>
-                        <div className='d-flex f_w_w g_30 p_t_10 info-heading-bold'>
-                        <p className=''>Phone: <span className='info-email'>{employeeComplete?.basic?.mobile || "-"}</span></p>
-                        <p className=''>Email: <span className='info-email'>{employeeComplete?.basic?.email || "-"}</span></p>
-                        </div>
-                        </div>
-                    </div>
-							</div>	
-                        </div>
-                    </div>
-                </div>
+       <Row gutter={[8, 16]}>
+  
+  
+       <div className="profile-card d-flex align-items-left">
+       <Col span={4}>
+    <div className="profile-img-wrap-square">
+        {employeeComplete?.basic?.display_profile_file ? (
+            <img src={`${BASE}${employeeComplete?.basic?.display_profile_file}`} className='profile-img-square' alt="Profile" />
+        ) : (
+            <img src={Avatar} alt="Avatar" className='profile-img-square' />
+        )}
+    </div></Col>
+    <Col span={16}>
+    <div className="profileInfo-content ">
+  <Title level={1} className="profileInfo-employeeName ">{`${employeeComplete?.basic?.firstname} ${employeeComplete?.basic?.lastname}`}</Title>
+  <Text type="secondary">{employeeComplete?.basic?.designation || '-'}</Text>
+  <div className="info-heading-bold">
+    <Text>
+      <span>Birthday: </span>
+      <span className="info-email">{moment(employeeComplete?.basic?.dob).format("DD/MM/YYYY") || "-"}</span>
+    </Text>
+    <Text>
+      <span>Gender: </span>
+      <span className="info-email">{employeeComplete?.basic?.gender || "-"}</span>
+    </Text>
+    <Text>
+      <span>Phone: </span>
+      <span className="info-email">{employeeComplete?.basic?.mobile || "-"}</span>
+    </Text>
+    <Text>
+      <span>Email: </span>
+      <span className="info-email">{employeeComplete?.basic?.email || "-"}</span>
+    </Text>
+  </div>
+</div>
+</Col>
+</div>
+</Row>
+
+
+
         
        
         <div  className='profileInfo-tabs'>

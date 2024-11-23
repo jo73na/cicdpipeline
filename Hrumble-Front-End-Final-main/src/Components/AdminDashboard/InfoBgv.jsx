@@ -2,9 +2,11 @@ import React, { useContext, useState } from 'react'
 import EmployeeContext from '../../Providers/EmployeeProvider'
 import BgvForm from "/images/BgvForm.png";
 import { FileExclamationOutlined, EditTwoTone } from '@ant-design/icons';
-import { BASE } from '../../Utils/api'
+// import { BASE } from '../../Utils/api'
 import { Modal } from 'antd';
 import CollapseBGV from './CollapseBGV';
+
+const BASE = import.meta.env.VITE_BASE_URL; 
 
 const InfoEducational = () => {
 

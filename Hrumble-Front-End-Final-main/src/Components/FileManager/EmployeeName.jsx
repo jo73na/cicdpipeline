@@ -12,7 +12,9 @@ import FileManagerContext from '../../Providers/FileManagerProvider';
 // import Bgv from "/images/BgvPhoto.svg";
 // import ExperiencePhoto from "/images/ExperiencePhoto.svg";
 // import BgvForm from "/images/BgvForm.png";
-import { BASE } from '../../Utils/api';
+// import { BASE } from '../../Utils/api';
+
+const BASE = import.meta.env.VITE_BASE_URL; 
 
 const EmployeeName = ({setEmployOpen}) => {
 

@@ -2,9 +2,11 @@ import{  useState} from 'react';
 import axios from 'axios';
 // import { ExpenceApi } from '../../api';
 import Context from './index';
-import { BASE_URL } from '../../Utils/api';
+// import { BASE_URL } from '../../Utils/api';
 import { notification } from 'antd';
 import CookieUtil from '../../Utils/Cookies';
+
+const BASE_URL = import.meta.env.VITE_BASE_URL; 
  
 const InvoiceExpenceProvider =(props) => {
     const [expence, setExpence] = useState([]);

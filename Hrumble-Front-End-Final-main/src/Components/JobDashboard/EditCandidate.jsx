@@ -11,9 +11,9 @@ import { useParams } from "react-router-dom";
 import BasicDetailAdd from "./BasicDetailAddCandidate";
 import ViewJobContext from "../../Providers/ViewJob";
 import { useForm } from 'antd/lib/form/Form';
-import { BASE } from "../../Utils/api";
+// import { BASE } from "../../Utils/api";
 
-
+const BASE = import.meta.env.VITE_BASE_URL; 
 
 
   const EditCandidatesPopup =() => {

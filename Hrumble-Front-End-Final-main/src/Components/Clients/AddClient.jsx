@@ -1,6 +1,6 @@
 import { useState, useContext,useEffect} from "react";
-import { Tabs,Button,Space,Input, Select, Radio } from "antd";
-import { Form, } from "antd";
+import { Form,Tabs,Button,Space,Input, Select, Radio } from "antd";
+
 
 
 import PhoneInput from "react-phone-input-2";

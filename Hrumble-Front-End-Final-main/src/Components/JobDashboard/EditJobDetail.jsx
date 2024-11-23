@@ -7,7 +7,7 @@ import ViewJobContext from '../../Providers/ViewJob';
 
 const {Option} = Select 
 
-const EditJobDetail=({onClose})=>{
+const EditJobDetail=({jobId, onClose})=>{
  const {clients,handleClientChange,skill,location,poc,endclient,handleClickjobTable,init} = useContext(JobContext);
 
  const {jobSingle,editJob} = useContext(ViewJobContext);
@@ -16,7 +16,7 @@ const EditJobDetail=({onClose})=>{
 
 
 
- console.log("form",jobSingle)
+
 
  const[form]=Form.useForm()
 
@@ -34,7 +34,7 @@ const EditJobDetail=({onClose})=>{
   const menuThree = (parent, menu) => {
     const filter = menu?.filter((e) => {
       return String(e?.parent?._id||null) === String(parent) });
-      console.log(filter,("filter"));
+
       const list = filter?.map((e) => {
         return {
           label: e?.name,
@@ -78,22 +78,30 @@ const EditJobDetail=({onClose})=>{
 
     const clientsData= menuThree(null,clients)
 
-
-    useEffect(()=>{
-      console.log("jobSingle1",jobSingle)
-      form.setFieldsValue({...jobSingle,client_id:jobSingle?.client_id[0]?._id})
-      setJobType(jobSingle?.job_type)
-      setSalaryType(jobSingle?.salaryType)
-    },[])
+    useEffect(() => {
+      if (jobId) {
+          handleClickjobTable(jobId); // Fetch job data when jobId is available
+      }
+  }, [jobId]);
+  
+  useEffect(() => {
+      if (jobSingle) {
+          form.setFieldsValue({
+              ...jobSingle,
+              client_id: jobSingle.client_id?.[0]?._id, // Use optional chaining
+          });
+          setJobType(jobSingle.job_type);
+          setSalaryType(jobSingle.salaryType);
+      }
+  }, [jobSingle]); // Run this effect when jobSingle changes
 
     useEffect(() => {
       init ()
     }, [])
     
 
-    console.log("editjob",editJob)
     const onfinish=(values)=>{
-      console.log("houresly",values)
+ 
       let data={
          ...values,
          salary:Number(String(values["salary"])?.replace(/,/g, '')||""),

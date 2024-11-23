@@ -294,7 +294,9 @@ const ExpenseDashboard = () => {
             <Tab.Container defaultActiveKey="Preview">
                         <div className="card">
                             <div className="card-header p-3 border-0 d_f j_c_s_b">
-                            <h4 className="heading mb-0">Employee Wise Salary Report</h4>   
+                            {
+                              activekey == "Invoice"  && <h4 className="heading mb-0">Employee Wise Salary Report</h4>   
+                            } 
 
                             <div>
 
@@ -337,7 +339,7 @@ const ExpenseDashboard = () => {
                                                     */}
                            <div className="chart-legend">
 <ul className = "d_f g_10 j_c_c">
-<li><span className="legend-color" style={{ backgroundColor: "var(--primary)" }}></span>Salary</li>
+{/* <li><span className="legend-color" style={{ backgroundColor: "var(--primary)" }}></span>Salary</li> */}
 {/* <li><span className="legend-color" style={{ backgroundColor: "var(--secondary)"}}></span>Others</li> */}
 {/* <li><span className="legend-color" style={{ backgroundColor: '#2ca02c' }}></span> Label 3</li> */}
 </ul>

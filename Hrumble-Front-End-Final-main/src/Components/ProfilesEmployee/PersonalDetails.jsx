@@ -7,12 +7,14 @@ import EmployeeContext from '../../Providers/EmployeeProvider';
 import JobContext from '../../Providers/JobProvider';
 import Loader from '../../Utils/Loader';
 import dayjs from 'dayjs';
-import { BASE } from '../../Utils/api';
+// import { BASE } from '../../Utils/api';
 import moment from 'moment';
 // import { Country, State, City } from 'country-state-city';
 import { Country, State }  from 'country-state-city-slim';
 import { useParams } from 'react-router-dom';
 import CookieUtil from '../../Utils/Cookies';
+
+const BASE = import.meta.env.VITE_BASE_URL;
 
 const PersonalDetails = ({setGoSteps,goSteps}) => {
 

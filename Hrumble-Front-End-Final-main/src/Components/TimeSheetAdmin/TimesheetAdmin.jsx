@@ -911,9 +911,11 @@ import FaqContext from '../../Providers/Faq';
 import { Drawer, Select, Form } from 'antd';
 import { useRef } from 'react';
 import AddTimesheet from './AddTimesheet';
-import { BASE_URL } from '../../Utils/api';
+// import { BASE_URL } from '../../Utils/api';
 import axios from 'axios';
 import Loader from '../../Utils/Loader';
+
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const TimelineGrouping = ({ setSalaryType, salary_type }) => {
   const { firstDayOfMonth, lastDayOfMonth, epmloeescdularNonbillable, setlastDayOfMonth, setfirstDayOfMonth, Loading, schedulerAdminData, AdminTimesheetData, epmloeescdularAdmin, setSchedulerAdminData, employee, setAdminTimesheetData } = useContext(FaqContext);

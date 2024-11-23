@@ -7,9 +7,10 @@ import { useState } from 'react';
 import { GridComponent, ColumnsDirective, ColumnDirective, Inject, Page, Aggregate, Group, AggregateDirective, AggregatesDirective } from '@syncfusion/ej2-react-grids';
 import { useContext } from 'react';
 import FaqContext from '../../Providers/Faq';
-import { BASE_URL } from '../../Utils/api';
+// import { BASE_URL } from '../../Utils/api';
 import { useForm } from 'antd/es/form/Form';
 
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 export default function DetailedReportAdmin() {
 

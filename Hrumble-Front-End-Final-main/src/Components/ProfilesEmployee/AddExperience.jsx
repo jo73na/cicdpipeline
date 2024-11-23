@@ -3,9 +3,11 @@ import React, { useContext, useEffect, useState } from 'react'
 import EmployeeContext from '../../Providers/EmployeeProvider'
 import { useForm } from 'antd/es/form/Form'
 import dayjs from 'dayjs';
-import { BASE } from '../../Utils/api'
+// import { BASE } from '../../Utils/api'
 import CookieUtil from '../../Utils/Cookies';
 import { useParams } from 'react-router-dom';
+
+const BASE = import.meta.env.VITE_BASE_URL; 
 
 const AddExperience = () => {
 

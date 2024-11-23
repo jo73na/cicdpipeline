@@ -2,6 +2,10 @@ import React from "react";
 import { Breadcrumb as AntdBreadcrumb } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowLeftOutlined } from "@ant-design/icons";
+
+
+
+
 export function Breadcrumb({ breadcrumb =[] }) {
   const navigate = useNavigate();
   // const split_title = title.split(",");

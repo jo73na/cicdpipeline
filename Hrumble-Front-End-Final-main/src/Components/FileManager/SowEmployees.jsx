@@ -2,9 +2,11 @@ import React, { useContext, useEffect, useState } from 'react'
 import { FolderOutlined , LeftOutlined } from '@ant-design/icons';
 import FileManagerContext from '../../Providers/FileManagerProvider';
 // import EmployeeName from './EmployeeName';
-import { BASE } from '../../Utils/api';
+// import { BASE } from '../../Utils/api';
 import { Empty} from "antd";
 import Bgv from "/images/BgvPhoto.svg";
+
+const BASE = import.meta.env.VITE_BASE_URL; 
 
 const sowEmployee = ({setProjectOpen}) => {
 

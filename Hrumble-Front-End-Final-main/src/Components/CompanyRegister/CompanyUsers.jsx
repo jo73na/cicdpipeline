@@ -9,11 +9,13 @@ import moment from 'moment';
 import Loader from '../../Utils/Loader';
 
 import CompanyContext from '../../Providers/Company';
-import { BASE, BASE_URL } from '../../Utils/api';
+// import { BASE, BASE_URL } from '../../Utils/api';
 // import { useEffect } from 'react'
 import { LeftOutlined } from '@ant-design/icons';
 import AddCompanyUser from './AddCompanyUser';
 
+const BASE = import.meta.env.VITE_BASE_URL; 
+const BASE_URL = import.meta.env.VITE_BASE_URL; 
 
 const { Search } = Input;
 

@@ -9,10 +9,10 @@ import dayjs from 'dayjs';
 
 import { useForm } from "antd/lib/form/Form";
 
-import { BASE_URL } from '../../Utils/api'
+// import { BASE_URL } from '../../Utils/api'
 import CookieUtil from '../../Utils/Cookies';
 
-
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 
 

@@ -6,8 +6,11 @@ import { PlusOutlined, MinusCircleOutlined } from '@ant-design/icons';
 import  { useContext, useState,useEffect } from 'react'
 import { useForm } from 'antd/es/form/Form';
 import axios from 'axios';
-import { BASE, BASE_URL } from './../../../Utils/api';
+// import { BASE, BASE_URL } from './../../../Utils/api';
 import CandidateContext from '../../../Providers/Candidate';
+
+const BASE = import.meta.env.VITE_BASE_URL; 
+const BASE_URL = import.meta.env.VITE_BASE_URL; 
  
 const UploadDocuments = ({isModalOpen,handleCancel,valueprops,onClose}) => {
  

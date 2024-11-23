@@ -57,9 +57,6 @@ export default function UserManageMent() {
           <label className='heading_text'>User Management </label>
       </div>
       </div>
-    
-      
-      
 
       <div className='card p_5 m_t_10'>
       <Tabs className="tAB_TABLE" items={items} activeKey={activekey} onChange={handleTabChange}

@@ -6,11 +6,13 @@ import EmployeeContext from '../../Providers/EmployeeProvider';
 import AddExperience from './AddExperience';
 import EditExperience from './EditExperience';
 import dayjs from 'dayjs';
-import { BASE } from '../../Utils/api';
+// import { BASE } from '../../Utils/api';
 import moment from 'moment';
 import { useParams } from 'react-router-dom';
 import Loader from '../../Utils/Loader';
 import CookieUtil from '../../Utils/Cookies';
+
+const BASE = import.meta.env.VITE_BASE_URL;
 
 const EducationalDetails = ({goSteps,setGoSteps,handlePrev}) => {
 

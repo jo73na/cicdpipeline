@@ -5,8 +5,9 @@ import Aadhar from "/images/AadharCard.svg";
 import EmployeeContext from '../../Providers/EmployeeProvider';
 import { Form } from 'antd';
 import moment from 'moment';
-import { BASE } from '../../Utils/api';
+// import { BASE } from '../../Utils/api';
 
+const BASE = import.meta.env.VITE_BASE_URL; 
 
 const  PersonalDetailinfo = () => {
 

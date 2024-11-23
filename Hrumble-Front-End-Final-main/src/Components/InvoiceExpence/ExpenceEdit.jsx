@@ -5,11 +5,11 @@ import Dragger from 'antd/es/upload/Dragger';
 import { useEffect } from 'react';
 import { useContext } from 'react';
 import InvoiceExpenceContext from '../../Providers/InvoiceExpence';
-import { BASE } from '../../Utils/api';
+// import { BASE } from '../../Utils/api';
 import dayjs from "dayjs"
 import moment from 'moment';
 
-
+const BASE = import.meta.env.VITE_BASE_URL; 
 
 const ExpenceEdit = ({handleFinishEdit,handleDrawerClose,setAttachment,setFileError}) => {
     const [form] = Form.useForm();

@@ -3,8 +3,10 @@ import axios from "axios";
 // import { FaqApi } from '../../api';
 import Context from "./index";
 import CookieUtil from "../../Utils/Cookies";
-import { BASE_URL } from "../../Utils/api";
+// import { BASE_URL } from "../../Utils/api";
 import { notification } from "antd";
+
+const BASE_URL = import.meta.env.VITE_BASE_URL; 
 
 const UserManagementProvider = (props) => {
   const [userList, setuserList] = useState([]);
@@ -26,9 +28,24 @@ const UserManagementProvider = (props) => {
 
   const [assignButtion, setAssignButton] = useState(false);
 
-  const admin = JSON.parse(CookieUtil.get("admin"));
-  const role = CookieUtil.get("role");
-  const token = CookieUtil.get("admin_token");
+  const adminCookie = CookieUtil.get("admin");
+  let admin = null;
+  
+  try {
+    // Parse only if the value is valid JSON
+    if (adminCookie && adminCookie !== 'undefined') {
+      admin = JSON.parse(adminCookie);
+    }
+  } catch (error) {
+    console.error("Failed to parse admin cookie:", error);
+    admin = null;
+  }
+  
+  const role = CookieUtil.get("role") || null;
+  const token = CookieUtil.get("admin_token") || null;
+  
+  
+  
 
   const fethPermission = async () => {
     let api = `${BASE_URL}/menues`;

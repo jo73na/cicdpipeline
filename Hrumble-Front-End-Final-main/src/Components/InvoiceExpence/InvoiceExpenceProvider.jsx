@@ -2,7 +2,10 @@ import{ useEffect, useState} from 'react';
 import axios from 'axios';
 // import { ExpenceApi } from '../../api';
 import Context from './index';
-import { BASE_URL } from '../../Utils/api';
+// import { BASE_URL } from '../../Utils/api';
+// import { BASE_URL } from '../../Utils/api';
+
+const BASE_URL = import.meta.env.VITE_BASE_URL; 
 
 const InvoiceExpenceProvider =(props) => {
     const [expence, setExpence] = useState([]);
@@ -11,7 +14,7 @@ const InvoiceExpenceProvider =(props) => {
 
     const fetchExpence = async () => {
 
-        let api="https://apiv1.technoladders.com/api/v1/job"
+        let api=`${BASE_URL}/job`
         try {
             await axios.get(api).then((resp) => {
                 setExpence(resp.data.data);

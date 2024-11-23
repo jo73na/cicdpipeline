@@ -3,12 +3,14 @@ import axios from 'axios';
 import Context from './index';
 import CookieUtil from '../../Utils/Cookies/'
 // import {notification} from"antd";
-import { BASE, BASE_URL } from '../../Utils/api';
+// import { BASE, BASE_URL } from '../../Utils/api';
 import { useContext } from 'react';
 import JobContext from '../JobProvider';
 import ViewJobContext from '../ViewJob';
 import { notification } from 'antd';
 
+const BASE_URL = import.meta.env.VITE_BASE_URL; 
+const BASE = import.meta.env.VITE_BASE_URL;
 
 const CandidateProvider = (props) => {
  const {fetchJob}=useContext(JobContext)

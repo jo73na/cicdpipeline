@@ -9,13 +9,13 @@ import axios from 'axios';
 
 
 import AddTimesheet from './AddTimesheet';
-import { BASE_URL } from '../../Utils/api';
+// import { BASE_URL } from '../../Utils/api';
 import Loader from '../../Utils/Loader';
 import FaqContext from '../../Providers/Faq';
 
 // import Loader from '../../Utils/Loader';
  
- 
+const BASE_URL = import.meta.env.VITE_BASE_URL;
  
  
 const TimelineGrouping = ({setSalaryType,salary_type}) => {

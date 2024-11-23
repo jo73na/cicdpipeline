@@ -3,11 +3,6 @@ import {Link, useNavigate, useParams} from 'react-router-dom';
 import { Dropdown,Tab, Nav } from 'react-bootstrap';
 
 import CountUp from 'react-countup';
-
-
-
-
-
 import { Drawer, Modal } from 'antd';
 import AddInterViewPopup from './AddInterview';
 import CandidateView from './Candidateview';
@@ -20,15 +15,6 @@ import ViewJobContext from '../../Providers/ViewJob';
 import UserManagementContext from '../../Providers/UserMangement';
 import { Breadcrumb } from '../UtlilsComponent/Breadcrumb';
 import { CSVLink } from 'react-csv';
-
-
-
-
-
-
-
-
-
 
 
 // const tableData = [

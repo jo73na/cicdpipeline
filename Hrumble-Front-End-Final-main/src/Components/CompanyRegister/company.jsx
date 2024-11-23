@@ -9,11 +9,13 @@ import moment from 'moment';
 import Loader from '../../Utils/Loader';
 
 import CompanyContext from '../../Providers/Company';
-import { BASE, BASE_URL } from '../../Utils/api';
+// import { BASE, BASE_URL } from '../../Utils/api';
 import AddCompany from './AddComapny';
 // import { useEffect } from 'react'
 import { EditOutlined } from '@ant-design/icons';
 
+const BASE = import.meta.env.VITE_BASE_URL; 
+const BASE_URL = import.meta.env.VITE_BASE_URL; 
 
 const { Search } = Input;
 
@@ -71,7 +73,7 @@ const columns = [
 
   )
   },
-  { title: 'Intustry Type', dataIndex: 'industry', key: 'industry' },
+  { title: 'Industry Type', dataIndex: 'industry', key: 'industry' },
   { title: 'Company Register', dataIndex: 'startDate', key: 'startDate' },
 
 //   { title: 'Status', dataIndex: 'status', key: 'status' ,

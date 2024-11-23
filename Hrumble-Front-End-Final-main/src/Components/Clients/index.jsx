@@ -297,7 +297,7 @@ const Clients = () => {
                                         <tr>
                                             <th>Name</th>
                                             <th>Avg.</th>
-                                            <th>Groth</th>
+                                            <th>Growth</th>
                                             <th>View</th>
                                             <th>status</th>
                                             <th>action</th>

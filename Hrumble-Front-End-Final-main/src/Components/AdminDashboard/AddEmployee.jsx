@@ -30,12 +30,16 @@ const AddEmployee = ({onClose}) => {
     <div className='p_t_15'>
       <Form layout='vertical' onFinish={onFinish} form={form}>
         <div className='col_5'>
-            <Form.Item label="Employee ID" name="employee_id">
+            <Form.Item label="Employee ID" name="employee_id"
+                    rules={[{ required: true, message: 'Please Enter Employee ID!' }]}
+                    >
                 <Input placeholder='Enter ID' />
             </Form.Item>
         </div>
         <div className='col_2 g_30'>
-        <Form.Item label="First Name" name="firstname">
+        <Form.Item label="First Name" name="firstname"
+       rules={[{ required: true, message: 'Please Enter First Name' }]}
+       >
             <Input placeholder='Enter First Name' />
         </Form.Item>
         <Form.Item label="Last Name" name="lastname">
@@ -43,10 +47,14 @@ const AddEmployee = ({onClose}) => {
         </Form.Item>
         </div>
         <div className='col_2 g_30'>
-            <Form.Item label="Email" name="email">
+            <Form.Item label="Email" name="email"
+       rules={[{ required: true, message: 'Please Enter Email!' }]}
+       >
                 <Input placeholder='Eg:abc@gamil.com' />
             </Form.Item>
-            <Form.Item label="Password" name="passwordHash">
+            <Form.Item label="Password" name="passwordHash"
+       rules={[{ required: true, message: 'Please Enter Password!' }]}
+       >
                 <Input.Password placeholder='Enter Password' />
             </Form.Item>
         </div>
@@ -103,10 +111,12 @@ const AddEmployee = ({onClose}) => {
             </Form.Item>
         </div> */}
         <div className='col_2 g_30'>
-            <Form.Item label="Monthly CTC" name="monthly_ctc">
+            {/* <Form.Item label="Monthly CTC" name="monthly_ctc">
                 <Input  placeholder='Enter Value' />
-            </Form.Item>
-            <Form.Item label="Yearly CTC" name="yearly_ctc">
+            </Form.Item> */}
+            <Form.Item label="Yearly CTC" name="yearly_ctc"
+                    rules={[{ required: true, message: 'Please Enter Yearly CTC!' }]}
+                    >
                 <Input  placeholder='Enter Value' />
             </Form.Item>
         </div>
@@ -116,7 +126,7 @@ const AddEmployee = ({onClose}) => {
                   justifyContent: "flex-end"
             }}>
 
-            <button onClick={onClose} className="btn_cancel btn">Cancel</button>
+            <button onClick={onClose} className=" btn btn-danger btn-sm ">Cancel</button>
             <button  className="btn btn-primary btn-sm" type="submit">Save</button>
         </div>
       </Form>

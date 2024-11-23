@@ -9,13 +9,13 @@ import okey from '/images/ok.png';
 import logo2 from '/images/MicrosoftTeams-image.png';
 
 import { Country,  }  from 'country-state-city-slim';
-import { BASE, BASE_URL } from './../../Utils/api';
+// import { BASE, BASE_URL } from './../../Utils/api';
 
 import axios from 'axios';
 import LoadingContext from '../../Providers/Loading';
 
-
-
+const BASE = import.meta.env.VITE_BASE_URL; 
+const BASE_URL = import.meta.env.VITE_BASE_URL; 
 
 
  let colorprimary ="green"

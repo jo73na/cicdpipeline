@@ -1824,6 +1824,7 @@ const AddJob=({handleopenDrawerJob})=>{
  });
 
     const clientsData= menuThree(null,clients)
+    console.log('clientsData:', clientsData);
 
     const handleJobtypeChange=(e)=>{
       if(e =="Full Time"){
@@ -1853,7 +1854,7 @@ const AddJob=({handleopenDrawerJob})=>{
          salaryType:salaryType,
          job_description:job_description,
       }
-
+console.log(salary);
       addJob(sendData,form)
       setJobDescription("")
       setSalaryType("Monthly")
@@ -2213,4 +2214,3 @@ activeBorderColor="red"
 
 
 export default AddJob;
-

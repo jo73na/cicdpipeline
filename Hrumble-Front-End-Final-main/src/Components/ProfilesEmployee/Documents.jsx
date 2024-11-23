@@ -2,10 +2,12 @@ import React, { useContext, useEffect, useState } from 'react'
 import Doc from "/images/Document.svg"
 import { Button, Form, Input, Upload, message } from 'antd'
 import EmployeeContext from '../../Providers/EmployeeProvider'
-import { BASE } from '../../Utils/api'
+// import { BASE } from '../../Utils/api'
 import { useParams } from 'react-router-dom'
 import Loader from '../../Utils/Loader'
 import CookieUtil from '../../Utils/Cookies'
+
+const BASE = import.meta.env.VITE_BASE_URL;
 
 const Documents = ({handlePrev,goSteps,setGoSteps}) => {
 

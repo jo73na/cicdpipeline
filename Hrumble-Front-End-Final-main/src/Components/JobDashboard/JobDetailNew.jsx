@@ -99,7 +99,7 @@
 //             <label>|</label>
 //             {
 //                 role  == "Vendor" ?
-//             <label>Job Type : <span className='jobDetailNew-labels'>{finddata?.vendor_job_type}</span></label>
+//             <label>Job Type : <span className='jobDetailNew-labels'>{finddata?.job_type}</span></label>
               
 //             :
 //             <label>Job Type : <span className='jobDetailNew-labels'>{jobSingle?.job_type}</span></label>
@@ -153,7 +153,7 @@ const JobDetailNew = () => {
     console.log(("8byoukbh",vendardata))
 
    const params =useParams()
-     
+   console.log('End Client:', jobSingle?.end_client);
   
     let description=  <div>
 
@@ -169,16 +169,15 @@ const JobDetailNew = () => {
     ? [{ title: 'Company Name', icon: 'fa-solid fa-city', subtitle: jobSingle.client_id[0].name },
     {title:'Job Type', icon:'fa-solid fa-book', subtitle:jobSingle?.job_type},
 
-    {title:'Salary', icon:'fa-solid fa-indian-rupee-sign', subtitle:`${jobSingle?.salary} - ${jobSingle?.salaryType}` || '-'},
+    {title:'Salary', icon:'fa-solid fa-indian-rupee-sign', subtitle:`${jobSingle?.vendor_clientbillable} - ${jobSingle?.salaryType}` || '-'},
+    { title: 'End Client', icon: 'fa-solid fa-building-user', subtitle: jobSingle?.end_client?.length > 0 ? jobSingle.end_client.join(', ') : "-" },    
 
   ]
     : [
-    {title:'Job Type', icon:'fa-solid fa-book', subtitle:vendardata?.vendor_job_type},
+    {title:'Job Type', icon:'fa-solid fa-book', subtitle:jobSingle?.job_type},
     {title:'Experience', icon:'fa-solid fa-hand-holding-heart', subtitle: `${jobSingle?.exp_from} Yrs   -  ${jobSingle?.exp_to} Yrs` || "-"},
-    {title:'Budget', icon:'fa-solid fa-indian-rupee-sign', subtitle:`${vendardata?.vendor_clientbillable} - ${vendardata?.vendor_salary_type}` || '-'},
-
- 
-    ]),
+    {title:'Budget', icon:'fa-solid fa-indian-rupee-sign', subtitle:`${jobSingle.salary} - ${jobSingle?.salary_type ?? jobSingle?.salaryType}` || '-'},
+]),
 
     {title:'Location', icon:'fa-solid fa-location-dot', subtitle:jobSingle?.job_location.map((item,i)=><span key={i} className=''>{item},&nbsp;</span>) || "-"},
     {title:'Date posted:', icon:'fa-solid fa-clock', subtitle:dayjs(jobSingle?.createdAt).format("DD-MM-YYYY")||"-"},
@@ -295,14 +294,23 @@ function  PostComment(){
                                                              <PostComment/>
                                                         </div>	
                                                         <span className={`badge light border-0 badge-success`} style={{
+                                                                right:" 160px",
+                                                                top: "26px",
+                                                                position: "absolute"
+                                                        }}> 
+                                                         {role  == "Vendor" ?
+                                                         vendardata?.job_type
+                                                        :
+                                                        jobSingle?.job_type}</span>
+                                                        <span className={`badge light border-0 badge-success`} style={{
                                                                 right:" 20px",
                                                                 top: "26px",
                                                                 position: "absolute"
                                                         }}> 
                                                          {role  == "Vendor" ?
-                                                         vendardata?.vendor_job_type
+                                                         vendardata?.job_type
                                                         :
-                                                        jobSingle?.job_type}</span>
+                                                        jobSingle?.secondarySelected}</span>
                                                  
                                                          
                                                     </div>
@@ -541,7 +549,7 @@ function  PostComment(){
                                         ))}															
                                     </div>													
                                 </Accordion.Body>
-                            </Accordion.Item>
+                            </Accordion.Item
                         </Accordion>
                     </div>
                 </div>

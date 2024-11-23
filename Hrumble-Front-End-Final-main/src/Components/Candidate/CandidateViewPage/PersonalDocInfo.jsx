@@ -1,10 +1,10 @@
 import React, { useContext } from 'react';
 import PDF from "/images/Pdffile.svg";
 import CandidateContext from '../../../Providers/Candidate';
-import { BASE } from '../../../Utils/api';
+// import { BASE } from '../../../Utils/api';
 import { InboxOutlined, EditOutlined } from '@ant-design/icons';
 
-
+const BASE = import.meta.env.VITE_BASE_URL; 
 
 
 const PersonalDocInfo = ({onchangeButton}) => {

@@ -2,9 +2,10 @@ import React, { useEffect, useState} from 'react';
 import axios from 'axios';
 // import { FaqApi } from '../../api';
 import Context from './index';
-import { BASE_URL } from '../../Utils/api';
+// import { BASE_URL } from '../../Utils/api';
 import CookieUtil from '../../Utils/Cookies';
 
+const BASE_URL = import.meta.env.VITE_BASE_URL; 
 
 
 const SettingProvider =(props) => {

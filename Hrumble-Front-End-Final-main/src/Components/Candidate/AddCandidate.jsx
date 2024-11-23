@@ -1,7 +1,6 @@
 import { useState, useEffect, useContext } from "react";
 import { Button, Form, Input } from "antd";
 import { message, Tabs, Rate } from "antd";
-
 import { useForm } from "antd/lib/form/Form";
 import {PlusOutlined,MinusCircleOutlined} from "@ant-design/icons"
 import CandidateContext from "../../Providers/Candidate";
@@ -11,16 +10,11 @@ import BasicDetailEdit from "./candidateBasicAdd";
 const AddCandidatesPopup = () => {
   const { candidatestotal,handleAddCandidatepage,loadingaddbutton,loadingAssign} = useContext(CandidateContext);
   const [value, setValue] = useState("");
- 
-   const [hiringtype, setHiringtype] = useState("");
-
+  const [hiringtype, setHiringtype] = useState("");
   const [active, setactive] = useState("1");
   let skillsdata = [];
- 
   console.log(skillsdata, "skillsdata");
   const [form] = useForm();
-
- 
   const [fileError, setFileError] = useState(false);
   const [resume, setResume] = useState("");
 

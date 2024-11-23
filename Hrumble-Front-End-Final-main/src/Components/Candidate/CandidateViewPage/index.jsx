@@ -292,7 +292,7 @@ import { Drawer, Empty, Typography, message,Upload } from 'antd';
 import AssignTable from '../AssignTable';
 import AssignEditCandidatesPopup from '../AssignEditCandidate';
 import Loader from './../../../Utils/Loader';
-import { BASE } from '../../../Utils/api';
+// import { BASE } from '../../../Utils/api';
 import CandidateContext from '../../../Providers/Candidate';
 import mammoth from 'mammoth';
 import * as DocxPreview from 'docx-preview';
@@ -301,6 +301,8 @@ import WorkExperienceEdit from './WorkExperienceEdit';
 import { InboxOutlined } from '@ant-design/icons';
  const {Dragger}=Upload
 
+ const BASE = import.meta.env.VITE_BASE_URL; 
+ 
 console.log("fffff",DocxPreview); 
 
 

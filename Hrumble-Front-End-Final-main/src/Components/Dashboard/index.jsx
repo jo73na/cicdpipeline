@@ -27,6 +27,7 @@ import { SalesandMarketting } from './SalesandMargetting';
 import ProjectOverviewChart from '../UtlilsComponent/ProjectOveviewTab';
 import InvoiceExpenceChart from './InvoiceExpenceChart';
 import GoalCard from '../../Utils/GoalCard';
+// import { GoalContext } from '../../Providers/Goal/GoalProvider';
 
 
 
@@ -136,7 +137,7 @@ const  color =["primary","secondary","info", "danger","success"]
      :
      <>
 
-      <p className='heading_text'>  {role === "SuperAdmin"?" Admin Dashboard":"Dashboard"} </p>
+      <p className='heading_text' style={{paddingBottom:'15px', paddingLeft:'3px', paddingTop:'10px'}}>  {role === "SuperAdmin"?" Admin Dashboard":"Dashboard"} </p>
 
       {
          role  == "Employee" ?
@@ -155,7 +156,7 @@ const  color =["primary","secondary","info", "danger","success"]
       {
          role === "SuperAdmin" ?
          <>
-             <div className='container-fluid'>
+             <div className='container-fluid' style={{marginLeft: '-10px'}}>
                <div className='row mt-1'>
                {iconBoxCard.map((item, index)=>(
                             <div className="col-xl-3 col-sm-6" key={index}>
@@ -166,7 +167,7 @@ const  color =["primary","secondary","info", "danger","success"]
                                                 <i className={`${item.icon} text-${item.bg}`}></i>
                                             </div>
                                             <div className="total-projects ms-3">
-                                                <h3 className={`text-${item.bg} count`}>{item.number}</h3> 
+                                                <h3 className={`text-${item.bg} count mb-2`}>{item.number}</h3> 
                                                 <span>{item.title}</span>
                                             </div>
                                         </div>
@@ -227,52 +228,31 @@ const  color =["primary","secondary","info", "danger","success"]
            </div>
        
      </div> 
-      <div
-       className='col-xl-8'>
-         <div
-              className={`col_${goal?.senddata?.length>2? "3": goal?.senddata?.length==2? "2": "1"} g_5`}>
-           {
-             
-                goal?.senddata?.map((item,i)=>{
-                  return <>
-                    <div className="card"
-                     style={{
-                       height:"300"
-                     }}>
-                  <div className="card-header border-0 pb-0">
-                    <div className="clearfix">
-                      <h3 className="card-title">{item?.goaltype_name}</h3>
-                       
-                    </div>
-                    <div className="clearfix text-center">
-                      <h3 className="text-primary mb-0">{Math.round(item.count)}/{Math.round(item.target)}</h3>
-                     
-                    </div>
-                  </div>
-                  <div className="card-body text-center">
-                  <Progress
-      percent={calculatePercentage(item.count,item.target)}
-      status="active"
-      strokeColor={{
-        from: '#108ee9',
-        to: '#87d068',
-      }}
-    />
-                    <GoalCard chartdata={item?.monthlyCounts}/>
-                  </div>
-                </div>
-                  
+     <div className="col-xl-8">
+  <div className={`col_${goal?.senddata?.length > 2 ? "3" : goal?.senddata?.length === 2 ? "2" : "1"} g_5`}>
+    {
+      goal?.senddata?.map((item, i) => {
+        return (
+          <div className="card" style={{ height: "350px" }} key={i}>
+            <div className="card-body text-center">
+            <GoalCard
+                chartdata={[{
+                  x: item.goaltype_name, // Label for the x-axis
+                  y: item.count, // Actual value for the chart
+                  goals: [{ name: 'Target', value: item.target }] // Target value for comparison
+                }]}
+                goals={[item.goaltype_name]} // Goal name for the Y-axis
+              />
 
-                  
-                 
+            </div>
+          </div>
+        );
+      })
+    }
+  </div>
+</div>
 
-              
-                 </>
-                })
-              }
-           </div>
-        
-      </div>
+
    
 
   {/* <div

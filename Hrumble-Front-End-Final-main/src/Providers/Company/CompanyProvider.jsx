@@ -2,10 +2,12 @@ import{ useContext, useEffect, useState} from 'react';
 import axios from 'axios';
 // import { LeaveApi } from '../../api';
 import Context from './index';
-import { BASE_URL } from '../../Utils/api';
+// import { BASE_URL } from '../../Utils/api';
 import { notification } from 'antd';
 import CookieUtil from '../../Utils/Cookies';
 import LoadingContext from '../Loading';
+
+const BASE_URL = import.meta.env.VITE_BASE_URL; 
 
 const CompanyProvider =(props) => {
 

@@ -25,8 +25,10 @@ import { BellOutlined, MoreOutlined } from "@ant-design/icons";
 import Cookies from "../Utils/Cookies";
 import CookieUtil from "../Utils/Cookies";
 import UserManagementContext from "../Providers/UserMangement";
-import { BASE } from "../Utils/api";
+// import { BASE } from "../Utils/api";
 const { Header, Content, Sider } = Layout;
+
+const BASE = import.meta.env.VITE_BASE_URL;
 
 const MobileMenu = lazy(() => import("../Layouts/MobileMenu"));
 

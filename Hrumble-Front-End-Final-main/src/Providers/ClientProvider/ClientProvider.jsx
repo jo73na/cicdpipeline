@@ -2,8 +2,10 @@ import { useState } from "react";
 import axios from "axios";
 import Context from "./index";
 import { notification } from "antd";
-import { BASE_URL } from "../../Utils/api";
+// import { BASE_URL } from "../../Utils/api";
 import CookieUtil from "../../Utils/Cookies";
+
+const BASE_URL = import.meta.env.VITE_BASE_URL; 
 
 const ClientProvider = (props) => {
   const [clients, setClients] = useState([]);

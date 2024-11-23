@@ -1,9 +1,12 @@
 import{ useEffect, useState,useMemo } from 'react';
 import axios from 'axios';
 import Context from './index';
-import {notification} from 'antd'
-import { BASE_URL} from '../../Utils/api';
+import { Snackbar, Alert } from '@mui/material'; 
+// import { BASE_URL} from '../../Utils/api';
 import CookieUtil from '../../Utils/Cookies';
+import {notification} from 'antd'
+
+const BASE_URL = import.meta.env.VITE_BASE_URL; 
 
  axios.defaults.headers.common['Authorization'] = `Bearer ${CookieUtil.get('token')}`;
 const JobProvider = (props) => {
@@ -46,6 +49,9 @@ const JobProvider = (props) => {
     const [viewCandidateDrawer,setViewCandidateDrawer]=useState(false);
     const [addbuttonJob,setAddButton]=useState(false);
     const [pagination, setPagination] = useState({ current: 1, pageSize: 10, total:10 });
+    const [snackbarOpen, setSnackbarOpen] = useState(false); // State for Snackbar
+    const [snackbarMessage, setSnackbarMessage] = useState(''); // Message to display in Snackbar
+    const [snackbarSeverity, setSnackbarSeverity] = useState('success'); // Severity of the Snackbar
     const memoizedResult = useMemo(() => {
         // Example: converting the searchjob to uppercase
         return searchjob.toUpperCase();
@@ -225,31 +231,37 @@ const JobProvider = (props) => {
             },})
              .then((response)=>{
                  if(response.status===201){
-                    notification.success({
-                        message: response?.data?.message,
-                        duration:1,
-                      });
-                    setAddButton(false)
-                    setOpenaddjob(!openaddjob)
-                    fetchJob()
-                    form.resetFields();
+                  setSnackbarMessage(response?.data?.message);
+                  setSnackbarSeverity('success');
+                  setSnackbarOpen(true);
+                  setAddButton(false);
+                  setOpenaddjob(!openaddjob);
+                  fetchJob();
+                  form.resetFields();
 
 
                  }
                  else{
-                    setAddButton(false)
-                    notification.error("Something Went Wrong!");
+                  setAddButton(false);
+                  // setSnackbarMessage("Something Went Wrong!");
+                  setSnackbarSeverity('error');
+                  setSnackbarOpen(true);
                     
                  }
                 })  
              .catch((err)=>{
-                console.log(err)
-                setAddButton(false)
-                notification.error("Something Went Wrong!");
+              console.log(err);
+              setAddButton(false);
+              // setSnackbarMessage("Something Went Wrong!");
+              setSnackbarSeverity('error');
+              setSnackbarOpen(true);
 
              }
              )
     }
+    const handleCloseSnackbar = () => {
+      setSnackbarOpen(false);
+  };
 
     const handleClientChange= async(e)=>{
         let params={
@@ -398,40 +410,30 @@ const JobProvider = (props) => {
         setopenvendor(!openvendor);
       }
 
-      const handleAssignVendor=(values,form)=>{
-        setvendorbutton(true)
-       
-        const apiCreatevedor=`${BASE_URL}/assignvendor/${vendorjob}`
-        axios.put(apiCreatevedor,values,{
+      const handleAssignVendor = (values, form) => {
+        setvendorbutton(true);
+        const apiCreateVendor = `${BASE_URL}/assignvendor/${vendorjob}`;
+        
+        axios.put(apiCreateVendor, values, {
             headers: {
-              Authorization: `Bearer ${token}`,
-              // Other headers if needed
-            },})
-             .then((response)=>{
-           
-                    notification.success({
-                        message: response?.data?.message,
-                        duration:1,
-                      });
-                    setvendorbutton(false)
-        setopenvendor(!openvendor);
-                    
-                  
-                    form.resetFields();
-
-
-                 })
-                
-                 
-             .catch((err)=>{
-                console.log(err)
-                setvendorbutton(false)
-                  
-                notification.error("Something Went Wrong!");
-
-             }
-             )
-    }
+                Authorization: `Bearer ${token}`,
+            },
+        })
+        .then((response) => {
+            notification.success({
+                message: response?.data?.message,
+                duration: 1,
+            });
+            setvendorbutton(false);
+            setopenvendor(!openvendor);
+            form.resetFields();
+        })
+        .catch((err) => {
+            console.log(err);
+            setvendorbutton(false);
+            notification.error("Something Went Wrong!");
+        });
+    };
     const handleAssignVendorTeam=(values,form)=>{
       setvendorbutton(true)
      
@@ -535,6 +537,11 @@ const JobProvider = (props) => {
             }}
         >
             {props.children}
+            <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={handleCloseSnackbar}>
+                <Alert onClose={handleCloseSnackbar} severity={snackbarSeverity} sx={{ width: '100%' }}>
+                    {snackbarMessage}
+                </Alert>
+            </Snackbar>
         </Context.Provider>
     );
 };

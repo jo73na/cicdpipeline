@@ -2,9 +2,13 @@ import{ useEffect, useState} from 'react';
 import axios from 'axios';
 // import { FaqApi } from '../../api';
 import Context from './index';
-import { BASE, BASE_URL } from '../../Utils/api';
+// import { BASE, BASE_URL } from '../../Utils/api';
 import { notification } from 'antd';
 import CookieUtil from '../../Utils/Cookies';
+
+const BASE_URL = import.meta.env.VITE_BASE_URL; 
+const BASE = import.meta.env.VITE_BASE_URL;
+
 
 const SalesandMargettingProvider =(props) => {
     const [account, setAccount] = useState([]);
@@ -42,6 +46,8 @@ const SalesandMargettingProvider =(props) => {
     const [paginationcontact, setPaginationcontact] = useState({ current: 1, pageSize: 10, total:10 });
     const role = CookieUtil.get("role");
     const token = CookieUtil.get("admin_token");
+
+
     const fethContacts = async () => {
 
         let api=`${BASE_URL}/contact`
@@ -55,6 +61,7 @@ const SalesandMargettingProvider =(props) => {
          
             await axios.get(api,{params}).then((resp) => {
                 setContacts(resp.data.data.data);
+              
             setPaginationcontact({...paginationcontact,total:resp.data.data.total});
 
                 setLoading(false)
@@ -77,17 +84,12 @@ const SalesandMargettingProvider =(props) => {
       }
       try {
           setLoading(true)
-
-       
           await axios.get(api,{params}).then((resp) => {
               setContactList(resp.data.data);
-              
-
               setLoading(false)
-
           });
          }
-       
+      
        catch (error) {
           console.log('error', error);
           setLoading(false)
@@ -101,12 +103,8 @@ const SalesandMargettingProvider =(props) => {
     
       try {
           // setLoading(true)
-
-       
           await axios.get(api,).then((resp) => {
             setListdata(resp.data.data);
-  
-
               setLoading(false)
 
           });
@@ -145,14 +143,7 @@ const SalesandMargettingProvider =(props) => {
 
     const locationapi= async()=>{
       let api=`${BASE_URL}/location/getselect`
-
-
-   
-
       try {
-        
-
-       
           await axios.get(api,).then((resp) => {
             setLocations(resp.data.data);
               
@@ -214,14 +205,6 @@ const SalesandMargettingProvider =(props) => {
               
                 setList("")
      fetchListselect()
-                
-   
-             
-              
-              
-            
-
-
            }
            else{
             setAddaccountButton(false)
@@ -263,13 +246,6 @@ const SalesandMargettingProvider =(props) => {
                   setList("")
        fetchListselect()
                   
-     
-               
-                
-                
-              
-  
-  
              }
              else{
               setAddaccountButton(false)

@@ -1,4 +1,4 @@
-import { Avatar, Checkbox, Collapse, Form, Input, Modal, Select, Switch, Table, Timeline } from 'antd'
+import { Avatar, Checkbox, Collapse, Form, Input,Row, Col, Modal, Select, Switch, Table, Timeline } from 'antd'
 import { useContext, useEffect, useState } from 'react'
 import EmployeeContext from '../../Providers/EmployeeProvider'
 import { EditTwoTone, ClockCircleOutlined } from '@ant-design/icons';
@@ -93,6 +93,39 @@ const EmployeeDetailinfo = () => {
      })
     
    })
+
+   const experienceColumns = [
+    {
+      title: 'Designation',
+      dataIndex: 'designation',
+      key: 'designation',
+    },
+    {
+      title: 'Company',
+      dataIndex: 'company_name',
+      key: 'company_name',
+    },
+    {
+      title: 'Joining Date',
+      dataIndex: 'joining_date',
+      key: 'joining_date',
+      render: (text) => moment(text).format('DD-MM-YYYY'),
+    },
+    {
+      title: 'Separation Date',
+      dataIndex: 'separation_date',
+      key: 'separation_date',
+      render: (text) => moment(text).format('DD-MM-YYYY'),
+    },
+  ];
+
+  const experienceData = employeeComplete?.experience?.map((item, i) => ({
+    key: i,
+    designation: item?.designation,
+    company_name: item?.company_name,
+    joining_date: item?.joining_date,
+    separation_date: item?.separation_date,
+  })) || [];
 
    const editPersonalInfo = () => {
     setEditTrue(true);
@@ -211,7 +244,7 @@ const showModal = () => {
 
         let id = CookieUtil.get("admin_id")
 
-        if(role=="Employee"){
+        if(role =="Employee"){
             employeeCompleteFetch(id);
         }
         else{
@@ -224,15 +257,18 @@ const showModal = () => {
     <div>
     
     <div>
-        <div className='col_2 g_20 employeeInfo-form'>
+        <div className='employeeInfo-form'>
+        <Row gutter={[20, 20]}>
+        <Col span={12}>
     
             <div className='card p_15'>
-                <div>
+                <div className='header-container'>
                     <label className='c_primary profileInfo_heading'>Personal Informations</label>
-                </div>
+                
                 
                 <div className='d_f j_c_f_e profileInfo-editIcon-size'>
                     <EditTwoTone onClick={(e) => handelEditPersonal(employeeComplete?.basic?._id)} />
+                </div>
                 </div>
                 <div className='profileInfo-list-gap'>
                 <ul>
@@ -267,13 +303,15 @@ const showModal = () => {
                 </ul>
                 </div>
             </div>
-
+            </Col>
+            <Col span={12}>
             <div className='card p_15'>
-                <div>
+                <div className='header-container'>
                 <label className='c_primary profileInfo_heading'>Contact Details</label>
-                </div>
+                
                 <div className='d_f j_c_f_e profileInfo-editIcon-size'>
                     <EditTwoTone onClick={showModal5} />
+                </div>
                 </div>
                 <div className='profileInfo-list-gap p_t_10'>
                 <label className='profileInfo-employeeName'>Present Address</label>
@@ -316,15 +354,17 @@ const showModal = () => {
                 </ul>
                 </div>
             </div>
-        </div>
+            </Col>
+        
 
-        <div className='col_2 g_20 p_t_20'>
+            <Col span={12}>
             <div className='card p_15'>
-                <div>
+                <div className='header-container'>
                     <label className='c_primary profileInfo_heading'>Bank Informations</label>
-                </div>
+                
                 <div className='d_f j_c_f_e profileInfo-editIcon-size'>
                     <EditTwoTone onClick={showModal2} />
+                </div>
                 </div>
                 <div className='profileInfo-list-gap p_t_10'>
                 <ul>
@@ -355,28 +395,38 @@ const showModal = () => {
                 </ul>
                 </div>
             </div>
+            </Col>
 
+            <Col span={12}>
             <div className='card p_15'>
-                <div>
+                <div className='header-container'>
                     <label className='c_primary profileInfo_heading'>Family Informations</label>
-                </div>
+                
                 <div className='d_f j_c_f_e profileInfo-editIcon-size'>
                     <EditTwoTone onClick={showModal3} />
+                </div>
                 </div>
                 <div className='p_t_5'>
                 <Table dataSource={data} columns={columns} rowClassName="editable-row" pagination={false}/>
                 </div>
             </div>
-        </div>
+            </Col>
+        
 
-        <div className='col_2 g_20 p_t_20'>
+            <Col span={12}>
             <div className='card p_15'>
-                <div>
+                <div className='header-container'>
                     <label className='c_primary profileInfo_heading'>Experience</label>
-                </div>
+                
                 <div className='d_f j_c_f_e profileInfo-editIcon-size'>
                     <EditTwoTone onClick={showModal4} />
                 </div>
+                </div>
+                <Table
+              columns={experienceColumns}
+              dataSource={experienceData}
+              pagination={false}
+            />
                 <Timeline items={employeeComplete?.experience?.map((data, index) => ({
                     children: (
                         <div key={index}>
@@ -386,22 +436,29 @@ const showModal = () => {
                         </div>
                     ),
                 }))} />
-
-
             </div>
+            </Col>
 
+            <Col span={12}>
             <div className='card p_15'>
-                <div>
+                <div className='header-container'>
                 <label className='c_primary profileInfo_heading'>Emergency Contact</label>
-                </div>
+                
                 <div className='d_f j_c_f_e profileInfo-editIcon-size'>
                     <EditTwoTone onClick={showModal1} />
+                </div>
                 </div>
                 <div className='p_t_5'>
                 <Table dataSource={Emergencydata} columns={columnsEmergency} rowClassName="editable-row" pagination={false}/>
                 </div>
             </div>
+            </Col>
+            </Row>
         </div>
+      
+
+
+
         <Modal title="Edit Personal Information" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}
         okButtonProps={{ style: { display: 'none' } }}
         cancelButtonProps={{ style: { display: 'none' } }}>

@@ -136,6 +136,7 @@ const ExpenceAdd = ({handleFinish,handleDrawerClose,setAttachment,setFileError})
        rules={[{ required: true, message: 'Please select Employee Name' }]}
      >
        <Select placeholder="Select Employee Name"
+
         options={expenceAddemployee}/>
          
        
@@ -147,6 +148,8 @@ const ExpenceAdd = ({handleFinish,handleDrawerClose,setAttachment,setFileError})
        <Form.Item
       label="Others"
        name ="others_type"
+       rules={[{ required: true, message: 'Please select Others Type' }]}
+
       
        >
       <Select placeholder="Select Others"

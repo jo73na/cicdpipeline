@@ -3,9 +3,12 @@ import axios from "axios";
 // import { FaqApi } from '../../api';
 import Context from "./index";
 import CookieUtil from "../../Utils/Cookies";
-import { BASE_URL } from "../../Utils/api";
+// import { BASE_URL } from "../../Utils/api";
 import { notification } from "antd";
 // import LoadingContext from '../Loading';
+
+const BASE_URL = import.meta.env.VITE_BASE_URL; 
+
 
 const FAQProvider = (props) => {
   //   const {Loading,setLoading}=useContext(LoadingContext)
@@ -48,6 +51,7 @@ const FAQProvider = (props) => {
     try {
       await axios.get(api).then((resp) => {
         setRequestNonBillable(resp.data.data);
+        // console.log(RequestNonBillable);
       });
     } catch (error) {
       console.log("error", error);

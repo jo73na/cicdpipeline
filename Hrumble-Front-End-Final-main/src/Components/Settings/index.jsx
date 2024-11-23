@@ -5,14 +5,14 @@ import  { useContext, useEffect, useState } from 'react'
  
 import { PlusOutlined } from '@ant-design/icons';
 import { Country }  from 'country-state-city-slim';
-import { BASE } from './../../Utils/api';
+// import { BASE } from './../../Utils/api';
 
 import CompanyContext from '../../Providers/Company';
 import { useForm } from 'antd/es/form/Form';
 import SettingDrawer from './SettingDrawer';
 import { Drawer } from 'antd/lib';
 
-
+const BASE = import.meta.env.VITE_BASE_URL;
 
 const Setting = () => { 
   const [form]=useForm()

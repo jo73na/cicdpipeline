@@ -4,9 +4,11 @@ import SSLC from "/images/Sslc.png";
 import HSC from "/images/Hsc.png";
 import Degree from "/images/Degree.png";
 import { FileExclamationOutlined, EditTwoTone  } from '@ant-design/icons';
-import { BASE } from '../../Utils/api'
+// import { BASE } from '../../Utils/api'
 import { Modal } from 'antd';
 import CollapseEducation from './CollapseEducation';
+
+const BASE = import.meta.env.VITE_BASE_URL; 
 
 const InfoEducational = () => {
 

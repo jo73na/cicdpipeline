@@ -2,11 +2,11 @@ import React, { useEffect, useState} from 'react';
 import axios from 'axios';
 // import { FaqApi } from '../../api';
 import Context from './index';
-import { BASE_URL } from '../../Utils/api';
+// import { BASE_URL } from '../../Utils/api';
 import CookieUtil from '../../Utils/Cookies';
 import { notification } from 'antd';
 
-
+const BASE_URL = import.meta.env.VITE_BASE_URL; 
 
 const GoalProvider =(props) => {
     const [comapnyDetails, setComapnyDetails] = useState([]);
@@ -27,6 +27,7 @@ const GoalProvider =(props) => {
     const [buttonLodaing, setButtonloading] = useState(false);
     const [openSettingsEdit, setOpenSettingsEditDrawer] = useState(false);
     const [Loading, setLoading] = useState(false);
+    const [goalCalculations, setGoalCalculations] = useState([]);
 
 
 
@@ -352,7 +353,19 @@ const GoalProvider =(props) => {
           setLoading(false);
         }
       };
-
+      const fetchGoalCalculations = async () => {
+        try {
+          const response = await axios.get(`${BASE_URL}/team/calculations`);
+          setGoalCalculations(response.data.data);
+        } catch (error) {
+          console.error('Error fetching goal calculations:', error);
+        }
+      };
+    
+      useEffect(() => {
+        fetchGoalCalculations();
+        // ... (keep other useEffect calls)
+      }, []);
 
     return (
         <Context.Provider
@@ -397,7 +410,9 @@ const GoalProvider =(props) => {
                 onFinishcondition,
                 setuser_id,
                 FetcTeamAdd,
-                users
+                users,
+                goalCalculations,
+                fetchGoalCalculations,
             }}
         >
             {props.children}

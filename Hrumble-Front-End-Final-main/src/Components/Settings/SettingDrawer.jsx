@@ -52,6 +52,7 @@ const SettingDrawer = ({onCloseDrawer}) => {
     
     >
     <Form.Item className='m_t_10' name="colorprimary" label="Color Primary" rules={[{ required: true }]}>
+    <ColorPicker defaultValue="#1677ff" size="large" showText onChange={handleColorChange}  />
         
         </Form.Item>
         <Form.Item  name="colorsecondary" label="Color Secondary" rules={[{ required: true }]}>

@@ -105,6 +105,9 @@ const  ProjectOverviewChart = (props) =>{
           toolbar: {
             show: false,
           },
+          zoom: {
+            enabled: true, // Disable zooming
+          },
       },
       
       stroke: {
@@ -120,10 +123,13 @@ const  ProjectOverviewChart = (props) =>{
         }
       },
       plotOptions: {
-          bar: {
-              columnWidth: '18%',
-              borderRadius:6	,
-          }
+        bar: {
+          columnWidth: '50%', // Set a fixed column width for all bars
+          distributed: false, // Ensure equal distribution across all columns
+          barHeight: '50%', // Consistent height for bars
+          borderRadius: 6, // Adds a rounded edge to the bars
+          borderRadiusApplication: 'end',
+        },
       },
       fill: {            
           type : 'gradient',

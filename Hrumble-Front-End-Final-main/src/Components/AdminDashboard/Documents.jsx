@@ -2,7 +2,9 @@ import React, { useContext } from 'react'
 import EmployeePhoto from "/images/EmployeePhoto.svg"
 import PDF from "/images/Pdffile.svg"
 import EmployeeContext from '../../Providers/EmployeeProvider'
-import { BASE } from '../../Utils/api'
+// import { BASE } from '../../Utils/api'
+
+const BASE = import.meta.env.VITE_BASE_URL; 
 
 const Documents = () => {
 

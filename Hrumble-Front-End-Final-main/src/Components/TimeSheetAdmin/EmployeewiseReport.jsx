@@ -8,7 +8,9 @@ import { GridComponent, ColumnsDirective, ColumnDirective, Inject, Page, Aggrega
 import { useContext } from 'react';
 import { useForm } from 'antd/es/form/Form';
 import FaqContext from '../../Providers/Faq';
-import { BASE_URL } from '../../Utils/api';
+// import { BASE_URL } from '../../Utils/api';
+
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 
 export default function EmployeeWiseReportAdmin({billable}) {

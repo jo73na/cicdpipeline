@@ -327,7 +327,7 @@ import wrongicon from '/images/wrongClick.png';
 
 
 // import { useEffect } from 'react'
-// import SalesandMargettingContext from './../../Providers/SalesandMargetting/index';
+//import SalesandMargettingContext from './../../Providers/SalesandMargetting/index';
 
 
 import AddContacts from './AddContacts';
@@ -395,9 +395,9 @@ contacts?.map((item,i)=>{
  useEffect(() => {
     fethContacts()
    
- }, [paginationcontact?.current])
+ }, [])
 
-
+ //paginationcontact?.current
   const handleSelect =()=>{
      console.log("e")
   }
@@ -548,7 +548,7 @@ contacts?.map((item,i)=>{
              <Dropdown.Toggle as="div" className={item.select}>{item.stage}</Dropdown.Toggle>
              <Dropdown.Menu className='task-drop-menu'>
                  <Dropdown.Item onClick={()=>handleSelect(item.id,'High')}>Cold</Dropdown.Item>
-                 <Dropdown.Item onClick={()=>handleSelect(item.id,'Approching')}>Approching</Dropdown.Item>
+                 <Dropdown.Item onClick={()=>handleSelect(item.id,'Approching')}>Approaching</Dropdown.Item>
                  <Dropdown.Item onClick={()=>handleSelect(item.id,'Approching')}>Replied</Dropdown.Item>
                  <Dropdown.Item onClick={()=>handleSelect(item.id,'Approching')}>Interested</Dropdown.Item>
                  <Dropdown.Item onClick={()=>handleSelect(item.id,'Approching')}>Not Interested</Dropdown.Item>

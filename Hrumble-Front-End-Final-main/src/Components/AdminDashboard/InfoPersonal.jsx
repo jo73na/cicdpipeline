@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { BASE } from '../../Utils/api'
+// import { BASE } from '../../Utils/api'
 import Aadhar from "/images/AdharCard.png";
 import Pan from "/images/PanCard.png";
 import Esic from "/images/Esic.png";
@@ -9,6 +9,7 @@ import EmployeeContext from '../../Providers/EmployeeProvider'
 import { Modal } from 'antd';
 import CollapsePersonal from './CollapsePersonal';
 
+const BASE = import.meta.env.VITE_BASE_URL; 
 const InfoPersonal = () => {
 
   const {fetchEmployFull,adminLoginData,personalEmp,fetchPersonalDetail,employeeComplete,isModalOpen5,isModalOpen6,isModalOpen7,isModalOpen8,setIsModalOpen5,setIsModalOpen6,setIsModalOpen7,setIsModalOpen8} = useContext(EmployeeContext)

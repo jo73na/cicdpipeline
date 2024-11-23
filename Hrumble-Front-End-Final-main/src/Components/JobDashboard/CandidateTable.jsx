@@ -2,7 +2,6 @@ import { useContext } from 'react';
 import {Table,Tooltip, Button, } from 'antd';
 import ViewJobContext from '../../Providers/ViewJob';
 
-
 import DownloadIcon from "/images/Download.svg"
 import UserManagementContext from '../../Providers/UserMangement';
 import CookieUtil from '../../Utils/Cookies';
@@ -247,7 +246,7 @@ options.map((item)=>{
                     {
                       title: 'Status',
                       dataIndex: 'status',
-                      render: (text, record) => {
+                      render: (text) => {
                         let labelClassName = '';
                     
                         if (

@@ -1,10 +1,11 @@
 import { Button, Checkbox, DatePicker, Form, Input, Radio, Upload, message } from 'antd'
 import React, { useContext, useEffect, useState } from 'react'
 import EmployeeContext from '../../Providers/EmployeeProvider'
-import { BASE } from '../../Utils/api'
+// import { BASE } from '../../Utils/api'
 import Loader from '../../Utils/Loader'
 import dayjs from 'dayjs';
 
+const BASE = import.meta.env.VITE_BASE_URL;
 const AddExperience = () => {
 
     const {experinceData,handleOpenEditDrawer,editExper,experienceSingle,addExper,Loading,addbuttonEmply} = useContext(EmployeeContext)

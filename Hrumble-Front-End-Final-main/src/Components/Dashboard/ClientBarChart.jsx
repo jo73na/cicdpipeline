@@ -71,7 +71,10 @@ const  CleintBarChart = ({login}) =>{
       plotOptions: {
           bar: {
               columnWidth: '18%',
-              borderRadius:6	,
+              borderRadius: 6,
+              borderRadiusApplication: 'end',
+              
+
           }
       },
       fill: {            

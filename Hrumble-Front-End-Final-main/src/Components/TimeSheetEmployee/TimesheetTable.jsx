@@ -20,9 +20,10 @@ import { useContext } from "react";
 
 import CookieUtil from "../../Utils/Cookies";
 import FaqContext from "../../Providers/Faq";
-import { BASE_URL } from "../../Utils/api";
+// import { BASE_URL } from "../../Utils/api";
 import Loader from "../../Utils/Loader";
 
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 /**
  * Schedule editor custom fields sample
  */

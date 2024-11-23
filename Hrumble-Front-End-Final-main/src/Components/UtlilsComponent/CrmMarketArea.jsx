@@ -42,8 +42,8 @@ const  CrmMarketArea = () => {
 		  }
 		},
 		markers: {
-		  size: [8,],
-		  strokeWidth: [4,],
+		  size: [8,6],
+		  strokeWidth: [4,5],
 		  strokeColors: ['#fff'],
 		  border:4,
 		  radius: 4,
@@ -71,8 +71,8 @@ const  CrmMarketArea = () => {
 			  labels: {
 				  show: true,
 				  align: 'right',
-				  minWidth: 15,
-				  offsetX:-16,
+				  minWidth: 5,
+				  offsetX:1,
 				  style: {
 					colors: '#666666',
 					fontSize: '12px',

@@ -60,7 +60,7 @@ const  InvoiceExpenceChart = (props) =>{
       },
       plotOptions: {
           bar: {
-              columnWidth: '10%',
+              columnWidth: '20%',
               borderRadius:6	,
           }
       },

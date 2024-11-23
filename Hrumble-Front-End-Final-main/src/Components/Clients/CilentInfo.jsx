@@ -3,7 +3,9 @@ import {Collapse,Divider,Tabs,Rate} from "antd";
 import CandidateContext from '../../Providers/Candidate';
 import CandiateTimeLine from './Timeline';
 import Pdf_file  from "/images//pdf-file.svg"
-import { BASE} from '../../Utils/api';
+// import { BASE} from '../../Utils/api';
+
+const BASE = import.meta.env.VITE_BASE_URL; 
 
 
 // import {ReactComponent as Pdf_file} from "../../EmployeeDashboard/Icons/pdf-file 1 (1).svg";

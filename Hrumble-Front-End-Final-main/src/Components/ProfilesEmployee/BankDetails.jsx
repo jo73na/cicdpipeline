@@ -2,13 +2,14 @@ import { Button, Form, Input, Select, Upload, message } from 'antd'
 import { Option } from 'antd/lib/mentions'
 import  { useContext, useEffect, useState } from 'react'
 import EmployeeContext from '../../Providers/EmployeeProvider'
-import { BASE } from '../../Utils/api'
+// import { BASE } from '../../Utils/api'
 // import { Country, State, City } from 'country-state-city';
 import { Country, State }  from 'country-state-city-slim';
 import { useParams } from 'react-router-dom'
 import Loader from '../../Utils/Loader'
 import CookieUtil from '../../Utils/Cookies'
 
+const BASE = import.meta.env.VITE_BASE_URL; 
 const BankDetails = ({handlePrev,setGoSteps,goSteps}) => {
 
   const {editPersonal,Loading,employeeLogindata,addbuttonEmply,bankDetailEmp,fetchBankDetails,employeesingle} = useContext(EmployeeContext);

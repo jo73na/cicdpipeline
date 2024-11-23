@@ -2,10 +2,12 @@ import React, { useEffect, useState} from 'react';
 import axios from 'axios';
 // import { FaqApi } from '../../api';
 import Context from './index';
-import { BASE, BASE_URL } from '../../Utils/api';
+// import { BASE, BASE_URL } from '../../Utils/api';
 import CookieUtil from '../../Utils/Cookies';
 import { notification } from 'antd';
 
+const BASE_URL = import.meta.env.VITE_BASE_URL; 
+const BASE = import.meta.env.VITE_BASE_URL;
 
 const EmployeeProvider =(props) => {
     const [interview, setInterview] = useState([]);

@@ -8,7 +8,9 @@ import Documents from './Documents';
 import { useContext, useEffect, useState } from 'react';
 import EmployeeContext from '../../Providers/EmployeeProvider';
 import { useNavigate } from 'react-router-dom';
-import { BASE } from '../../Utils/api';
+// import { BASE } from '../../Utils/api';
+
+const BASE = import.meta.env.VITE_BASE_URL; 
 
 const EmployeeDetailinfo = () => {
 

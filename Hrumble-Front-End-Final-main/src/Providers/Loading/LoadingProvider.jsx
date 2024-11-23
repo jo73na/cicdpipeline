@@ -3,8 +3,10 @@ import { useEffect, useState } from "react";
 // import { FaqApi } from '../../api';
 import Context from "./index";
 import axios from "axios";
-import { BASE_URL } from "../../Utils/api";
+// import { BASE_URL } from "../../Utils/api";
 import CookieUtil from "../../Utils/Cookies";
+
+const BASE_URL = import.meta.env.VITE_BASE_URL; 
 
 const LoadingProvider = (props) => {
   const token =CookieUtil.get("admin_token")

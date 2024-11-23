@@ -5,10 +5,10 @@ import { Option } from 'antd/es/mentions';
 import axios from 'axios';
 import { useState } from 'react';
 import { GridComponent, ColumnsDirective, ColumnDirective, Inject, Page, Aggregate, Group, AggregateColumnsDirective, AggregateColumnDirective, AggregateDirective, AggregatesDirective } from '@syncfusion/ej2-react-grids';
-import { BASE_URL } from '../../Utils/api';
+// import { BASE_URL } from '../../Utils/api';
 import CookieUtil from '../../Utils/Cookies';
 
-
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 export default function TimesheetReport3() {
 
 

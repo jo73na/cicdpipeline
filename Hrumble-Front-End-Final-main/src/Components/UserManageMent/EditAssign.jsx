@@ -1,5 +1,4 @@
 import { Button, Form, Select } from 'antd'
-
 import { useEffect } from 'react'
 import { useContext } from 'react'
 import UserManagementContext from '../../Providers/UserMangement'
@@ -10,12 +9,11 @@ const EditAssign = () => {
   const [form]=useForm()
 
  const {handleFinishAssignEdit,editbutton,assignEdit,setUserDrawerOpen,FetchSelectUsers, reportmanagers,selectRoles,handleFinishAssign}=useContext(UserManagementContext)
-   useEffect(() => {
+   
+ useEffect(() => {
      FetchSelectUsers()
-     
-      
-  
    }, [])
+
    useEffect(() => {
     let reportManagerEmail =[]
     let CCEmail =[]
@@ -31,7 +29,7 @@ const EditAssign = () => {
         CCEmail.push(
            item.email_address?.address
         ) 
-      }) ;
+      });
   }
   
     form.setFieldsValue({
@@ -39,10 +37,8 @@ const EditAssign = () => {
         report_manager:reportManagerEmail,
         cc:CCEmail
      })
-         
-   
-
-   }, [assignEdit])
+        
+    }, [assignEdit])
    
     const handleFinish=(values)=>{
         handleFinishAssignEdit(values)
@@ -50,9 +46,9 @@ const EditAssign = () => {
   return( 
     <>
       <Form
-       className='m_t_20'
-       layout='vertical'
-       onFinish={handleFinish}
+        className='m_t_20'
+        layout='vertical'
+        onFinish={handleFinish}
         form={form}>
       <div>
         {/* <Card className="zive-addjob-rating"> */}
@@ -79,25 +75,24 @@ const EditAssign = () => {
                         ]}
                       >
                         <Select options={reportmanagers}
-                         mode='multiple'
-                        placeholder="Select a Report Manager" 
-                         style ={{
-                          width: "200px"
+                           mode='multiple'
+                           placeholder="Select a Report Manager" 
+                           style ={{
+                           width: "200px"
                          }}/>
                       </Form.Item>
                       <Form.Item
                         label="Cc"
                         name= "cc"
-                      
                       >
                         <Select options={reportmanagers}
-                        placeholder="Select a Cc" 
-                        mode='multiple'
-
-                         style ={{
-                          width: "200px"
-                         }}/>
-                      </Form.Item>
+                           placeholder="Select a Cc" 
+                           mode='multiple'
+                           style ={{
+                           width: "200px"
+                         }}
+                         />
+          </Form.Item>
          </div>
 
         <div
@@ -109,20 +104,18 @@ const EditAssign = () => {
           }}
         >
           <Button className="btn_cancel" 
-           onClick={()=>setUserDrawerOpen(false)}>
+            onClick={()=>setUserDrawerOpen(false)}>
             Cancel
           </Button>
           <Button
-           type="primary"  
-
+            type="primary"  
             className="btn"
             htmlType="submit"
-             loading={editbutton}
+            loading={editbutton}
           >
             Save
           </Button>
         </div>
-
         {/* </Card> */}
       </div>
       </Form>

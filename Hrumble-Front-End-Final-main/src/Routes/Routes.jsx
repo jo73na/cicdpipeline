@@ -22,8 +22,10 @@ import NewDasign from "../Components/TimeSheetAdmin/NewDasign";
 import EditInvoice from "../Components/InvoiceExpence/EditInvoice";
 import ExpenceInfo from "../Components/InvoiceExpence/ExpenceInfo";
 import ExpenseDashboard from "../Components/InvoiceExpence/ExpenseDashboard";
+import ConClients from "../Components/Construction/Clients";
+// import Projects from "../Components/Construction/Projects";
 const  GoalAdmin  = lazy(()=>import( "../Components/GoalAdmin")) 
-const  Projects  =lazy(()=>import( "../Components/Clients/Project"));
+// const  Projects  =lazy(()=>import( "../Components/Clients/Project"));
 const  AssignEmployess =lazy(()=>import( "../Components/Clients/AssignEmployess"));
 const  ViewJob  =lazy(()=>import( "../Components/JobDashboard/ViewJob"));
 const JobDashboard = lazy(() => import("../Components/JobDashboard"));
@@ -49,11 +51,17 @@ const FileManager = lazy(() => import("../Components/FileManager"));
 const EmployeeTabs = lazy(() => import("../Components/AdminDashboard/EmployeeTabs"));
 const InfoPage = lazy(() => import("../Components/AdminDashboard/InfoPage"));
 const ProfilesEmployee = lazy(() => import("../Components/ProfilesEmployee"));
+const  Projects= lazy(()=> import( "../Components/Construction/Projects"))
+
 //  const Projects = lazy(() => import("../Components/Clients/Project"));
 
 //  const AssignEmployess = lazy(() => import("../Components/Clients/AssignEmployess"));
 const  InvoiceExpence  =lazy(()=>import( './../Components/InvoiceExpence/index'));
 const  Settings  =lazy(()=>import( './../Components/Settings/index'));
+// const  SignUp =lazy(()=>import( './../Components/sign-up/SignUp'));
+import Units from './../Components/Construction/Projects/Units';
+import EditProjects from "../Components/Construction/Projects/EditProjects";
+import AddJobs from "../Components/JobDashboard/AddJobs";
 
 
 const RoutesDynamic = [
@@ -78,14 +86,22 @@ const RoutesDynamic = [
     path: "/clients/:id",
     exact: true,
 
-    component: <AssignEmployess />,
+    component: <AssignEmployess/>,
   },
   {
-    path: "/project/",
+    path: "/projects/",
     exact: true,
 
-    component: <Projects />,
+    component: <Units/>,
   },
+
+  {
+    path: "/projects/:id",
+    exact: true,
+
+    component: <EditProjects/>,
+  },
+ 
   {
     path: "/candidates",
     exact: true,
@@ -360,6 +376,18 @@ const RoutesDynamic = [
     exact: true,
 
     component: <NewDasign/>,
+  },
+  {
+    path: "/Construction/Clients",
+    exact: true,
+
+    component: <ConClients/>,
+  },
+  {
+    path: "/addjobs",
+    exact: true,
+
+    component: <AddJobs/>,
   },
  
 ];

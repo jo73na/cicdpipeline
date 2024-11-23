@@ -118,12 +118,12 @@ const ClietsTable = () =>{
       render: (_, record) => (
         <p className='d_f a_i_c g_5 c_primary' style={{cursor:"pointer"}} onClick={(e)=>handelEdit(e,record?.action)} ><img src={Vector}/> Edit</p>
     
-        // <Icon className='clients-table-icon' component = {BreifCaseAdd} />
+        // <Icon className='clients-table-icon' component = {BriefCaseAdd} />
       
       ),
     },
   ];
-  // Redux useSelctor 
+  // Redux useSelector 
   let data=[]
 
  

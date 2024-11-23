@@ -3,11 +3,13 @@ import EmployeeContext from '../../Providers/EmployeeProvider'
 import Bgv from "/images/BgvPhoto.svg";
 import ExperiencePhoto from "/images/Experincephoto.png";
 import { FileExclamationOutlined, EditTwoTone } from '@ant-design/icons';
-import { BASE } from '../../Utils/api'
+// import { BASE } from '../../Utils/api'
 import { Form, Modal, Timeline, Upload } from 'antd';
 import PDFlogo from '/images/pdf-file logo.svg';
 import CollapseWork from './CollapseWork';
 import moment from 'moment';
+
+const BASE = import.meta.env.VITE_BASE_URL; 
 
 const InfoEducational = () => {
 

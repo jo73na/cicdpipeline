@@ -4,11 +4,11 @@ import {useContext,useEffect} from 'react'
 import axios from "axios"
 import Dragger from 'antd/es/upload/Dragger';
 import { useForm } from "antd/lib/form/Form";
-import { BASE_URL } from '../../Utils/api'
+// import { BASE_URL } from '../../Utils/api'
 import FaqContext from '../../Providers/Faq';
 import dayjs from 'dayjs';
 
-
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 
 

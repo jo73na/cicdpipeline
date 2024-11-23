@@ -102,12 +102,25 @@ activeBorderColor="red"
                      />
                 </Form.Item>
                 <Form.Item>to</Form.Item>
-                <Form.Item name="exp_to">
+                <Form.Item name="exp_to" rules={[({getFieldValue}) =>({
+                  validator(_,value){
+                    const minyear = getFieldValue("exp_from");
+                      if(!value || value >= minyear) {
+                        return Promise.resolve();
+                      }
+                      return Promise.reject(new Error("Maxmimum year should greater than minimum year"));
+                    }
+                  }
+                ),
+              ]}
+                dependencies ={["exp_from"]}
+                >
                   <Select options={options} defaultValue={0}/>
                 </Form.Item>
+                
               </div>
-           </Form.Item>
-
+           
+</Form.Item>
          
          
         </div>
