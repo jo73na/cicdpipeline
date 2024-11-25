@@ -28,25 +28,17 @@ services:
       MONGO_URL: mongodb://zivedbadmin:Co1mbat0re9091@zivelogin-mongo:27017/master?authSource=admin
       PORT: 8080
       JWT_SECRET: mysecret123
-# Gmail Configuration
+      # Gmail Configuration
       SMPT_HOST: smtp.googlemail.com
       SMPT_PORT: 587
       SMPT_PASSWORD: nfyunxrmdsgxmlmp
       SMPT_MAIL: devlopsdemo@gmail.com
-      GMAIL_SMTP_HOST: smtp.gmail.com
-      GMAIL_SMTP_PORT: 465
-      GMAIL_USER: devlopsdemo@gmail.com
-      GMAIL_PASSWORD: nfyunxrmdsgxmlmp
-# Outlook Configuration
+      # Outlook Configuration
       OUTLOOK_SMTP_HOST: smtp-mail.outlook.com
       OUTLOOK_SMTP_PORT: 587
-# Common Email Settings
+      # Common Email Settings
       EMAIL_FROM: "No Reply <devlopsdemo@gmail.com>"
       ADMIN_EMAIL: sangeeth@technoladders.com
-
-
-
-
     depends_on:
       - zivelogin-mongo
 
@@ -61,7 +53,7 @@ services:
       - "15518:27017"  # Expose MongoDB on port 15517
     volumes:
       - mongodb_data:/data/db
-      - /root/cicdpipeline_new/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro  # Absolute path to mongo-init.js
+      - /root/cicdpipeline_new/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro  # Ensure this path is correct
     environment:
       MONGO_INITDB_ROOT_USERNAME: zivedbadmin
       MONGO_INITDB_ROOT_PASSWORD: Co1mbat0re9091
@@ -89,22 +81,24 @@ services:
 
   # NGINX Reverse Proxy
   nginx:
-    image: nginx:alpine
-    container_name: zivelogin-nginx
+    image: 'jc21/nginx-proxy-manager:latest'
     restart: unless-stopped
+    container_name: zivelogin-nginx
     networks:
       zivelogin-network-prod:
         ipv4_address: 192.168.1.200  # Static IP for NGINX container
     ports:
-     - "8080:80"  # Change 80 to an available port  # Expose port 80 on the host to port 80 on the container
+      - '80:80'   # Public HTTP Port
+      - '443:443' # Public HTTPS Port
+      - '81:81'   # Admin Web Port
     depends_on:
       - zivelogin-backend
       - zivelogin-frontend
     volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro  # Ensure the path is correct
 
-  # Portainer Service (with a unique name to avoid conflict)
-  portainer_new:  # Changed container name here
+  # Portainer Service
+  portainer_new:
     image: portainer/portainer-ce:latest
     container_name: portainer_new  # Changed container name to avoid conflict
     restart: unless-stopped
@@ -112,7 +106,7 @@ services:
       - proxy-network-prod
     ports:
       - "9100:9000"  # Expose Portainer web UI on port 9001 (changed port)
-  # Expose Portainer secured UI on port 9444 (changed port)
+      - "9444:9443"  # Expose secured Portainer UI
     volumes:
       - /opt/portainer:/data:rw  # Volume to store Portainer data
       - /var/run/docker.sock:/var/run/docker.sock:rw  # Docker socket for management
