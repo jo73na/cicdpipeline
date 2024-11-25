@@ -21,8 +21,6 @@ const Employee = lazy(() => import("../Components/Dashboard"));
 import LoadingContext from './../Providers/Loading/index';
 import JobApplay from "../Components/UtlilsComponent/JobApplay";
 import ApplayCandidateAdd from "../Components/UtlilsComponent/ApplayCandidateAdd";
-const SignInSide = lazy(() => import( "../Components/sign-in-side/SignInSide"))
-import SignUp from "../Components/sign-up/SignUp"
 
 
 const MainRoutes = () => {
@@ -116,9 +114,7 @@ const MainRoutes = () => {
                     }
                   />
                 </Route>
-               <Route path="/login" element={<SignInSide />} />
-                {/* <Route path="/login" element={<Login />} /> */}
-                <Route path="/signup" element={<SignUp />} />
+                <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/jobapplay/:id" element={<JobApplay />} />
                 <Route path="/applayCandidate/:id" element={<ApplayCandidateAdd/>} />
