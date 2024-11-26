@@ -39,15 +39,24 @@ jobs:
             sudo cp /etc/letsencrypt/live/hrumbles.com/privkey.pem ~/cicdpipeline_new/certs/privkey.pem
           "
 
-      # Step 4: Clean Up Volumes and Containers
+      # # Step 4: Clean Up Volumes and Containers
+      # - name: Clean Up Docker Resources
+      #   run: |
+      #     ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "
+      #       # Remove any unused volumes
+      #       sudo docker volume prune -f &&
+      #       # Stop and remove containers for the application
+      #       cd ~/cicdpipeline_new &&
+      #       sudo docker-compose down --volumes --remove-orphans
+      #     "
+
+      # Step 4: Clean Up Containers (Preserve Volumes)
       - name: Clean Up Docker Resources
         run: |
           ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "
-            # Remove any unused volumes
-            sudo docker volume prune -f &&
-            # Stop and remove containers for the application
             cd ~/cicdpipeline_new &&
-            sudo docker-compose down --volumes --remove-orphans
+            sudo docker-compose stop zivelogin-backend zivelogin-frontend &&
+            sudo docker-compose rm -f zivelogin-backend zivelogin-frontend
           "
 
       # Step 5: Build and Deploy the Application
@@ -55,16 +64,31 @@ jobs:
         run: |
           ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "
             cd ~/cicdpipeline_new &&
-            # Ensure Docker Compose is installed
             if ! command -v docker-compose &> /dev/null; then
               echo 'Installing Docker Compose...'
               sudo curl -L 'https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)' -o /usr/local/bin/docker-compose
               sudo chmod +x /usr/local/bin/docker-compose
             fi &&
-            # Build and start containers
             sudo docker-compose build --no-cache &&
-            sudo docker-compose up -d
+            sudo docker-compose up -d --no-recreate
           "
+
+
+      # # Step 5: Build and Deploy the Application
+      # - name: Run Docker Compose
+      #   run: |
+      #     ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "
+      #       cd ~/cicdpipeline_new &&
+      #       # Ensure Docker Compose is installed
+      #       if ! command -v docker-compose &> /dev/null; then
+      #         echo 'Installing Docker Compose...'
+      #         sudo curl -L 'https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)' -o /usr/local/bin/docker-compose
+      #         sudo chmod +x /usr/local/bin/docker-compose
+      #       fi &&
+      #       # Build and start containers
+      #       sudo docker-compose build --no-cache &&
+      #       sudo docker-compose up -d
+      #     "
 
       # Step 6: Cleanup SSH Keys
       - name: Cleanup SSH Keys
