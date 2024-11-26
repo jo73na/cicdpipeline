@@ -81,7 +81,7 @@ services:
 
   # NGINX Reverse Proxy
   nginx:
-    image: 'jc21/nginx-proxy-manager:latest'
+    image: 'nginx:alpine'
     restart: unless-stopped
     container_name: zivelogin-nginx
     networks:
