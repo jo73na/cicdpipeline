@@ -30,7 +30,16 @@ jobs:
             fi
           "
 
-      # Step 3: Clean Up Volumes and Containers
+      # Step 3: Copy SSL Certificates
+      - name: Copy SSL Certificates
+        run: |
+          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "
+            mkdir -p ~/cicdpipeline_new/certs &&
+            sudo cp /etc/letsencrypt/live/hrumbles.com/fullchain.pem ~/cicdpipeline_new/certs/fullchain.pem &&
+            sudo cp /etc/letsencrypt/live/hrumbles.com/privkey.pem ~/cicdpipeline_new/certs/privkey.pem
+          "
+
+      # Step 4: Clean Up Volumes and Containers
       - name: Clean Up Docker Resources
         run: |
           ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "
@@ -41,7 +50,7 @@ jobs:
             sudo docker-compose down --volumes --remove-orphans
           "
 
-      # Step 4: Build and Deploy the Application
+      # Step 5: Build and Deploy the Application
       - name: Run Docker Compose
         run: |
           ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "
@@ -57,7 +66,7 @@ jobs:
             sudo docker-compose up -d
           "
 
-      # Step 5: Cleanup SSH Keys
+      # Step 6: Cleanup SSH Keys
       - name: Cleanup SSH Keys
         run: |
           rm -rf ~/.ssh

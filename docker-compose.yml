@@ -95,7 +95,8 @@ services:
       - zivelogin-backend
       - zivelogin-frontend
     volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf:ro  # Ensure the path is correct
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./certs:/etc/nginx/certs:ro  # Ensure the path is correct
 
   # Portainer Service
   portainer_new:
