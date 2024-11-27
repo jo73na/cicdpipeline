@@ -68,4 +68,3 @@ jobs:
       - name: Cleanup SSH Keys
         run: |
           rm -rf ~/.ssh"
-i dont want to remove the db data everytime new file is added/commited and same with portainer and nginx
