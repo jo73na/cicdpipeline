@@ -17,7 +17,7 @@ services:
       context: ./Hrumbles-Backend-main
       dockerfile: Dockerfile
     image: opt-zivelogin-backend:latest
-    container_name: zivelogin-backend
+    container_name: zivelogin-backend-new
     restart: unless-stopped
     networks:
       - proxy-network-prod
@@ -64,7 +64,7 @@ services:
     build:
       context: ./Hrumble-Front-End-Final-main
       dockerfile: Dockerfile
-    container_name: zivelogin-frontend
+    container_name: zivelogin-frontend-new
     restart: unless-stopped
     networks:
       - proxy-network-prod
