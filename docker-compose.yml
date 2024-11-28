@@ -25,7 +25,7 @@ services:
     ports:
       - "5001:8080"  # Expose backend on port 5001
     environment:
-      MONGO_URL: mongodb://zivedbadmin:Co1mbat0re9091@zivelogin-mongo:27017/master?authSource=admin
+      MONGO_URL: mongodb://zivedbadmin:Co1mbat0re9091@62.72.51.159:15518/master
       PORT: 8080
       JWT_SECRET: mysecret123
       # Gmail Configuration
