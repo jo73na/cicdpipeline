@@ -93,9 +93,9 @@ services:
       - '80:80'   # Public HTTP Port
       - '443:443' # Public HTTPS Port
       - '81:81'   # Admin Web Port
-      volumes:
-        - /root/cicdpipeline_new/nginx_proxy/data:/data
-        - /root/cicdpipeline_new/letsencrypt:/etc/letsencrypt  # Ensure the path is correct
+    volumes:
+      - /root/cicdpipeline_new/nginx_proxy/data:/data
+      - /root/cicdpipeline_new/letsencrypt:/etc/letsencrypt  # Ensure the path is correct
 
   # Portainer Service
   portainer_new:
@@ -115,4 +115,4 @@ services:
 
 volumes:
   mongodb_data:
-    name: zivelogin_mongodb_data
+    driver: local
