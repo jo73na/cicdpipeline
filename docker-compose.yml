@@ -74,16 +74,16 @@ services:
     volumes:
       - ./frontend/dist:/dist
     environment:
-      VITE_BASE: "https://62.72.51.159:5001/"
-      VITE_BASE_URL: "https://62.72.51.159:5001/api/v1"
+      VITE_BASE: "http://62.72.51.159:5001/"
+      VITE_BASE_URL: "http://62.72.51.159:5001/api/v1"
     depends_on:
       - zivelogin-backend
 
   # NGINX Reverse Proxy
-  nginx:
-    image: 'nginx:alpine'
+  nginx-proxy: 
+    image: 'jc21/nginx-proxy-manager:latest'
     restart: unless-stopped
-    container_name: zivelogin-nginx
+    container_name: nginx-proxy
     networks:
       zivelogin-network-prod:
         ipv4_address: 192.168.1.200  # Static IP for NGINX container
