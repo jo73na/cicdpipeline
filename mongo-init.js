@@ -1,4 +1,4 @@
-db.auth('zivedbadmin', 'Co1mbat0re9091')
+db.auth('zivedbadmin', 'hrumbles2025')
 
 db = db.getSiblingDB('master')
 
