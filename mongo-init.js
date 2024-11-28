@@ -4,7 +4,7 @@ db = db.getSiblingDB('master')
 
 db.createUser({
   user: 'zivedbadmin',
-  pwd: 'Co1mbat0re9091',
+  pwd: 'hrumbles2025',
   roles: [
     {
       role: 'readWrite',
