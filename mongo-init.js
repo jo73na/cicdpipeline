@@ -1,10 +1,10 @@
-db.auth('zivedbadmin', 'hrumbles2025')
+db.auth('zivedbadmin', 'Co1mbat0re9091')
 
 db = db.getSiblingDB('master')
 
 db.createUser({
   user: 'zivedbadmin',
-  pwd: 'hrumbles2025',
+  pwd: 'Co1mbat0re9091',
   roles: [
     {
       role: 'readWrite',
