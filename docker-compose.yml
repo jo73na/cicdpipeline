@@ -84,6 +84,8 @@ services:
     image: 'jc21/nginx-proxy-manager:latest'
     restart: unless-stopped
     container_name: nginx-proxy
+    environment:
+      X_FRAME_OPTIONS: "sameorigin"
     networks:
       zivelogin-network-prod:
         ipv4_address: 192.168.1.200  # Static IP for NGINX container
@@ -91,12 +93,9 @@ services:
       - '80:80'   # Public HTTP Port
       - '443:443' # Public HTTPS Port
       - '81:81'   # Admin Web Port
-    depends_on:
-      - zivelogin-backend
-      - zivelogin-frontend
-    volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./certs:/etc/nginx/certs:ro  # Ensure the path is correct
+      volumes:
+        - /root/cicdpipeline_new/nginx_proxy/data:/data
+        - /root/cicdpipeline_new/letsencrypt:/etc/letsencrypt  # Ensure the path is correct
 
   # Portainer Service
   portainer_new:
