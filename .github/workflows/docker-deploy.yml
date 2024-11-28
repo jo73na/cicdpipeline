@@ -37,7 +37,16 @@ jobs:
             sudo cp /etc/letsencrypt/live/hrumbles.com/privkey.pem ~/cicdpipeline_new/certs/privkey.pem
           "
 
-      # Step 4: Clean Up Volumes and Containers
+      # Step 4: Create required folders if they don't exist
+      - name: Create Folders on Server
+        run: |
+          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "
+            # Create directories if they do not exist
+            mkdir -p /root/cicdpipeline_new/nginx_proxy/data &&
+            mkdir -p /root/cicdpipeline_new/letsencrypt
+          "
+
+      # Step 5: Clean Up Volumes and Containers
       - name: Clean Up Docker Resources
         run: |
           ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "
@@ -48,7 +57,7 @@ jobs:
             sudo docker-compose down --volumes --remove-orphans
           "
 
-      # Step 5: Build and Deploy the Application
+      # Step 6: Build and Deploy the Application
       - name: Run Docker Compose
         run: |
           ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "
@@ -64,7 +73,7 @@ jobs:
             sudo docker-compose up -d
           "
 
-      # Step 6: Cleanup SSH Keys
+      # Step 7: Cleanup SSH Keys
       - name: Cleanup SSH Keys
         run: |
-          rm -rf ~/.ssh"
+          rm -rf ~/.ssh
