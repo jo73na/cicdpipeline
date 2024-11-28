@@ -52,7 +52,7 @@ services:
     ports:
       - "15518:27017"  # Expose MongoDB on port 15517
     volumes:
-      - /root/mongodata:/data/db
+      - mongodb_data:/data/db
       - /root/cicdpipeline_new/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro  # Ensure this path is correct
     environment:
       MONGO_INITDB_ROOT_USERNAME: zivedbadmin
