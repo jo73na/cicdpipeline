@@ -2,7 +2,7 @@ const set = (cookieName, cookieValue, expiryDays = 30) => {
   const expiryDate = new Date();
   expiryDate.setDate(expiryDate.getDate() + expiryDays);
   const expires = "expires=" + expiryDate.toUTCString();
-  document.cookie = `${cookieName}=${cookieValue};${expires};path=/;SameSite=None; Secure`;
+  document.cookie = `${cookieName}=${cookieValue};${expires};path=/;SameSite=Strict; HttpOnly`;
 };
 
 const get = (cookieName) => {
