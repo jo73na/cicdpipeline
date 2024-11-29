@@ -41,6 +41,22 @@ services:
       ADMIN_EMAIL: sangeeth@technoladders.com
     depends_on:
       - zivelogin-mongo
+# Add this new service
+  zivelogin-mongo-test:
+    image: mongo:latest
+    container_name: zivelogin-mongo-test  # Unique container name
+    restart: unless-stopped
+    networks:
+      - zivelogin-network-prod
+    ports:
+      - "15519:27017"  # Expose MongoDB on a different port
+    volumes:
+      - /root/mongodata:/data/db  # Separate volume for the new DB
+      - /root/cicdpipeline_new/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro  # Ensure this path is correct
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: zivedbadmin
+      MONGO_INITDB_ROOT_PASSWORD: Co1mbat0re9091
+      MONGO_INITDB_DATABASE: master
 
   # MongoDB Service
   zivelogin-mongo:
