@@ -294,7 +294,7 @@ function  PostComment(){
                                                              <PostComment/>
                                                         </div>	
                                                         <span className={`badge light border-0 badge-success`} style={{
-                                                                right:" 160px",
+                                                                right:" 26px",
                                                                 top: "26px",
                                                                 position: "absolute"
                                                         }}> 
@@ -303,7 +303,7 @@ function  PostComment(){
                                                         :
                                                         jobSingle?.job_type}</span>
                                                         <span className={`badge light border-0 badge-success`} style={{
-                                                                right:" 20px",
+                                                                right:" 100px",
                                                                 top: "26px",
                                                                 position: "absolute"
                                                         }}> 

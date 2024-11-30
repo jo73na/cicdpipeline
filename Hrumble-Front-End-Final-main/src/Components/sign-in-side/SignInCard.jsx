@@ -68,7 +68,8 @@ export default function SignInCard() {
         // Proceed with login after OTP validation
         const loginSuccess = await login(form); // Perform login
         if (loginSuccess) {
-          navigate("/dashboard"); // Navigate to the dashboard or another page
+          navigate("/dashboard");
+          window.location.reload(); // Navigate to the dashboard or another page
         }
       } else {
         // OTP validation failed, display an error message

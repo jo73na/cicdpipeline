@@ -74,25 +74,25 @@ const Goal = () => {
          fethGoals()
     }, [])
 
-    let breadcrumb =[ {
-      title: <Link to="/">Home</Link> ,
-    },
-    {
-      title: <Link to="/teams">Team</Link> ,
-    },
-    {
-      title:  <Link to="/goal">Goals</Link> ,
-      active:true
-    },
-  ]
+  //   let breadcrumb =[ {
+  //     title: <Link to="/">Home</Link> ,
+  //   },
+  //   {
+  //     title: <Link to="/teams">Team</Link> ,
+  //   },
+  //   {
+  //     title:  <Link to="/goal">Goals</Link> ,
+  //     active:true
+  //   },
+  // ]
     
   return (
     <>
-     <div className="d_f j_c_s_b a_i_f_s">
+     {/* <div className="d_f j_c_s_b a_i_f_s">
     <p className='heading_text'>Goals</p>
     <Breadcrumb breadcrumb={breadcrumb}/>
 
-     </div>
+     </div> */}
 
     <div className="d_f a_i_f_s  j_c_s_b f_d_c_xs m_b_5 m_t_5 g_5 f_d_c_sm">
         <Search

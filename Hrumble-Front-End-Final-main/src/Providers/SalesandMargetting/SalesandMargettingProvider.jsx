@@ -7,7 +7,7 @@ import { notification } from 'antd';
 import CookieUtil from '../../Utils/Cookies';
 
 const BASE_URL = import.meta.env.VITE_BASE_URL; 
-const BASE = import.meta.env.VITE_BASE_URL;
+const BASE = import.meta.env.VITE_BASE;
 
 
 const SalesandMargettingProvider =(props) => {

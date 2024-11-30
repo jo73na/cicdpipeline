@@ -1,3 +1,5 @@
+name: CI/CD Pipeline
+
 on:
   push:
     branches:
@@ -20,7 +22,6 @@ jobs:
       - name: Clone or Pull Repository
         run: |
           ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "
-            # Check if the repository is already cloned
             if [ ! -d ~/cicdpipeline_new/.git ]; then
               git clone https://github.com/jo73na/cicdpipeline.git ~/cicdpipeline_new
             else
@@ -28,33 +29,32 @@ jobs:
             fi
           "
 
-      # Step 3: Copy SSL Certificates
-      - name: Copy SSL Certificates
+      # Step 3: Create the MongoDB Data Volume (if missing)
+      - name: Ensure MongoDB Volume Exists
         run: |
           ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "
-            mkdir -p ~/cicdpipeline_new/certs &&
-            sudo cp /etc/letsencrypt/live/hrumbles.com/fullchain.pem ~/cicdpipeline_new/certs/fullchain.pem &&
-            sudo cp /etc/letsencrypt/live/hrumbles.com/privkey.pem ~/cicdpipeline_new/certs/privkey.pem
+            docker volume inspect mongodb_data || docker volume create mongodb_data
           "
 
-      # Step 4: Create required folders if they don't exist
-      - name: Create Folders on Server
+      # Step 4: Stop and Remove Containers (Preserve Volumes)
+      - name: Stop and Remove Containers
         run: |
           ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "
-            # Create directories if they do not exist
-            mkdir -p /root/cicdpipeline_new/nginx_proxy/data &&
-            mkdir -p /root/cicdpipeline_new/letsencrypt
-          "
-
-      # Step 5: Clean Up Volumes and Containers
-      - name: Clean Up Docker Resources
-        run: |
-          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "
-            # Remove any unused volumes
-            sudo docker volume prune -f &&
-            # Stop and remove containers for the application
             cd ~/cicdpipeline_new &&
-            sudo docker-compose down --volumes --remove-orphans
+            sudo docker-compose down --remove-orphans
+          "
+
+      # Step 5: Remove Unused Docker Images
+      - name: Clean Up Unused Docker Images
+        run: |
+          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "
+            sudo docker image prune -f &&
+            unused_images=$(sudo docker images -q -f 'dangling=false') &&
+            for image in $unused_images; do
+              if ! sudo docker ps -a | grep $image; then
+                sudo docker rmi $image
+              fi
+            done
           "
 
       # Step 6: Build and Deploy the Application
@@ -62,13 +62,11 @@ jobs:
         run: |
           ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "
             cd ~/cicdpipeline_new &&
-            # Ensure Docker Compose is installed
             if ! command -v docker-compose &> /dev/null; then
-              echo 'Installing Docker Compose...'
-              sudo curl -L 'https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)' -o /usr/local/bin/docker-compose
+              echo 'Installing Docker Compose...' &&
+              sudo curl -L 'https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)' -o /usr/local/bin/docker-compose &&
               sudo chmod +x /usr/local/bin/docker-compose
             fi &&
-            # Build and start containers
             sudo docker-compose build --no-cache &&
             sudo docker-compose up -d
           "

@@ -7,7 +7,7 @@ import CookieUtil from '../../Utils/Cookies';
 import { notification } from 'antd';
 
 const BASE_URL = import.meta.env.VITE_BASE_URL; 
-const BASE = import.meta.env.VITE_BASE_URL;
+const BASE = import.meta.env.VITE_BASE;
 
 const EmployeeProvider =(props) => {
     const [interview, setInterview] = useState([]);

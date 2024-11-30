@@ -12,7 +12,7 @@ import { useForm } from 'antd/es/form/Form';
 
 import { Drawer } from 'antd/lib';
 
-const BASE = import.meta.env.VITE_BASE_URL; 
+const BASE = import.meta.env.VITE_BASE; 
 
 const AddComapny = ({handleopenDrawerCompany}) => { 
   const [form]=useForm()

@@ -7,7 +7,7 @@ import { useParams } from 'react-router-dom'
 import Loader from '../../Utils/Loader'
 import CookieUtil from '../../Utils/Cookies'
 
-const BASE = import.meta.env.VITE_BASE_URL;
+const BASE = import.meta.env.VITE_BASE;
 
 const Documents = ({handlePrev,goSteps,setGoSteps}) => {
 

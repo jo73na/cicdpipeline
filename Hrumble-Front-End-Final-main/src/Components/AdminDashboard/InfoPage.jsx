@@ -12,7 +12,7 @@ import CookieUtil from '../../Utils/Cookies';
 import { Dropdown, Nav, Tab, TabContainer } from 'react-bootstrap';
 import { SVGICON } from '../../Utils/SVGICON';
 
-const BASE = import.meta.env.VITE_BASE_URL; 
+const BASE = import.meta.env.VITE_BASE; 
 
 
 const InfoPage = () => {

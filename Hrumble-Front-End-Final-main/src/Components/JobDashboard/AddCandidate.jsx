@@ -9,7 +9,7 @@ import JobContext from "../../Providers/JobProvider";
 // import { BASE, BASE_URL } from "../../Utils/api";
 import axios from "axios";
 
-const BASE = import.meta.env.VITE_BASE_URL; 
+const BASE = import.meta.env.VITE_BASE; 
 const BASE_URL = import.meta.env.VITE_BASE_URL; 
 
 const AddCandidatesPopup = () => {

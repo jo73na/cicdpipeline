@@ -44,4 +44,3 @@ const MobileMenu = ({ menu }) => {
 
 export default MobileMenu;
 
-

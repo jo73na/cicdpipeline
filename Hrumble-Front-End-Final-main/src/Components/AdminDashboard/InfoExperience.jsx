@@ -9,7 +9,7 @@ import PDFlogo from '/images/pdf-file logo.svg';
 import CollapseWork from './CollapseWork';
 import moment from 'moment';
 
-const BASE = import.meta.env.VITE_BASE_URL; 
+const BASE = import.meta.env.VITE_BASE; 
 
 const InfoEducational = () => {
 

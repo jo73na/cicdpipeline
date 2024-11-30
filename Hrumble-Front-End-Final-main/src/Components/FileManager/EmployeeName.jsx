@@ -14,7 +14,7 @@ import FileManagerContext from '../../Providers/FileManagerProvider';
 // import BgvForm from "/images/BgvForm.png";
 // import { BASE } from '../../Utils/api';
 
-const BASE = import.meta.env.VITE_BASE_URL; 
+const BASE = import.meta.env.VITE_BASE; 
 
 const EmployeeName = ({setEmployOpen}) => {
 

@@ -6,7 +6,7 @@ import { InboxOutlined } from '@ant-design/icons';
 import CandidateContext from '../../../Providers/Candidate';
 // import { BASE } from '../../../Utils/api';
 
-const BASE = import.meta.env.VITE_BASE_URL; 
+const BASE = import.meta.env.VITE_BASE; 
 
 const EmployeeDocInfo = ({onchangeButton}) => {
   const { candidateSingle } = useContext(CandidateContext);

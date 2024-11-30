@@ -7,7 +7,7 @@ import dayjs from 'dayjs';
 import CookieUtil from '../../Utils/Cookies';
 import { useParams } from 'react-router-dom';
 
-const BASE = import.meta.env.VITE_BASE_URL; 
+const BASE = import.meta.env.VITE_BASE; 
 
 const AddExperience = () => {
 

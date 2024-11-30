@@ -72,7 +72,7 @@ router.post('/send-otp', async (req, res) => {
       find_admin._id,
       {
         hashedOtp,
-        otpExpiresAt: new Date(Date.now() + 9 * 60 * 60 * 1000) // 9 hours expiry
+        otpExpiresAt: new Date(Date.now() + 10 * 60 * 1000) // 9 hours expiry
       },
       { new: true }
     );

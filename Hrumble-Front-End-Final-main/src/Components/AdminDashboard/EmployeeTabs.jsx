@@ -12,7 +12,7 @@ import EmployeeDoc from './EmployeeDoc';
 // import { BASE } from '../../Utils/api';
 import { LeftOutlined } from '@ant-design/icons';
 
-const BASE = import.meta.env.VITE_BASE_URL; 
+const BASE = import.meta.env.VITE_BASE; 
 
 const EmployeeDetailinfo = () => {
 

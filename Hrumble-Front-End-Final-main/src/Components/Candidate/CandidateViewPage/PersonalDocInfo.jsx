@@ -4,7 +4,7 @@ import CandidateContext from '../../../Providers/Candidate';
 // import { BASE } from '../../../Utils/api';
 import { InboxOutlined, EditOutlined } from '@ant-design/icons';
 
-const BASE = import.meta.env.VITE_BASE_URL; 
+const BASE = import.meta.env.VITE_BASE; 
 
 
 const PersonalDocInfo = ({onchangeButton}) => {

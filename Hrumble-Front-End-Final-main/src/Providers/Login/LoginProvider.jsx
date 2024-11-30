@@ -20,10 +20,31 @@ const LoginProvider = (props) => {
   const login = async (values) => {
     setIsLoading(true);
     let api = `${BASE_URL}/login`;
-
+  
     try {
       const res = await axios.post(api, values);
-
+  
+      // Check the user status from the response
+      const userStatus = res?.data?.data?.admin_data?.status;
+  
+      if (userStatus === 'blocked') {
+        setSnackbar({
+          open: true,
+          message: 'Account is blocked. Please contact the administrator.',
+          severity: 'error',
+        });
+        setIsLoading(false);
+        return false; // Return false for blocked user
+      } else if (userStatus === 'disabled') {
+        setSnackbar({
+          open: true,
+          message: 'Invalid Username or Password!',
+          severity: 'error',
+        });
+        setIsLoading(false);
+        return false; // Return false for disabled user
+      }
+  
       // Set cookies with login response
       CookieUtil.set('admin_token', res?.data?.token);
       CookieUtil.set('is_admin', res?.data?.success);
@@ -31,28 +52,29 @@ const LoginProvider = (props) => {
       CookieUtil.set('admin_id', res?.data?.data?.admin_data?._id);
       CookieUtil.set('admin', JSON.stringify(res?.data?.data?.admin_data));
       CookieUtil.set('company', JSON.stringify(res?.data?.company));
-
+  
       setIsLoading(false);
       setSnackbar({
         open: true,
         message: 'Login successfully',
         severity: 'success',
       });
-
+  
       return true; // Return true if login is successful
     } catch (error) {
       const errorMessage =
-        error.response?.data?.message?.split(':')[1] || 'Login failed';
+        error.response?.data?.message || 'Login failed'; // Ensure correct message from backend
       setSnackbar({
         open: true,
         message: errorMessage,
         severity: 'error',
       });
       setIsLoading(false);
-      console.error('Error:', error);
       return false; // Return false if login fails
     }
   };
+  
+  
 
   const sendOtp = async (email_id) => {
     setIsLoadingOtp(true);

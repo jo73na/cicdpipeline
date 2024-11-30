@@ -10,7 +10,7 @@ import EmployeeContext from '../../Providers/EmployeeProvider';
 import { useNavigate } from 'react-router-dom';
 // import { BASE } from '../../Utils/api';
 
-const BASE = import.meta.env.VITE_BASE_URL; 
+const BASE = import.meta.env.VITE_BASE; 
 
 const EmployeeDetailinfo = () => {
 

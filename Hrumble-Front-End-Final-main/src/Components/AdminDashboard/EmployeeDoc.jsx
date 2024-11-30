@@ -14,7 +14,7 @@ import InfoBgv from './InfoBgv';
 import EditInfoDocument from './EditInfoDocument';
 // import { BASE } from '../../Utils/api';
 
-const BASE = import.meta.env.VITE_BASE_URL; 
+const BASE = import.meta.env.VITE_BASE; 
 
 const EmployeeDetailinfo = () => {
 

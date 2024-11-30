@@ -10,7 +10,7 @@ import ViewJobContext from '../ViewJob';
 import { notification } from 'antd';
 
 const BASE_URL = import.meta.env.VITE_BASE_URL; 
-const BASE = import.meta.env.VITE_BASE_URL;
+const BASE = import.meta.env.VITE_BASE;
 
 const CandidateProvider = (props) => {
  const {fetchJob}=useContext(JobContext)

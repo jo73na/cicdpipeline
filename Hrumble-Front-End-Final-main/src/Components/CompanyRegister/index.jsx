@@ -14,7 +14,7 @@ import { Country,  }  from 'country-state-city-slim';
 import axios from 'axios';
 import LoadingContext from '../../Providers/Loading';
 
-const BASE = import.meta.env.VITE_BASE_URL; 
+const BASE = import.meta.env.VITE_BASE; 
 const BASE_URL = import.meta.env.VITE_BASE_URL; 
 
 

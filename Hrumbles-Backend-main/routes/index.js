@@ -3,8 +3,7 @@ const path = require('path');
 const app = express();
 const fs = require('fs');
 
-  // Static files serving (public folder)
-  app.use('/public', express.static(path.join(__dirname, 'public')));
+
 
   
 

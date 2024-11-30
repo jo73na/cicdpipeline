@@ -6,7 +6,7 @@ import FileManagerContext from '../../Providers/FileManagerProvider';
 import { Empty} from "antd";
 import Bgv from "/images/BgvPhoto.svg";
 
-const BASE = import.meta.env.VITE_BASE_URL; 
+const BASE = import.meta.env.VITE_BASE; 
 
 const sowEmployee = ({setProjectOpen}) => {
 

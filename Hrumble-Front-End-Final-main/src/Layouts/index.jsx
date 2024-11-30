@@ -86,7 +86,7 @@ const Layouts = () => {
       role !="Vendor" &&
       role !="Client" &&
       getItem(
-        <Link to="/">
+        <Link to="/dashboard">
           <span>Dashboard</span>
         </Link>,
         "1200",

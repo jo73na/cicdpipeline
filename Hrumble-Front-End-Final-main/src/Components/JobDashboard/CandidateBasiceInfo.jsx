@@ -10,7 +10,7 @@ import CookieUtil from '../../Utils/Cookies';
 import { useForm } from 'antd/es/form/Form';
 
 
-const BASE = import.meta.env.VITE_BASE_URL; 
+const BASE = import.meta.env.VITE_BASE; 
 
 
 const BasicInfo =()=> { 

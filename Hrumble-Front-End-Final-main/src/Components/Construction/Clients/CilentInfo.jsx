@@ -5,7 +5,7 @@ import CandiateTimeLine from './Timeline';
 import Pdf_file  from "/images//pdf-file.svg"
 // import { BASE} from '../../Utils/api';
 
-const BASE = import.meta.env.VITE_BASE_URL; 
+const BASE = import.meta.env.VITE_BASE; 
 const BASE_URL = import.meta.env.VITE_BASE_URL; 
 
 

@@ -4,7 +4,7 @@ import CandidateContext from '../../../Providers/Candidate';
 // import { BASE } from '../../../Utils/api';
 import { EditOutlined, InboxOutlined } from '@ant-design/icons';
 
-const BASE = import.meta.env.VITE_BASE_URL; 
+const BASE = import.meta.env.VITE_BASE; 
 
 
 const ResumeInfo = ({onchangeButton,}) => {

@@ -206,6 +206,16 @@ const accessList= [
   //   ]
   // },
   {
+    module: "Goal",
+    component: "Goal",
+    url: "/goal",
+    icon: "GoalLogo",
+    permissions: [
+      "View Goal",
+      "Assign Goal"
+    ]
+  },
+  {
     module:"FileManager",
     url:"/filemanager",
     icon:"FolderOpenOutlined",
@@ -445,6 +455,16 @@ const accessListBlatform= [
       "View Settings",
      
 
+    ]
+  },
+  {
+    module: "Goal",
+    component: "Goal",
+    url: "/goal",
+    icon: "GoalLogo",
+    permissions: [
+      "View Goal",
+      "Assign Goal"
     ]
   },
   // {

@@ -9,7 +9,7 @@ import EmployeeContext from '../../Providers/EmployeeProvider'
 import { Modal } from 'antd';
 import CollapsePersonal from './CollapsePersonal';
 
-const BASE = import.meta.env.VITE_BASE_URL; 
+const BASE = import.meta.env.VITE_BASE; 
 const InfoPersonal = () => {
 
   const {fetchEmployFull,adminLoginData,personalEmp,fetchPersonalDetail,employeeComplete,isModalOpen5,isModalOpen6,isModalOpen7,isModalOpen8,setIsModalOpen5,setIsModalOpen6,setIsModalOpen7,setIsModalOpen8} = useContext(EmployeeContext)

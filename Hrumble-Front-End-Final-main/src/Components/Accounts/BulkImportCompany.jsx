@@ -7,7 +7,7 @@ import CandidateContext from '../../Providers/Candidate';
 // import { BASE } from '../../Utils/api';
 import SalesandMargettingContext from '../../Providers/SalesandMargetting';
 
-const BASE = import.meta.env.VITE_BASE_URL; 
+const BASE = import.meta.env.VITE_BASE; 
 
 export default function BulkImportCompany() {
     const[upload,setUpload]=useState("")

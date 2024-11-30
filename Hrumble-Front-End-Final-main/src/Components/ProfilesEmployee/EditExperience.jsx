@@ -5,7 +5,7 @@ import EmployeeContext from '../../Providers/EmployeeProvider'
 import Loader from '../../Utils/Loader'
 import dayjs from 'dayjs';
 
-const BASE = import.meta.env.VITE_BASE_URL;
+const BASE = import.meta.env.VITE_BASE;
 const AddExperience = () => {
 
     const {experinceData,handleOpenEditDrawer,editExper,experienceSingle,addExper,Loading,addbuttonEmply} = useContext(EmployeeContext)

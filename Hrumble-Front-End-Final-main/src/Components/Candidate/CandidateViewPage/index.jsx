@@ -301,7 +301,7 @@ import WorkExperienceEdit from './WorkExperienceEdit';
 import { InboxOutlined } from '@ant-design/icons';
  const {Dragger}=Upload
 
- const BASE = import.meta.env.VITE_BASE_URL; 
+ const BASE = import.meta.env.VITE_BASE; 
  
 console.log("fffff",DocxPreview); 
 

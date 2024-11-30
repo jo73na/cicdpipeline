@@ -8,7 +8,7 @@ import { FileExclamationOutlined, EditTwoTone  } from '@ant-design/icons';
 import { Modal } from 'antd';
 import CollapseEducation from './CollapseEducation';
 
-const BASE = import.meta.env.VITE_BASE_URL; 
+const BASE = import.meta.env.VITE_BASE; 
 
 const InfoEducational = () => {
 

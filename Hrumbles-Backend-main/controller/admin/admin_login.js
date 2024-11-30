@@ -49,38 +49,59 @@ router.post('/register', asyncHandler(async (req, res) => {
 //admin login
 router.post('/login', asyncHandler(async (req, res) => {
   const { email_id, password } = req.body;
+
   try {
-    const find_admin = await crud.getOneDocument(admin, { email_id},{},{populate:"company_id"});
-    
+    // Fetch user details
+    const find_admin = await crud.getOneDocument(admin, { email_id }, {}, { populate: "company_id" });
+
+    if (!find_admin) {
+      throw new Error("Invalid Username Or Password!");
+    }
+
+    // Set default status to 'active' if not present
+    const userStatus = find_admin.status || 'active'; 
+
+    // Check if the user is blocked or disabled
+    if (userStatus === 'blocked') {
+      return res.status(403).json({ success: false, message: "Account is blocked. Please contact the administrator." });
+    }
+
+    if (userStatus === 'disabled') {
+      return res.status(403).json({ success: false, message: "Account is disabled. Please contact the administrator." });
+    }
+
+    // Verify password
     const password_match = async (password) => {
       return await bcrypt.compare(password, find_admin?.password);
-    }
+    };
 
-    let localStorage_projection = {
-      "firstname":1,
-      "lastname":1,
-      "email":1,
-      "display_profile_file":1,
-      "user_role":1,
-      "user_id":1,
-      "_id":0,
-    }
+    if (await password_match(password)) {
+      // Fetch additional user data
+      const employee_details = await crud.getOneDocument(employee, { "email": email_id }, { 
+        "firstname": 1,
+        "lastname": 1,
+        "email": 1,
+        "display_profile_file": 1,
+        "user_role": 1,
+        "user_id": 1,
+        "_id": 0,
+      }, {});
 
-    if (find_admin && await password_match(password)) {
-      const employee_details = await crud.getOneDocument(employee, { "email":email_id},{...localStorage_projection},{});
       let responseJson = {
-        "admin_data":find_admin,
-        "user_data":employee_details
-      }
-      console.log("responseJson:",responseJson)
-      successToken(res, 200, true, "Login Successfully",responseJson,generateToken(find_admin?._id),find_admin?.company_id);
+        "admin_data": find_admin,
+        "user_data": employee_details
+      };
+
+      console.log("responseJson:", responseJson);
+      successToken(res, 200, true, "Login Successfully", responseJson, generateToken(find_admin?._id), find_admin?.company_id);
     } else {
-      throw new Error("Invalid Username Or Password!")
-    } 
+      throw new Error("Invalid Username Or Password!");
+    }
   } catch (error) {
-    throw new Error(error);
+    throw new Error(error.message || "An error occurred during login.");
   }
-}))
+}));
+
 
 // getAllHR
 
@@ -3253,39 +3274,37 @@ router.get('/owner-select/',authAdmin, asyncHandler(async (req, res) => {
     router.put('/assignedit/:id', asyncHandler(async (req, res) => {
       const { id } = req.params;
       validateId(id); 
-     console.log("fff",req.body)
     
-             let inserdata={
-              _id:req.body?.employee_id,
-              reportmanager:
-              req.body.report_manager?.map((report)=>(
-              {
-                email_address:{
-                  address:report,
-                  name:""
-                }
-              })),
-              cc:req.body.cc?.map((cc)=>(
-                {
-                  email_address:{
-                    address:cc,
-                    name:""
-                  }
-                })),
-              permission:id
-             }
-      
+      console.log("Request body:", req.body);
+    
+      // Prepare data to update, including the status field
+      const inserdata = {
+        _id: req.body?.employee_id,
+        reportmanager: req.body.report_manager?.map((report) => ({
+          email_address: {
+            address: report,
+            name: ""
+          }
+        })),
+        cc: req.body.cc?.map((cc) => ({
+          email_address: {
+            address: cc,
+            name: ""
+          }
+        })),
+        permission: id,
+        status: req.body?.status || 'active', // Set status, default to active if not provided
+      };
+    
       try {
-      let data=  await crud.updateById(admin,req?.body?.employee_id,inserdata, { new: true })
-        
+        const data = await crud.updateById(admin, req?.body?.employee_id, inserdata, { new: true });
     
-        //  let data=crud.updateMany(admin,{},req?.body,{ new: true })
         success(res, 200, true, "Updated Successfully", data);
-        }
-       catch (error) {
+      } catch (error) {
         throw new Error(error);
       }
-    }))
+    }));
+    
 
 
     router.get('/company', asyncHandler(async (req, res) => {

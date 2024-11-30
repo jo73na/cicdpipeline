@@ -6,7 +6,7 @@ import { FileExclamationOutlined, EditTwoTone } from '@ant-design/icons';
 import { Modal } from 'antd';
 import CollapseBGV from './CollapseBGV';
 
-const BASE = import.meta.env.VITE_BASE_URL; 
+const BASE = import.meta.env.VITE_BASE; 
 
 const InfoEducational = () => {
 

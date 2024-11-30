@@ -9,7 +9,7 @@ import InvoiceExpenceContext from '../../Providers/InvoiceExpence';
 import dayjs from "dayjs"
 import moment from 'moment';
 
-const BASE = import.meta.env.VITE_BASE_URL; 
+const BASE = import.meta.env.VITE_BASE; 
 
 const ExpenceEdit = ({handleFinishEdit,handleDrawerClose,setAttachment,setFileError}) => {
     const [form] = Form.useForm();

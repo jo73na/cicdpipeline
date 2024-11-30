@@ -15,30 +15,25 @@ const EditAssign = () => {
    }, [])
 
    useEffect(() => {
-    let reportManagerEmail =[]
-    let CCEmail =[]
-     if (assignEdit && assignEdit.reportmanager && assignEdit.reportmanager?.length > 0) {
-        assignEdit.reportmanager?.map((item)=>{
-          reportManagerEmail.push(
-             item.email_address?.address
-          ) 
-        }) ;
+    let reportManagerEmail = [];
+    let CCEmail = [];
+    
+    if (assignEdit?.reportmanager?.length > 0) {
+      reportManagerEmail = assignEdit.reportmanager.map(item => item.email_address?.address);
     }
-    if (assignEdit && assignEdit.cc && assignEdit.cc?.length > 0) {
-      assignEdit.cc?.map((item)=>{
-        CCEmail.push(
-           item.email_address?.address
-        ) 
-      });
-  }
+  
+    if (assignEdit?.cc?.length > 0) {
+      CCEmail = assignEdit.cc.map(item => item.email_address?.address);
+    }
   
     form.setFieldsValue({
-        employee_id:assignEdit?._id,
-        report_manager:reportManagerEmail,
-        cc:CCEmail
-     })
-        
-    }, [assignEdit])
+      employee_id: assignEdit?._id,
+      report_manager: reportManagerEmail,
+      cc: CCEmail,
+      status: assignEdit?.status || 'active', 
+    });
+  }, [assignEdit, form]);
+  
    
     const handleFinish=(values)=>{
         handleFinishAssignEdit(values)
@@ -93,6 +88,26 @@ const EditAssign = () => {
                          }}
                          />
           </Form.Item>
+          <Form.Item
+  label="Status"
+  name="status"
+  initialValue="active" 
+  rules={[
+    { required: false, message: "Status is Required" },
+  ]}
+>
+  <Select
+    options={[
+      { value: 'active', label: 'Active' },
+      { value: 'blocked', label: 'Blocked' },
+      { value: 'disabled', label: 'Disabled' },
+    ]}
+    placeholder="Select Status"
+    style={{
+      width: "200px"
+    }}
+  />
+</Form.Item>
          </div>
 
         <div

@@ -8,10 +8,9 @@ networks:
     driver: bridge
     ipam:
       config:
-        - subnet: "192.168.1.0/24"  # Custom subnet for static IP allocation
+        - subnet: "192.168.1.0/24"
 
 services:
-  # Backend Service
   zivelogin-backend:
     build:
       context: ./Hrumbles-Backend-main
@@ -23,59 +22,37 @@ services:
       - proxy-network-prod
       - zivelogin-network-prod
     ports:
-      - "5001:8080"  # Expose backend on port 5001
+      - "5001:8080"
     environment:
       MONGO_URL: mongodb://zivedbadmin:Co1mbat0re9091@zivelogin-mongo:27017/master?authSource=admin
       PORT: 8080
       JWT_SECRET: mysecret123
-      # Gmail Configuration
       SMPT_HOST: smtp.googlemail.com
       SMPT_PORT: 587
       SMPT_PASSWORD: nfyunxrmdsgxmlmp
       SMPT_MAIL: devlopsdemo@gmail.com
-      # Outlook Configuration
       OUTLOOK_SMTP_HOST: smtp-mail.outlook.com
       OUTLOOK_SMTP_PORT: 587
-      # Common Email Settings
       EMAIL_FROM: "No Reply <devlopsdemo@gmail.com>"
       ADMIN_EMAIL: sangeeth@technoladders.com
     depends_on:
       - zivelogin-mongo
-# Add this new service
-  zivelogin-mongo-test:
-    image: mongo:latest
-    container_name: zivelogin-mongo-test  # Unique container name
-    restart: unless-stopped
-    networks:
-      - zivelogin-network-prod
-    ports:
-      - "15519:27017"  # Expose MongoDB on a different port
-    volumes:
-      - /root/mongodata:/data/db  # Separate volume for the new DB
-      - /root/cicdpipeline_new/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro  # Ensure this path is correct
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: zivedbadmin
-      MONGO_INITDB_ROOT_PASSWORD: Co1mbat0re9091
-      MONGO_INITDB_DATABASE: master
 
-  # MongoDB Service
   zivelogin-mongo:
     image: mongo:latest
-    container_name: zivelogin-mongo-new  # Changed the container name to avoid conflict
+    container_name: zivelogin-mongo-new
     restart: unless-stopped
     networks:
       - zivelogin-network-prod
     ports:
-      - "15518:27017"  # Expose MongoDB on port 15517
+      - "15518:27017"
     volumes:
       - mongodb_data:/data/db
-      - /root/cicdpipeline_new/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro  # Ensure this path is correct
     environment:
       MONGO_INITDB_ROOT_USERNAME: zivedbadmin
       MONGO_INITDB_ROOT_PASSWORD: Co1mbat0re9091
       MONGO_INITDB_DATABASE: master
 
-  # Frontend Build Service
   zivelogin-frontend:
     build:
       context: ./Hrumble-Front-End-Final-main
@@ -95,8 +72,7 @@ services:
     depends_on:
       - zivelogin-backend
 
-  # NGINX Reverse Proxy
-  nginx-proxy: 
+  nginx-proxy:
     image: 'jc21/nginx-proxy-manager:latest'
     restart: unless-stopped
     container_name: nginx-proxy
@@ -104,28 +80,27 @@ services:
       X_FRAME_OPTIONS: "sameorigin"
     networks:
       zivelogin-network-prod:
-        ipv4_address: 192.168.1.200  # Static IP for NGINX container
+        ipv4_address: 192.168.1.200
     ports:
-      - '80:80'   # Public HTTP Port
-      - '443:443' # Public HTTPS Port
-      - '81:81'   # Admin Web Port
+      - '80:80'
+      - '443:443'
+      - '81:81'
     volumes:
       - /root/cicdpipeline_new/nginx_proxy/data:/data
-      - /root/cicdpipeline_new/letsencrypt:/etc/letsencrypt  # Ensure the path is correct
+      - /root/cicdpipeline_new/letsencrypt:/etc/letsencrypt
 
-  # Portainer Service
   portainer_new:
     image: portainer/portainer-ce:latest
-    container_name: portainer_new  # Changed container name to avoid conflict
+    container_name: portainer_new
     restart: unless-stopped
     networks:
       - proxy-network-prod
     ports:
-      - "9100:9000"  # Expose Portainer web UI on port 9001 (changed port)
-      - "9444:9443"  # Expose secured Portainer UI
+      - "9000:9000"
+      - "9444:9443"
     volumes:
-      - /opt/portainer:/data:rw  # Volume to store Portainer data
-      - /var/run/docker.sock:/var/run/docker.sock:rw  # Docker socket for management
+      - /opt/portainer:/data:rw
+      - /var/run/docker.sock:/var/run/docker.sock:rw
     environment:
       - TZ=UTC
 

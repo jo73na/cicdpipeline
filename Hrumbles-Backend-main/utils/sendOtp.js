@@ -1,87 +1,79 @@
-require('dotenv').config();
-const nodemailer = require('nodemailer');
+require("dotenv").config();
+const nodemailer = require("nodemailer");
 
-// Create Gmail transporter
-const gmailTransporter = nodemailer.createTransport({
-  host: process.env.GMAIL_SMTP_HOST,
-  port: process.env.GMAIL_SMTP_PORT,
-  secure: process.env.GMAIL_SMTP_PORT === '465', // true for port 465, false for port 587
+// Zoho Transporter for notifications
+const zohoNotificationsTransporter = nodemailer.createTransport({
+  host: process.env.ZOHO_SMTP_HOST,
+  port: process.env.ZOHO_SMTP_PORT,
+  secure: false,
+  requireTLS: true,
   auth: {
-    user: process.env.GMAIL_USER,
-    pass: process.env.GMAIL_PASSWORD,
+    user: "emailapikey",
+    pass: process.env.ZOHO_NOREPLY_PASS,
   },
 });
 
-// Create Outlook transporter
-const outlookTransporter = nodemailer.createTransport({
-  host: process.env.OUTLOOK_SMTP_HOST,
-  port: process.env.OUTLOOK_SMTP_PORT,
-  secure: process.env.OUTLOOK_SMTP_PORT === '465',
-  auth: {
-    user: process.env.OUTLOOK_USER,
-    pass: process.env.OUTLOOK_PASSWORD,
-  },
-});
-
-// Function to select transporter based on email domain
-const getTransporter = (email) => {
-  if (email.endsWith('@gmail.com')) {
-    return gmailTransporter;
-  } else if (email.endsWith('@outlook.com') || email.endsWith('@hotmail.com')) {
-    return outlookTransporter;
-  } else {
-    return gmailTransporter; // Default to Gmail if domain is not specified
-  }
-};
-
-// Function to send OTP email
 // Function to send OTP email with HTML template
 const sendOTPEmail = async (email, otp) => {
   try {
-    const transporter = getTransporter(email);
-
     const mailOptions = {
-      from: process.env.EMAIL_FROM,
+      from: process.env.ZOHO_NOREPLY_USER,
       to: email,
-      subject: 'Your OTP Code',
+      subject: "Your OTP Code",
       html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #ddd; border-radius: 10px; overflow: hidden;">
-          <div style="background-color: #88a67e; padding: 20px; text-align: center;">
-            <img src="http://localhost:8080/public/images/Hricon.svg" alt="Hrumbles" style="width: 100px; height: auto;" />
-            <h2 style="color: #fff; margin: 0;">Your OTP Code</h2>
-          </div>
-          <div style="padding: 20px;">
-            <p>Hello,</p>
-            <p>Thank you for signing in! Please use the OTP below to verify your email address:</p>
-            <h3 style="color: #0073e6; text-align: center;">${otp}</h3>
-            <p>If you did not request this, please ignore this email.</p>
-          </div>
-          <div style="background-color: #f8f8f8; padding: 15px; text-align: center;">
-            <small style="color: #888;">&copy; 2024 Hrumbles. All rights reserved.</small>
-          </div>
-        </div>
+       <head>
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+    <meta name="x-apple-disable-message-reformatting" /><!--$-->
+  </head>
+
+  <body style="background-color:#ffffff">
+    <table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" style="max-width:37.5em;padding-left:12px;padding-right:12px;margin:0 auto">
+      <tbody>
+        <tr style="width:100%">
+          <td>
+          <h1 style="color:#333;font-family:-apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, &#x27;Roboto&#x27;, &#x27;Oxygen&#x27;, &#x27;Ubuntu&#x27;, &#x27;Cantarell&#x27;, &#x27;Fira Sans&#x27;, &#x27;Droid Sans&#x27;, &#x27;Helvetica Neue&#x27;, sans-serif;font-size:24px;font-weight:bold;margin:40px 0;padding:0">Login</h1>
+           <p style="font-size:14px;line-height:24px;margin:24px 0;color:#333;font-family:-apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, &#x27;Roboto&#x27;, &#x27;Oxygen&#x27;, &#x27;Ubuntu&#x27;, &#x27;Cantarell&#x27;, &#x27;Fira Sans&#x27;, &#x27;Droid Sans&#x27;, &#x27;Helvetica Neue&#x27;, sans-serif;margin-bottom:14px">Please use the one-time password below for secure login:</p><code style="display:inline-block;padding:16px 4.5%;width:90.5%;background-color:#f4f4f4;border-radius:5px;border:1px solid #eee;color:#333">${otp}</code>
+            <p style="font-size:14px;line-height:24px;margin:24px 0;color:#ababab;font-family:-apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, &#x27;Roboto&#x27;, &#x27;Oxygen&#x27;, &#x27;Ubuntu&#x27;, &#x27;Cantarell&#x27;, &#x27;Fira Sans&#x27;, &#x27;Droid Sans&#x27;, &#x27;Helvetica Neue&#x27;, sans-serif;margin-top:14px;margin-bottom:16px">This code is valid for 10 minutes.</p>
+            <p style="font-size:14px;line-height:24px;margin:24px 0;color:#ababab;font-family:-apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, &#x27;Roboto&#x27;, &#x27;Oxygen&#x27;, &#x27;Ubuntu&#x27;, &#x27;Cantarell&#x27;, &#x27;Fira Sans&#x27;, &#x27;Droid Sans&#x27;, &#x27;Helvetica Neue&#x27;, sans-serif;margin-top:12px;margin-bottom:20px">Disclaimer: This is an auto-generated email. Please DO NOT reply.</p>
+           <img
+<img
+  src="https://res.cloudinary.com/dsrmbnai0/image/upload/v1732912241/Hricon_sa4awo.png"
+  alt="Hrumbles Logo"
+  style="display: block; outline: none; border: none; text-decoration: none; width: 32px; height: 32px;"
+/><p style="font-size:14px;line-height:24px;margin:24px 0;color:#ababab;font-family:-apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, &#x27;Roboto&#x27;, &#x27;Oxygen&#x27;, &#x27;Ubuntu&#x27;, &#x27;Cantarell&#x27;, &#x27;Fira Sans&#x27;, &#x27;Droid Sans&#x27;, &#x27;Helvetica Neue&#x27;, sans-serif;margin-top:12px;margin-bottom:10px">Simplify reporting and stay organized—all in one platform.</p>
+
+            </td>
+        </tr>
+      </tbody>
+    </table><!--/$-->
+  </body>
       `,
-      replyTo: 'no-reply@example.com',
+      replyTo: process.env.ZOHO_NOREPLY_USER,
     };
 
-    await transporter.sendMail(mailOptions);
+    await zohoNotificationsTransporter.sendMail(mailOptions);
     return { success: true };
   } catch (error) {
-    console.error('Error sending OTP email:', error);
+    console.error("Error sending OTP email:", error);
     return { success: false, error };
   }
 };
 
 // Function to send user details email
 // Function to send user details email with HTML template
-const sendUserDetailsEmail = async (email, name, phone, company_name, team_size, domain) => {
+const sendUserDetailsEmail = async (
+  email,
+  name,
+  phone,
+  company_name,
+  team_size,
+  domain
+) => {
   try {
-    const transporter = getTransporter(process.env.ADMIN_EMAIL);
-
     const mailOptions = {
-      from: process.env.EMAIL_FROM,
+      from: process.env.ZOHO_NOREPLY_USER,
       to: process.env.ADMIN_EMAIL,
-      subject: 'New User Signup Details',
+      subject: "New User Signup Details",
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #ddd; border-radius: 10px; overflow: hidden;">
           <div style="background-color: #88a67e; padding: 20px; text-align: center;">
@@ -107,13 +99,12 @@ const sendUserDetailsEmail = async (email, name, phone, company_name, team_size,
       `,
     };
 
-    await transporter.sendMail(mailOptions);
+    await zohoNotificationsTransporter.sendMail(mailOptions);
     return { success: true };
   } catch (error) {
-    console.error('Error sending user details email:', error);
+    console.error("Error sending user details email:", error);
     return { success: false, error };
   }
 };
-
 
 module.exports = { sendOTPEmail, sendUserDetailsEmail };

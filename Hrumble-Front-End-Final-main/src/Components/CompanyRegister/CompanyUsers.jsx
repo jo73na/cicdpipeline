@@ -14,7 +14,7 @@ import CompanyContext from '../../Providers/Company';
 import { LeftOutlined } from '@ant-design/icons';
 import AddCompanyUser from './AddCompanyUser';
 
-const BASE = import.meta.env.VITE_BASE_URL; 
+const BASE = import.meta.env.VITE_BASE; 
 const BASE_URL = import.meta.env.VITE_BASE_URL; 
 
 const { Search } = Input;

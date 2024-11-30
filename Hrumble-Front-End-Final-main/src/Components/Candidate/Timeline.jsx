@@ -5,7 +5,7 @@ import { Link} from "react-router-dom"
 import PDF from "/images/Pdffile.svg"
 // import { BASE } from "../../Utils/api";
 
-const BASE = import.meta.env.VITE_BASE_URL; 
+const BASE = import.meta.env.VITE_BASE; 
 
 
 const CandiateTimeLine = ({candidateSingle}) => {

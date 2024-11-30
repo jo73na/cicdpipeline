@@ -5,7 +5,7 @@ import CandiateTimeLine from './Timeline';
 import Pdf_file  from "/images//pdf-file.svg"
 // import { BASE} from '../../Utils/api';
 
-const BASE = import.meta.env.VITE_BASE_URL; 
+const BASE = import.meta.env.VITE_BASE; 
 
 
 // import {ReactComponent as Pdf_file} from "../../EmployeeDashboard/Icons/pdf-file 1 (1).svg";

@@ -13,7 +13,7 @@ import moment from 'moment';
 
 // import { BASE } from '../../../Utils/api';
 
-const BASE = import.meta.env.VITE_BASE_URL; 
+const BASE = import.meta.env.VITE_BASE; 
 
 const ExpenseTable = () => {
  const {expence,handleAddExpense,handleFinishExpence,fetchExpence,expencegraph,Loading} =useContext(InvoiceExpenceContext)

@@ -21,5 +21,6 @@ const admin_schema = {
     {type:mongoose.Schema.Types.ObjectId, ref:"goaltypes", default:null}
   ],
  cc:[ {}],
+ status: { type: String, enum: ['active', 'blocked', 'disabled'], default: 'active' }, 
 };
 module.exports = admin_schema;
