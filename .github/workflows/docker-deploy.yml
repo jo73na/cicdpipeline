@@ -49,10 +49,9 @@ jobs:
         run: |
           ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "
             sudo docker image prune -f &&
-            unused_images=$(sudo docker images -q -f 'dangling=false') &&
-            for image in $unused_images; do
-              if ! sudo docker ps -a | grep $image; then
-                sudo docker rmi $image
+            for image_id in \$(sudo docker images -q -f 'dangling=false'); do
+              if ! sudo docker ps -a | grep \$image_id > /dev/null; then
+                sudo docker rmi \$image_id || true
               fi
             done
           "
