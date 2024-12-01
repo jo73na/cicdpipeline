@@ -86,8 +86,8 @@ services:
       - '443:443'
       - '81:81'
     volumes:
-      - /root/cicdpipeline_new/nginx_proxy/data:/data
-      - /root/cicdpipeline_new/letsencrypt:/etc/letsencrypt
+      - ./data:/data
+      - ./letsencrypt:/etc/letsencrypt
 
   portainer_new:
     image: portainer/portainer-ce:latest
