@@ -169,7 +169,8 @@ const JobDetailNew = () => {
     ? [{ title: 'Company Name', icon: 'fa-solid fa-city', subtitle: jobSingle.client_id[0].name },
     {title:'Job Type', icon:'fa-solid fa-book', subtitle:jobSingle?.job_type},
 
-    {title:'Salary', icon:'fa-solid fa-indian-rupee-sign', subtitle:`${jobSingle?.vendor_clientbillable} - ${jobSingle?.salaryType}` || '-'},
+    {title:'Client Budget', icon:'fa-solid fa-indian-rupee-sign', subtitle:`${jobSingle?.salary} - ${jobSingle?.salaryType}` || '-'},
+    {title:'Budget', icon:'fa-solid fa-indian-rupee-sign', subtitle:`${jobSingle?.vendor_clientbillable} - ${jobSingle?.salaryType}` || '-'},
     { title: 'End Client', icon: 'fa-solid fa-building-user', subtitle: jobSingle?.end_client?.length > 0 ? jobSingle.end_client.join(', ') : "-" },    
 
   ]

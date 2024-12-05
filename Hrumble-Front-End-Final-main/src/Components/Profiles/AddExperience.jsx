@@ -1,6 +1,7 @@
 import { DatePicker, Form, Input, Radio, Upload, message } from 'antd'
 import React, { useState } from 'react'
 
+const BASE = import.meta.env.VITE_BASE;
 const AddExperience = () => {
 
   const [upload,setUpload]= useState("");
@@ -10,7 +11,7 @@ const AddExperience = () => {
     const props = {
         name: "file",
         multiple: false,
-        action: "https://apiv1.technoladders.com/test",
+        action: `${BASE}test`,
       
         onChange(info) {
           const { status } = info.file;

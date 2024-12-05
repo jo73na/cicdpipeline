@@ -110,7 +110,7 @@ const BankDetails = ({handlePrev,setGoSteps,goSteps}) => {
   }
 
   const props = {
-    action: "https://apiv1.technoladders.com/test",
+    action: `${BASE}test`,
     name: "file",
     multiple: false,
     defaultFileList: chequefile,

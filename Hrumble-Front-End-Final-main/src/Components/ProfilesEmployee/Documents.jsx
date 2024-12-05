@@ -55,7 +55,7 @@ const Documents = ({handlePrev,goSteps,setGoSteps}) => {
       let [form] = Form.useForm();
 
       const props = {
-        action: "https://apiv1.technoladders.com/test",
+        action: `${BASE}test`,
         name: "file",
         multiple: false,
         defaultFileList: verificationfile,
@@ -86,7 +86,7 @@ const Documents = ({handlePrev,goSteps,setGoSteps}) => {
       };
 
       const props1 = {
-        action: "https://apiv1.technoladders.com/test",
+        action: `${BASE}test`,
         name: "file",
         multiple: false,
         defaultFileList: authorizationfile,

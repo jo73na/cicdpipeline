@@ -138,11 +138,11 @@ skill?.map((item, i) => {
         }
  
         // Validate salary
-        const salaryAmount = values.salary;
-        if (salaryAmount <= 0) {
-          message.error("Salary amount must be greater than 0!");
-          return false;
-        }
+        // const salaryAmount = values.salary;
+        // if (salaryAmount <= 0) {
+        //   message.error("Salary amount must be greater than 0!");
+        //   return false;
+        // }
       }
  
       // Step 3 Validation
@@ -399,7 +399,7 @@ skill?.map((item, i) => {
           </Col>
  
           {/* Keep experience fields the same */}
-          <Col span={9}>
+          {/* <Col span={9}>
           <Form.Item
                  label="Salary"
                 name="salary"
@@ -451,8 +451,8 @@ skill?.map((item, i) => {
                   placeholder={salaryType === "Per Hour" ? "1,000" : "1,00,000"}
                 />
               </Form.Item>
-            </Col>
-            <Col span={6}>
+            </Col> */}
+            <Col span={9}>
               <Form.Item
                 label="Skills"
                 name="skils"
@@ -522,19 +522,15 @@ skill?.map((item, i) => {
       </Stepper>
  
       <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 20 }}>
-        <Button
-          onClick={onDiscard}
-          style={{
-            background: "#FF5E5E",
-            borderColor: "white",
-            color: "#ffdede",
-            borderRadius: "10px",
-            marginRight: 8
-          }}
-          className="discard-button"
-        >
-          Discard
-        </Button>
+      <button type='button' className='btn btn-danger light ms-1 btn-sm'
+            onClick={onDiscard}
+            style={{
+              borderRadius: "10px",
+              marginRight: 8,
+            }}
+          >
+            Discard
+          </button>
  
         {activeStep > 0 && (
           <Button

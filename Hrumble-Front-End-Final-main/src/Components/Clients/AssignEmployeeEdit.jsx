@@ -9,7 +9,7 @@ import ClientContext from "../../Providers/ClientProvider";
 import Loader from "../../Utils/Loader";
 
 
-
+const BASE = import.meta.env.VITE_BASE;
 
 const { RangePicker } = DatePicker;
 const { Option } = Select;
@@ -49,7 +49,7 @@ const AssignEmployeeEditPopup = ({ params,handleopenDrawerEdit }) => {
       uid: "1",
       name: assignSingle?.sow,
       status: "done", // Set the status to 'done' for default files
-      url: `https://apiv1.technoladders.com/${assignSingle?.sow}`, // Set the URL of the default file
+      url: `${BASE}${assignSingle?.sow}`, // Set the URL of the default file
     },
   ];
 
@@ -57,7 +57,7 @@ const AssignEmployeeEditPopup = ({ params,handleopenDrawerEdit }) => {
     name: "file",
     multiple: false,
     ...(assignSingle?.sow && { defaultFileList }),
-    action: `https://apiv1.technoladders.com/test`,
+    action: `${BASE}test`,
     onChange(info) {
       const { status } = info.file;
       if (info.fileList.length > 1) {

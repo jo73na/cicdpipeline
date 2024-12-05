@@ -32,7 +32,7 @@ const CollapseBGV = () => {
   ];
 
   const props1 = {
-    action: "https://apiv1.technoladders.com/test",
+    action: `${BASE}test`,
     name: "file",
     multiple: false,
     defaultFileList: Authorizationfile,
@@ -62,7 +62,7 @@ const CollapseBGV = () => {
   };
 
   const props2 = {
-    action: "https://apiv1.technoladders.com/test",
+    action: `${BASE}test`,
     name: "file",
     multiple: false,
     defaultFileList: VerificationFile,

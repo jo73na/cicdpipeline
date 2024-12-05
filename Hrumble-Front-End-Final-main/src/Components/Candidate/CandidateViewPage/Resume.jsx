@@ -10,6 +10,7 @@ import PersonalDocInfo from "./PersonalDocInfo";
 
 import ResumeInfo from "./ResumeInfo";
 import UploadDocuments from "./UploadDocments";
+const BASE = import.meta.env.VITE_BASE;
 
 
 
@@ -129,7 +130,7 @@ const Resume = () => {
   const props = {
     name: "file",
     multiple: false,
-    action: "https://apiv1.technoladders.com/test",
+    action: `${BASE}test`,
   
     onChange(info) {
       const { status } = info.file;

@@ -388,7 +388,7 @@ const ViewJob = () => {
 
 
       const profit =(item)=>{
-        console.log("item",item)
+        console.log("item",item?.resume)
    
        // let profit = 0;
        // switch (true) {

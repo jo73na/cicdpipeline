@@ -153,7 +153,7 @@ const onFinish = (Values) => {
   ]; 
 
   const props = {
-    action: "https://apiv1.technoladders.com/test",
+    action: `${BASE}test`,
     name: "file",
     multiple: false,
     defaultFileList: slcfile,
@@ -183,7 +183,7 @@ const onFinish = (Values) => {
   };
 
   const props1 = {
-    action: "https://apiv1.technoladders.com/test",
+    action: `${BASE}test`,
     name: "file",
     multiple: false,
     defaultFileList: hscfile,
@@ -213,7 +213,7 @@ const onFinish = (Values) => {
   };
 
   const props2 = {
-    action: "https://apiv1.technoladders.com/test",
+    action: `${BASE}test`,
     name: "file",
     multiple: false,
     defaultFileList: degreefile,
@@ -245,7 +245,7 @@ const onFinish = (Values) => {
   const props3 = {
     name: "file",
     multiple: false,
-    action: "https://apiv1.technoladders.com/test",
+    action: `${BASE}test`,
     defaultFileList: pgdegreefile,
   
     onChange(info) {

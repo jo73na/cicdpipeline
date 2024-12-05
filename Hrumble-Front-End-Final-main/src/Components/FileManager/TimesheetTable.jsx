@@ -4,6 +4,7 @@ import { DownloadOutlined , LeftOutlined } from '@ant-design/icons';
 import FileManagerContext from '../../Providers/FileManagerProvider';
 import moment from 'moment';
 
+const BASE = import.meta.env.VITE_BASE;
 const TimesheetTable = () => {
 
   const { FetchTimesheet, timesheetDoc , fetchEmployFull} = useContext(FileManagerContext);
@@ -45,7 +46,7 @@ const TimesheetTable = () => {
             display:"flex",
             gap:"10px 10px"
          }}>
-          <a href={`https://apiv1.technoladders.com/${record?.timesheet}`} target="_blank" rel="noopener noreferrer" download>
+          <a href={`${BASE}${record?.timesheet}`} target="_blank" rel="noopener noreferrer" download>
           <Tooltip placement="bottomRight" title="Download">
           <DownloadOutlined />
                           

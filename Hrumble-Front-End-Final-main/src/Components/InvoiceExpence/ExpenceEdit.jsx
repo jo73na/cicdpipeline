@@ -44,7 +44,7 @@ const ExpenceEdit = ({handleFinishEdit,handleDrawerClose,setAttachment,setFileEr
                 url: `${BASE}${editExpence?.expense_attachment}`, // Set the URL of the default file
               },],
     
-            action: "https://apiv1.technoladders.com/test",
+            action: `${BASE}test`,
             beforeUpload: (file) => {
               // Define the allowed file types (e.g., PDF, PNG, JPG)
               const allowedTypes = ["application/pdf", "image/jpeg", "image/png", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"];

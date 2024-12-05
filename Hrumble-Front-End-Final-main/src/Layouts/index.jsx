@@ -1,4 +1,4 @@
-import { lazy, useContext, useState } from "react";
+import { lazy, useContext, useState, useEffect } from "react";
 import {HeatMapOutlined, PoweroffOutlined, PlusOutlined, ReconciliationOutlined, UserOutlined, FolderOpenOutlined } from "@ant-design/icons";
 import { Layout, Menu, theme, Dropdown, Avatar } from "antd";
 import { Link, Outlet } from "react-router-dom";
@@ -25,17 +25,18 @@ import { BellOutlined, MoreOutlined } from "@ant-design/icons";
 import Cookies from "../Utils/Cookies";
 import CookieUtil from "../Utils/Cookies";
 import UserManagementContext from "../Providers/UserMangement";
+import LoginContext from "../Providers/Login/index"; 
 // import { BASE } from "../Utils/api";
 const { Header, Content, Sider } = Layout;
 
-const BASE = import.meta.env.VITE_BASE_URL;
+const BASE = import.meta.env.VITE_BASE;
 
 const MobileMenu = lazy(() => import("../Layouts/MobileMenu"));
 
 const Layouts = () => {
   let logindata = JSON.parse(CookieUtil.get("admin"))
   let company = CookieUtil.get("company") == undefined || CookieUtil.get("company") == null  ? null : JSON.parse(CookieUtil.get("company"));
-  
+  const { logout,checkSessionValidity } = useContext(LoginContext);
   const {permission}= useContext(UserManagementContext)
   console.log("permission",permission)
 
@@ -45,18 +46,31 @@ const Layouts = () => {
     token: { colorPrimary, colorBgContainer, borderColor, colorBg },
   } = theme.useToken();
 
-  const logout = () => {
-    Cookies.remove("admin_token");
-    Cookies.remove("is_admin");
-    Cookies.remove("admin");
-    Cookies.remove("admin_id");
-    localStorage.removeItem("breakStartTime");
-    localStorage.removeItem("totalSeconds");
-    localStorage.removeItem("isActive");
-    localStorage.removeItem("selectedActivity");
-    window.location.href = "/login";
-  };
+  // const logout = () => {
+  //   // Call the logout function from the LoginProvider context
+  //   // Ensure this function updates the context state
+  //   Cookies.remove("admin_token");
+  //   Cookies.remove("is_admin");
+  //   Cookies.remove("admin");
+  //   Cookies.remove("admin_id");
+  //   Cookies.remove("session_expires_at");
+  //   Cookies.remove("role");
+  //   CookieUtil.remove('session_token');
+  //   CookieUtil.remove('session_data');
+  //   localStorage.clear(); // Clear all local storage items
+  //   window.location.href = "/login"; // Redirect to login
+  // };
+  useEffect(() => {
+    // Check session validity immediately when component loads
+    checkSessionValidity();
 
+    // Optional: Set up an interval to check periodically 
+    const intervalId = setInterval(checkSessionValidity, 60000); // Check every minute
+
+    // Clean up interval when component unmounts
+    return () => clearInterval(intervalId);
+    
+  }, [checkSessionValidity]);
   function toggleSideBar() {
     setCollapsed(!collapsed);
   }

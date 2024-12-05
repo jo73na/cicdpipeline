@@ -4,6 +4,8 @@ import { UploadOutlined } from '@ant-design/icons';
 import { Button, Form,message} from 'antd';
 import { useState,useContext } from 'react';
 import CandidateContext from '../../Providers/Candidate';
+const BASE = import.meta.env.VITE_BASE;
+
 
 export default function CandidateImport({handleopenDrawerforAdd}) {
     const[upload,setUpload]=useState("")
@@ -13,7 +15,7 @@ export default function CandidateImport({handleopenDrawerforAdd}) {
     const props = {
         name: "file",
         multiple: false,
-        action: "https://apiv1.technoladders.com/test",
+        action: `${BASE}test`,
       
         onChange(info) {
           const { status } = info.file;

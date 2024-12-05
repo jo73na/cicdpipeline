@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import {
   Box,
   Button,
@@ -13,11 +13,12 @@ import {
   IconButton,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import LoginContext from "../../Providers/Login";
-import { useTheme } from "@mui/material/styles"; // Import the useTheme hook
-import Visibility from '@mui/icons-material/Visibility'; // Import Visibility icon
+import { useTheme } from "@mui/material/styles";
+import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff'; 
+import CookieUtil from '../../Utils/Cookies'; // Adjust the import path as needed
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: "flex",
@@ -35,9 +36,11 @@ const Card = styled(MuiCard)(({ theme }) => ({
 
 export default function SignInCard() {
   const [form, setForm] = useState({ email_id: "", password: "", remember: true });
-  const [otp, setOtp] = useState(""); // State for OTP
-  const [isOtpSent, setIsOtpSent] = useState(false); // State to check if OTP is sent
+  const [otp, setOtp] = useState("");
+  const [isOtpSent, setIsOtpSent] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [isSessionValid, setIsSessionValid] = useState(false);
+
   const {
     login,
     sendOtp,
@@ -47,11 +50,41 @@ export default function SignInCard() {
     setSnackbar,
     isLoadingOtp,
   } = useContext(LoginContext);
+
   const navigate = useNavigate();
-  const theme = useTheme(); // Access the current theme
+  const theme = useTheme();
+
+  // Check session validity on component mount
+  useEffect(() => {
+    const checkSessionStatus = () => {
+      const sessionData = CookieUtil.get('session_data');
+      if (sessionData) {
+        try {
+          const { sessionExpiresAt } = JSON.parse(sessionData);
+          const now = new Date();
+          
+          if (new Date(sessionExpiresAt) > now) {
+            setIsSessionValid(true);
+            navigate("/dashboard");
+            return true;
+          }
+        } catch (error) {
+          console.error("Error parsing session data:", error);
+        }
+      }
+      return false;
+    };
+
+    checkSessionStatus();
+  }, [navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // If session is already valid, do nothing
+    if (isSessionValid) {
+      return;
+    }
 
     if (!isOtpSent) {
       // Validate email and password before sending OTP
@@ -59,24 +92,22 @@ export default function SignInCard() {
       if (isValid) {
         // Send OTP
         await sendOtp(form.email_id);
-        setIsOtpSent(true); // Set OTP sent state to true
+        setIsOtpSent(true);
       }
     } else {
       // Handle OTP verification
-      const isVerified = await validateOtp(form.email_id, otp); // Validate the OTP
+      const isVerified = await validateOtp(form.email_id, otp);
       if (isVerified) {
-        // Proceed with login after OTP validation
-        const loginSuccess = await login(form); // Perform login
-        if (loginSuccess) {
-          navigate("/dashboard");
-          window.location.reload(); // Navigate to the dashboard or another page
-        }
-      } else {
-        // OTP validation failed, display an error message
-        setSnackbar({ open: true, message: "Invalid OTP", severity: "error" });
+        navigate("/dashboard");
+        window.location.reload();
       }
     }
   };
+
+  // If session is valid, don't render the login form
+  if (isSessionValid) {
+    return null;
+  }
 
   return (
     <Card variant="outlined">
@@ -85,9 +116,9 @@ export default function SignInCard() {
         variant="h4"
         sx={{
           fontSize: "clamp(2rem, 10vw, 2.15rem)",
-          fontFamily: "Mulish, sans-serif", // Set font family to Mulish
-          fontWeight: 500, // Set font weight to 500
-          color: theme.palette.text.primary, // Change color based on theme
+          fontFamily: "Mulish, sans-serif",
+          fontWeight: 500,
+          color: theme.palette.text.primary,
         }}
       >
         {isOtpSent ? "Verify OTP" : "Sign in"}
@@ -109,17 +140,17 @@ export default function SignInCard() {
                   variant="outlined"
                   required
                   sx={{
-                    fontFamily: "Mulish, sans-serif", // Set font family to Mulish
-                    fontSize: "14px", // Set font size to 14px
-                    fontWeight: 500, // Set font weight to 500
+                    fontFamily: "Mulish, sans-serif",
+                    fontSize: "14px",
+                    fontWeight: 500,
                   }}
                 />
               </FormControl>
 
               <FormControl>
-              <TextField
+                <TextField
                   name="password"
-                  type={showPassword ? "text" : "password"} // Toggle between text and password
+                  type={showPassword ? "text" : "password"}
                   placeholder="••••••"
                   value={form.password}
                   onChange={(e) =>
@@ -129,17 +160,17 @@ export default function SignInCard() {
                   variant="outlined"
                   required
                   sx={{
-                    fontFamily: "Mulish, sans-serif", // Set font family to Mulish
-                    fontSize: "14px", // Set font size to 14px
-                    fontWeight: 500, // Set font weight to 500
+                    fontFamily: "Mulish, sans-serif",
+                    fontSize: "14px",
+                    fontWeight: 500,
                   }}
                   InputProps={{
                     endAdornment: (
                       <IconButton
-                        onClick={() => setShowPassword(!showPassword)} // Toggle password visibility
+                        onClick={() => setShowPassword(!showPassword)}
                         edge="end"
                       >
-                        {showPassword ? <VisibilityOff /> : <Visibility />} {/* Show appropriate icon */}
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
                       </IconButton>
                     ),
                   }}
@@ -159,10 +190,10 @@ export default function SignInCard() {
                 label={
                   <Typography
                     sx={{
-                      fontFamily: "Mulish, sans-serif", // Set font family to Mulish
-                      fontSize: "14px", // Set font size to 14px
-                      fontWeight: 500, // Set font weight to 500
-                      color: theme.palette.text.primary, // Change color based on theme
+                      fontFamily: "Mulish, sans-serif",
+                      fontSize: "14px",
+                      fontWeight: 500,
+                      color: theme.palette.text.primary,
                     }}
                   >
                     Remember me
@@ -174,12 +205,12 @@ export default function SignInCard() {
                 type="submit"
                 fullWidth
                 variant="contained"
-                disabled={isLoadingOtp} // Disable button while loading
+                disabled={isLoadingOtp}
                 sx={{
                   transition: "0.3s ease",
-                  fontFamily: "Mulish, sans-serif", // Set font family to Mulish
-                  fontSize: "14px", // Set font size to 14px
-                  fontWeight: 500, // Set font weight to 500
+                  fontFamily: "Mulish, sans-serif",
+                  fontSize: "14px",
+                  fontWeight: 500,
                 }}
               >
                 Send OTP
@@ -197,9 +228,9 @@ export default function SignInCard() {
                   variant="outlined"
                   required
                   sx={{
-                    fontFamily: "Mulish, sans-serif", // Set font family to Mulish
-                    fontSize: "14px", // Set font size to 14px
-                    fontWeight: 500, // Set font weight to 500
+                    fontFamily: "Mulish, sans-serif",
+                    fontSize: "14px",
+                    fontWeight: 500,
                   }}
                 />
               </FormControl>
@@ -208,50 +239,30 @@ export default function SignInCard() {
                 type="submit"
                 fullWidth
                 variant="contained"
-                disabled={isLoading} // Disable button while loading
+                disabled={isLoading}
                 sx={{
                   transition: "0.3s ease",
-                  fontFamily: "Mulish, sans-serif", // Set font family to Mulish
-                  fontSize: "14px", // Set font size to 14px
-                  fontWeight: 500, // Set font weight to 500
+                  fontFamily: "Mulish, sans-serif",
+                  fontSize: "14px",
+                  fontWeight: 500,
                 }}
               >
-                Validate OTP
+                Verify OTP
               </Button>
             </>
           )}
         </Box>
       </form>
 
-       {/* Signup Link */}
-       <Box sx={{ display: "flex", justifyContent: "center", marginTop: 2 }}>
-        <Typography sx={{ fontFamily: "Mulish, sans-serif", fontSize: "14px", fontWeight: 500, color: theme.palette.text.primary }}>
-          Don't have an account?{" "}
-          <Link
-            to="/signup"
-            component="a"
-            sx={{ fontWeight: 500, fontSize: "14px", color: theme.palette.primary.main }} // Link color based on theme
-          >
-            Sign Up
-          </Link>
-        </Typography>
-      </Box>
-
-      {/* Snackbar for Notifications */}
       <Snackbar
         open={snackbar.open}
-        autoHideDuration={2000}
-        onClose={() =>
-          setSnackbar({ ...snackbar, open: false })
-        }
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        autoHideDuration={6000}
+        onClose={() => setSnackbar({ ...snackbar, open: false })}
       >
         <Alert
-          onClose={() =>
-            setSnackbar({ ...snackbar, open: false })
-          }
+          onClose={() => setSnackbar({ ...snackbar, open: false })}
           severity={snackbar.severity}
-          sx={{ width: '100%' }}
+          sx={{ width: "100%" }}
         >
           {snackbar.message}
         </Alert>

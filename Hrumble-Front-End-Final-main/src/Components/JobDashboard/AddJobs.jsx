@@ -42,7 +42,7 @@ const AddJobs = () => {
     setJobDescription("");
   };
   const handleTalentSelectClick = (selection) => {
-    setSecondarySelected(selection); // Set secondary selected to "Talent Deployment"
+    setSecondarySelected(selection); 
   };
 
   const handleClearForm = () => {

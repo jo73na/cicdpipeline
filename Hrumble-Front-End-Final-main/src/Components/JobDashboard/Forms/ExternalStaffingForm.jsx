@@ -22,7 +22,7 @@ const { Option } = Select;
 const ExternalStaffingForm = ({onDiscard,primarySelected, secondarySelected, resetForm}) => {
  
   const [form] = Form.useForm();
-  const [job_type, setjob_type] = useState("");
+  const [job_type, setjob_type] = useState("Full Time");
   const [formData, setFormData] = useState({});
   const [activeStep, setActiveStep] = useState(0);
   const [salaryType, setSalaryType] = useState("LPA");
@@ -162,24 +162,18 @@ else if (activeStep === 1) {
     return false;
   }
 
-  const salaryAmount = values.salary;
-  if (salaryAmount <= 0) {
-    message.error("Salary amount must be greater than 0!");
-    return false;
-  }
+  // const salaryAmount = values.salary;
+  // if (salaryAmount <= 0) {
+  //   message.error("Salary amount must be greater than 0!");
+  //   return false;
+  // }
 }
 
 // Step 3 Validation
 else if (activeStep === 2) {
   const values = await form.validateFields(clientFields);
  
-  const Cbudget = values.vendor_clientbillable;
-  if (Cbudget <= 0) {
-    message.error("Budget should be greater than 0!");
-    return false;
-  }
- 
-  else if (!values.client_id && !values.clientBudget && !values.end_client && !values.poc) {
+  if (!values.client_id && !values.clientBudget && !values.end_client && !values.poc) {
     message.error("Please fill at least one of the client details!");
     return false;
   }
@@ -302,18 +296,11 @@ else if (activeStep === 3) {
             <Col span={8}>
               <Form.Item
                 name="job_type"
+                initialValue="Full Time"
                 label="Hiring Mode"
                 rules={[{ required: true, message: "Please select Hiring Mode type!" }]}
               >
-                <Select
-                  placeholder="Select Hiring Mode Type"
-                   onChange={ value => setjob_type(value)}
-                >
-                  <Option value="Full Time">Full Time</Option>
-                  <Option value="Contract">Contract</Option>
-                  <Option value="Both">Both</Option>
- 
-                </Select>
+                <Input disabled value="Full Time" />
               </Form.Item>
             </Col>
             {job_type && (
@@ -476,7 +463,7 @@ else if (activeStep === 3) {
               </Select>
             </Form.Item>
           </Col>
-          <Col span={9}>
+          {/* <Col span={9}>
            
            <Form.Item
 label="Salary"
@@ -532,8 +519,8 @@ getValueFromEvent={(e) => {
 />
 </Form.Item>
           
-       </Col>
-          <Col span={6}>
+       </Col> */}
+          <Col span={9}>
            <Form.Item label="Skills" name="skils"
         rules={[
           {
@@ -596,10 +583,10 @@ getValueFromEvent={(e) => {
                  />
               </Form.Item>
             </Col>
-            <Col span={8}>
+            <Col span={9}>
             <Form.Item
   label="Client Budget"
-  name="vendor_clientbillable"
+  name="salary"
   rules={[
     {
       required: true,
@@ -616,6 +603,7 @@ getValueFromEvent={(e) => {
   }}
 >
   <Input
+  addonBefore={<p className="m_10">₹</p>}
     addonAfter={
       job_type === "Full Time" ? (
         <p
@@ -657,7 +645,7 @@ getValueFromEvent={(e) => {
   />
 </Form.Item>
    </Col>
-            <Col span={8}>
+            <Col span={6}>
              <Form.Item
                     name="end_client"
                     label="End Client"
@@ -748,18 +736,15 @@ getValueFromEvent={(e) => {
         </Stepper>
 
         <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 20 }}>
-          <Button
+        <button type='button' className='btn btn-danger light ms-1 btn-sm'
             onClick={onDiscard}
             style={{
-              background: "#FF5E5E",
-              borderColor: "white",
-              color: "#ffdede",
               borderRadius: "10px",
               marginRight: 8,
             }}
           >
             Discard
-          </Button>
+          </button>
 
           {activeStep > 0 && (
             <Button

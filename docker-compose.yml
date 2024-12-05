@@ -33,7 +33,7 @@ services:
       SMPT_MAIL: devlopsdemo@gmail.com
       OUTLOOK_SMTP_HOST: smtp-mail.outlook.com
       OUTLOOK_SMTP_PORT: 587
-      EMAIL_FROM: "No Reply <devlopsdemo@gmail.com>"
+      EMAIL_FROM: "No Reply (Hrumbles.ai)"
       ADMIN_EMAIL: sangeeth@technoladders.com
     depends_on:
       - zivelogin-mongo

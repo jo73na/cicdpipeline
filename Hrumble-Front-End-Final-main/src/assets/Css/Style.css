@@ -96,7 +96,7 @@
 }
 .ant-input-group .ant-input-group-addon {
   position: relative;
-  padding: 0 11px;
+  padding: 0 5px !important;
   color: rgba(0, 0, 0, 0.88);
   font-weight: normal;
   font-size: 14px;
@@ -43587,3 +43587,55 @@ background: "#ebc1c1"
 }
 
 /* Addjobs Form Input Salary type */
+.table th,
+.table td {
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.reason-column {
+  max-width: 200px; /* Adjust as per need */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tooltip {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip .tooltip-text {
+  visibility: hidden;
+  width: 200px; /* Tooltip width */
+  background-color: #555;
+  color: #fff;
+  text-align: center;
+  padding: 5px;
+  border-radius: 6px;
+
+  /* Position tooltip above */
+  position: absolute;
+  z-index: 1;
+  bottom: 100%;
+  left: 50%;
+  margin-left: -100px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.tooltip:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
+}
+
+.truncate {
+  display: inline-block;
+  max-width: 150px; /* Adjust as needed */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+

@@ -6,7 +6,7 @@ import { useEffect } from 'react';
 import { useContext } from 'react';
 import InvoiceExpenceContext from './../../../Providers/InvoiceExpence/index';
 
-
+const BASE = import.meta.env.VITE_BASE;
 const ExpenceAdd = ({handleFinish,handleDrawerClose,setAttachment,setFileError}) => {
     const [form] = Form.useForm();
     const [radio,setRadio]=useState("Salary")
@@ -15,7 +15,7 @@ const ExpenceAdd = ({handleFinish,handleDrawerClose,setAttachment,setFileError})
     const props = {
         name: "file",
         multiple: false,
-        action: "https://apiv1.technoladders.com/test",
+        action: `${BASE}test`,
         beforeUpload: (file) => {
           // Define the allowed file types (e.g., PDF, PNG, JPG)
           const allowedTypes = ["application/pdf", "image/jpeg", "image/png", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"];

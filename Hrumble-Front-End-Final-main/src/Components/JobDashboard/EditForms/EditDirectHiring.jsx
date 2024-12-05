@@ -15,6 +15,7 @@ const indianCities = [
  
 const EditDirectHiring = ({ jobId, closeForm }) => {
   const [form] = Form.useForm();
+  const [initialData, setInitialData] = useState({});
   const [activeStep, setActiveStep] = useState(0);
   const [formData, setFormData] = useState({});
   const [contractType, setContractType] = useState("");
@@ -88,7 +89,7 @@ const EditDirectHiring = ({ jobId, closeForm }) => {
   // Populate form when jobSingle data changes
   useEffect(() => {
     if (jobSingle && Object.keys(jobSingle).length > 0) {
-      // Format salary for display
+      setInitialData(jobSingle);
       const formattedSalary = new Intl.NumberFormat('en-IN', {
         style: 'currency',
         currency: 'INR',
@@ -125,6 +126,28 @@ const EditDirectHiring = ({ jobId, closeForm }) => {
   setSecondarySelected(jobSingle.secondarySelected);
     }
   }, [jobSingle, form]);
+
+  const handleCancel = () => {
+    form.setFieldsValue({
+      contractType: initialData.contractType,
+      job_id: initialData.job_id,
+      job_title: initialData.job_title,
+      required_no_of_candidates: initialData.required_no_of_candidates,
+      job_location: initialData.job_location,
+      notice_period: initialData.notice_period,
+      exp_from: initialData.exp_from,
+      exp_to: initialData.exp_to,
+      salary: initialData.salary,
+      skils: initialData.skils,
+      client_id: initialData.client_id[0]?._id,
+    });
+
+    setContractType(initialData.contractType);
+    setjob_description(initialData.job_description || "");
+    setPrimarySelected(initialData.primarySelected);
+    setSecondarySelected(initialData.secondarySelected);
+    message.info("Form reset to initial data.");
+  };
  
   // Validation functions remain the same
   const jobInfoFields = [
@@ -778,18 +801,15 @@ const EditDirectHiring = ({ jobId, closeForm }) => {
       </Stepper>
   
       <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 20 }}>
-        <Button
-          onClick={closeForm}
+        <button type='button' className='btn btn-danger light ms-1 btn-sm'
+          onClick={handleCancel}
           style={{
-            background: "#FF5E5E",
-            borderColor: "white",
-            color: "#ffdede",
             borderRadius: "10px",
             marginRight: 8
           }}
         >
           Cancel
-        </Button>
+        </button>
   
         {activeStep > 0 && (
           <Button

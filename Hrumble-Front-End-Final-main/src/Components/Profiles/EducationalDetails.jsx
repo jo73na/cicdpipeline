@@ -5,6 +5,8 @@ import  { useContext, useEffect, useState } from 'react'
 import EmployeeContext from '../../Providers/EmployeeProvider';
 import AddExperience from './AddExperience';
 
+const BASE = import.meta.env.VITE_BASE;
+
 const EducationalDetails = () => {
 
   const {addbuttonEmply,employeeLogindata,editEmployee}=useContext(EmployeeContext)
@@ -50,7 +52,7 @@ const onFinish = (Values) => {
   const props = {
     name: "file",
     multiple: false,
-    action: "https://apiv1.technoladders.com/test",
+    action: `${BASE}test`,
   
     onChange(info) {
       const { status } = info.file;
@@ -80,7 +82,7 @@ const onFinish = (Values) => {
   const props1 = {
     name: "file",
     multiple: false,
-    action: "https://apiv1.technoladders.com/test",
+    action: `${BASE}test`,
   
     onChange(info) {
       const { status } = info.file;
@@ -110,7 +112,7 @@ const onFinish = (Values) => {
   const props2 = {
     name: "file",
     multiple: false,
-    action: "https://apiv1.technoladders.com/test",
+    action: `${BASE}test`,
   
     onChange(info) {
       const { status } = info.file;
@@ -140,7 +142,7 @@ const onFinish = (Values) => {
   const props3 = {
     name: "file",
     multiple: false,
-    action: "https://apiv1.technoladders.com/test",
+    action: `${BASE}test`,
   
     onChange(info) {
       const { status } = info.file;

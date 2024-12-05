@@ -5,7 +5,7 @@ import {useContext, useState} from 'react'
 import ClientContext from '../../Providers/ClientProvider';
 import { useEffect } from 'react';
 
-
+const BASE = import.meta.env.VITE_BASE;
  const  AddProject =()=> {
 const {clientSingle,handleAddProject} = useContext(ClientContext)
 
@@ -20,7 +20,7 @@ const [form] = Form.useForm();
     const props = {
         name: 'file',
         multiple: false,
-        action: `https://apiv1.technoladders.com/test`,
+        action: `${BASE}test`,
         onChange(info) {
           const { status } = info.file;
           if (info.fileList.length > 1) {

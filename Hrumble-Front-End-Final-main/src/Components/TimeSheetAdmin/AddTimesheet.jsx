@@ -120,7 +120,7 @@ let fileList = [
       uid: "1",
       name: filenamechange(args?.data?.timesheet)||"",
       status: "done", // Set the status to 'done' for default files
-      url: `https://apiv1.technoladders.com/${args?.data?.timesheet||""}`, // Set the URL of the default file
+      url: `${BASE}${args?.data?.timesheet||""}`, // Set the URL of the default file
     },
   ]; 
  console.log("filelist",fileList)
@@ -129,7 +129,7 @@ let fileList = [
     name: "file",
     multiple: false,
     ...(edit && args?.data?.timesheet && {defaultFileList:fileList}) ,
-    action: "https://apiv1.technoladders.com/test",
+    action: `${BASE}test`,
     beforeUpload: (file) => {
       // Define the allowed file types (e.g., PDF, PNG, JPG)
       const allowedTypes = ["application/pdf", "image/jpeg", "image/png", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"];

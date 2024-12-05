@@ -15,7 +15,7 @@ const crud = new crud_service();
 const upload = require("../../utils/upload");
 const admin_schema = require('../../models/admin_login');
 
-
+const INACTIVITY_TIMEOUT= 10 * 60 * 1000;
 
 
 //create admin
@@ -51,56 +51,90 @@ router.post('/login', asyncHandler(async (req, res) => {
   const { email_id, password } = req.body;
 
   try {
-    // Fetch user details
     const find_admin = await crud.getOneDocument(admin, { email_id }, {}, { populate: "company_id" });
 
     if (!find_admin) {
       throw new Error("Invalid Username Or Password!");
     }
 
-    // Set default status to 'active' if not present
-    const userStatus = find_admin.status || 'active'; 
-
-    // Check if the user is blocked or disabled
-    if (userStatus === 'blocked') {
-      return res.status(403).json({ success: false, message: "Account is blocked. Please contact the administrator." });
+    const userStatus = find_admin.userstatus || 'active';
+    if (userStatus === 'blocked' || userStatus === 'disabled') {
+      const message = `Account is ${userStatus}. Please contact the administrator.`;
+      return res.status(403).json({ success: false, message });
     }
 
-    if (userStatus === 'disabled') {
-      return res.status(403).json({ success: false, message: "Account is disabled. Please contact the administrator." });
-    }
-
-    // Verify password
-    const password_match = async (password) => {
-      return await bcrypt.compare(password, find_admin?.password);
-    };
-
-    if (await password_match(password)) {
-      // Fetch additional user data
-      const employee_details = await crud.getOneDocument(employee, { "email": email_id }, { 
-        "firstname": 1,
-        "lastname": 1,
-        "email": 1,
-        "display_profile_file": 1,
-        "user_role": 1,
-        "user_id": 1,
-        "_id": 0,
-      }, {});
-
-      let responseJson = {
-        "admin_data": find_admin,
-        "user_data": employee_details
-      };
-
-      console.log("responseJson:", responseJson);
-      successToken(res, 200, true, "Login Successfully", responseJson, generateToken(find_admin?._id), find_admin?.company_id);
-    } else {
+    const password_match = await bcrypt.compare(password, find_admin.password);
+    if (!password_match) {
       throw new Error("Invalid Username Or Password!");
     }
+
+    const sessionDuration = 9 * 60 * 60 * 1000; // 9 hours
+    const sessionExpiresAt = new Date(Date.now() + sessionDuration);
+    const lastActivityAt = new Date();
+
+    await admin.findByIdAndUpdate(
+      find_admin._id,
+      { sessionExpiresAt, lastActivityAt },
+      { new: true }
+    );
+
+    const token = generateToken(find_admin._id);
+
+    res.cookie('session_token', token, {
+      httpOnly: true,
+      maxAge: sessionDuration, 
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "Login Successfully",
+      token,
+      data: {
+        admin_data: find_admin,
+        session_data: { sessionExpiresAt, lastActivityAt }
+      }
+    });
   } catch (error) {
-    throw new Error(error.message || "An error occurred during login.");
+    return res.status(500).json({
+      success: false,
+      message: error.message || "An error occurred during login."
+    });
   }
 }));
+
+
+///Session Alive status
+router.post('/keep-alive', (req, res) => {
+  const token = req.cookies['session_token'];
+  const sessionData = req.cookies['session_data'] ? JSON.parse(req.cookies['session_data']) : null;
+
+  if (!token || !sessionData) {
+    return res.status(401).json({ error: 'Session expired. Please log in again.' });
+  }
+
+  const now = new Date();
+  const lastActivityAt = new Date(sessionData.lastActivityAt);
+
+  if (now - lastActivityAt > 15 * 60 * 1000) { // 15 minutes inactivity
+    res.clearCookie('session_token');
+    res.clearCookie('session_data');
+    return res.status(401).json({ error: 'Session expired due to inactivity.' });
+  }
+
+  const updatedLastActivityAt = new Date();
+  sessionData.lastActivityAt = updatedLastActivityAt;
+
+  res.cookie('session_data', JSON.stringify(sessionData), {
+    httpOnly: true,
+    secure: true,
+    maxAge: 10 * 60 * 60 * 1000, // 10 hours
+  });
+
+  res.status(200).json({ message: 'Session refreshed.' });
+});
+
+
+
 
 
 // getAllHR
@@ -3293,7 +3327,7 @@ router.get('/owner-select/',authAdmin, asyncHandler(async (req, res) => {
           }
         })),
         permission: id,
-        status: req.body?.status || 'active', // Set status, default to active if not provided
+        userstatus: req.body?.userstatus || 'active', // Set status, default to active if not provided
       };
     
       try {

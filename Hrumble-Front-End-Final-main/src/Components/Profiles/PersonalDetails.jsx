@@ -5,6 +5,7 @@ import { MinusCircleOutlined, PlusOutlined, UploadOutlined} from '@ant-design/ic
 import { useContext, useEffect, useState } from "react";
 import EmployeeContext from '../../Providers/EmployeeProvider';
 
+const BASE = import.meta.env.VITE_BASE;
 const PersonalDetails = () => {
 
   const {personalDet,editEmployee,addbuttonEmply,openaddEmply,setOpenaddEmply,setAddButton,employeeLogindata}=useContext(EmployeeContext)
@@ -65,7 +66,7 @@ const PersonalDetails = () => {
   const props = {
     name: "file",
     multiple: false,
-    action: "https://apiv1.technoladders.com/test",
+    action: `${BASE}test`,
   
     onChange(info) {
       const { status } = info.file;
@@ -95,7 +96,7 @@ const PersonalDetails = () => {
   const props2 = {
     name: "file",
     multiple: false,
-    action: "https://apiv1.technoladders.com/test",
+    action: `${BASE}test`,
   
     onChange(info) {
       const { status } = info.file;
@@ -125,7 +126,7 @@ const PersonalDetails = () => {
   const props3 = {
     name: "file",
     multiple: false,
-    action: "https://apiv1.technoladders.com/test",
+    action: `${BASE}test`,
   
     onChange(info) {
       const { status } = info.file;
@@ -155,7 +156,7 @@ const PersonalDetails = () => {
   const props4 = {
     name: "file",
     multiple: false,
-    action: "https://apiv1.technoladders.com/test",
+    action: `${BASE}test`,
   
     onChange(info) {
       const { status } = info.file;
@@ -185,7 +186,7 @@ const PersonalDetails = () => {
   const props5 = {
     name: "file",
     multiple: false,
-    action: "https://apiv1.technoladders.com/test",
+    action: `${BASE}test`,
   
     onChange(info) {
       const { status } = info.file;

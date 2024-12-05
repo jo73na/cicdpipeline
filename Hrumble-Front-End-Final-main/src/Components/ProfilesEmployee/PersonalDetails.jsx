@@ -337,7 +337,7 @@ const [showUploadLabel, setShowUploadLabel] = useState(true);
 
   const props = {
      ...data,
-    action: "https://apiv1.technoladders.com/test",
+    action: `${BASE}test`,
     name: "file",
     multiple: false,
     ...(personalEmp?.display_profile_file &&
@@ -400,7 +400,7 @@ const [showUploadLabel, setShowUploadLabel] = useState(true);
 
 
   const props2 = {
-    action: "https://apiv1.technoladders.com/test",
+    action: `${BASE}test`,
     name: "file",
     multiple: false,
     defaultFileList: panfile,
@@ -430,7 +430,7 @@ const [showUploadLabel, setShowUploadLabel] = useState(true);
   };
 
   const props3 = {
-    action: "https://apiv1.technoladders.com/test",
+    action: `${BASE}test`,
     name: "file",
     multiple: false,
     defaultFileList: esicfile,
@@ -460,7 +460,7 @@ const [showUploadLabel, setShowUploadLabel] = useState(true);
   };
 
   const props4 = {
-    action: "https://apiv1.technoladders.com/test",
+    action: `${BASE}test`,
     name: "file",
     multiple: false,
     defaultFileList: uanfile,

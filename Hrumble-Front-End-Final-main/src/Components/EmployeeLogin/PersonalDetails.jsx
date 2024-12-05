@@ -332,7 +332,7 @@ const [showUploadLabel, setShowUploadLabel] = useState(true);
   // file upload function starts here
 
   const props = {
-    action: "https://apiv1.technoladders.com/test",
+    action: `${BASE}test`,
     name: "file",
     multiple: false,
     defaultFileList: displayPicture,
@@ -362,7 +362,7 @@ const [showUploadLabel, setShowUploadLabel] = useState(true);
   };
 
   const props1 = {
-    action: "https://apiv1.technoladders.com/test",
+    action: `${BASE}test`,
     name: "file",
     multiple: false,
     defaultFileList: aadharfile,
@@ -393,7 +393,7 @@ const [showUploadLabel, setShowUploadLabel] = useState(true);
 
 
   const props2 = {
-    action: "https://apiv1.technoladders.com/test",
+    action: `${BASE}test`,
     name: "file",
     multiple: false,
     defaultFileList: panfile,
@@ -423,7 +423,7 @@ const [showUploadLabel, setShowUploadLabel] = useState(true);
   };
 
   const props3 = {
-    action: "https://apiv1.technoladders.com/test",
+    action: `${BASE}test`,
     name: "file",
     multiple: false,
     defaultFileList: esicfile,
@@ -453,7 +453,7 @@ const [showUploadLabel, setShowUploadLabel] = useState(true);
   };
 
   const props4 = {
-    action: "https://apiv1.technoladders.com/test",
+    action: `${BASE}test`,
     name: "file",
     multiple: false,
     defaultFileList: uanfile,

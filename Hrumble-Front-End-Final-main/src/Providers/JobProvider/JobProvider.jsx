@@ -52,6 +52,7 @@ const JobProvider = (props) => {
     const [snackbarOpen, setSnackbarOpen] = useState(false); // State for Snackbar
     const [snackbarMessage, setSnackbarMessage] = useState(''); // Message to display in Snackbar
     const [snackbarSeverity, setSnackbarSeverity] = useState('success'); // Severity of the Snackbar
+    const [editDrawer, setEditDrawer] = useState(false);
     const memoizedResult = useMemo(() => {
         // Example: converting the searchjob to uppercase
         return searchjob.toUpperCase();
@@ -154,6 +155,39 @@ const JobProvider = (props) => {
         setSearchcandidate(e.target.value)
         
     }
+
+    const handleEditJob= async(id)=>{
+      console.log("id", id);
+    let apigetJob = `${BASE_URL}/job/${id}`;
+    setEditDrawer(!editDrawer);
+    if (id) {
+      try {
+        await axios.get(apigetJob).then((resp) => {
+          setjobSingle(resp.data?.data);
+        });
+      } catch (error) {
+        console.log("error", error);
+      }
+      // setEditDrawer(false);
+      }
+  };
+
+  const handleAssign= async(id)=>{
+    console.log("id", id);
+  let apigetJob = `${BASE_URL}/job/${id}`;
+  setOpenAssign(!openAssign);
+  if (id) {
+    try {
+      await axios.get(apigetJob).then((resp) => {
+        setjobSingle(resp.data?.data);
+      });
+    } catch (error) {
+      console.log("error", error);
+    }
+    // setEditDrawer(false);
+    }
+};
+  
 
     const handleClickjobTable= async(id)=>{
        const jobsingleApi =`${BASE_URL}/job/${id}`
@@ -309,6 +343,7 @@ const JobProvider = (props) => {
 
       const handleopenfilter=()=>{
          setopenFilter(!openFilter)
+        
       }
 
       const handleChangestatus= async(id,e)=>{
@@ -533,7 +568,10 @@ const JobProvider = (props) => {
                 openAssign,
                 setvendorjob,
                 selectusers,
-                teams
+                teams,
+                handleEditJob,
+                editDrawer,
+                handleAssign,
             }}
         >
             {props.children}

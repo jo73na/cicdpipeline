@@ -8,7 +8,7 @@ import CookieUtil from '../../Utils/Cookies';
 import { EditOutlined } from '@ant-design/icons';
 
 
-
+const BASE = import.meta.env.VITE_BASE;
 
 
 const CandidatesTable=({table})=>{
@@ -332,7 +332,7 @@ options.map((item)=>{
                     
        
                    
-                       <a href={`https://apiv1.technoladders.com/${record?.resume}`} target="_blank" rel="noopener noreferrer" download>
+                       <a href={`${BASE}${record?.resume}`} target="_blank" rel="noopener noreferrer" download>
                        <Tooltip placement="bottomRight" title="Download">
                         
                            <img src={DownloadIcon}/>

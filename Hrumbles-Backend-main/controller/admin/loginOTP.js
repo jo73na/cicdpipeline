@@ -72,7 +72,7 @@ router.post('/send-otp', async (req, res) => {
       find_admin._id,
       {
         hashedOtp,
-        otpExpiresAt: new Date(Date.now() + 10 * 60 * 1000) // 9 hours expiry
+        otpExpiresAt: new Date(Date.now() + 9 * 60 * 60 * 1000) // 9 hours expiry
       },
       { new: true }
     );
@@ -85,6 +85,7 @@ router.post('/send-otp', async (req, res) => {
 });
 
 
+// Validate OTP
 // Validate OTP
 router.post('/validate-otp', async (req, res) => {
   const { email_id, otp } = req.body;
@@ -101,18 +102,24 @@ router.post('/validate-otp', async (req, res) => {
 
     // Check if OTP is expired
     if (find_admin.otpExpiresAt < new Date()) {
-      // Clear OTP if expired (keep it here for the expiration logic)
+      // Clear OTP if expired
       await admin.findByIdAndUpdate(find_admin._id, { hashedOtp: null, otpExpiresAt: null });
       return res.status(400).json({ error: 'OTP expired' });
     }
 
-    // Verify OTP without clearing it (keep the OTP stored until it expires)
+    // Verify OTP
     const isOtpValid = await bcrypt.compare(otp, find_admin.hashedOtp);
     if (isOtpValid) {
-      // Optionally update expiration time to 9 hours from current time after validation, but don't clear OTP
-      await admin.findByIdAndUpdate(find_admin._id, {
-        otpExpiresAt: new Date(Date.now() + 9 * 60 * 60 * 1000) // 9 hours expiry
-      });
+      // Update otp_verified to true and clear OTP fields
+      await admin.findByIdAndUpdate(
+        find_admin._id,
+        {
+          otp_verified: true,
+          hashedOtp: null,
+          otpExpiresAt: null
+        },
+        { new: true }
+      );
 
       return res.status(200).json({ success: true, message: 'OTP validated successfully' });
     } else {
@@ -123,6 +130,7 @@ router.post('/validate-otp', async (req, res) => {
     res.status(500).json({ error: 'Failed to validate OTP' });
   }
 });
+
 
 
 module.exports = router;

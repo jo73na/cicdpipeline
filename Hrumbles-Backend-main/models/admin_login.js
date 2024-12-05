@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const admin_schema = {
   name: { type: String, required: true },
   phone_number: { type: Number, },
-  email_id: { type: String, required: true, unique: true },
+  email_id: { type: String, required: true, unique: true, index:true },
   role:{type:String,default:"HR"},
   password: { type: String, required: true },
   hashedOtp: { type: String },
@@ -21,6 +21,15 @@ const admin_schema = {
     {type:mongoose.Schema.Types.ObjectId, ref:"goaltypes", default:null}
   ],
  cc:[ {}],
- status: { type: String, enum: ['active', 'blocked', 'disabled'], default: 'active' }, 
-};
+ userstatus: { type: String, enum: ['active', 'blocked', 'disabled'], default: 'active' }, 
+
+ lastLogin: {
+  type: Date, 
+  default: null,
+},
+sessionExpiresAt: {
+  type: Date,
+  default: null,
+},
+}
 module.exports = admin_schema;

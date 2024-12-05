@@ -6,7 +6,7 @@ import { useState ,useContext} from 'react';
 import CandidateContext from "../../Providers/Candidate";
 import { useParams } from "react-router-dom";
 
-
+const BASE = import.meta.env.VITE_BASE;
 const ApplayCandidateAdd = () => {
     const {handleapplayCandidatepage}=useContext(CandidateContext)
      const [form]=useForm()
@@ -19,7 +19,7 @@ const ApplayCandidateAdd = () => {
      const props = {
         name: "file",
         multiple: false,
-        action: "https://apiv1.technoladders.com/test",
+        action: `${BASE}test`,
         beforeUpload: (file) => {
           // Define the allowed file types (e.g., PDF, PNG, JPG)
           const allowedTypes = ["application/pdf", "image/jpeg", "image/png", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"];

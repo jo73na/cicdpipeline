@@ -13,7 +13,7 @@ import BasicDetailAdd from "../JobDashboard/BasicDetailAddCandidate";
 import { useForm } from 'antd/lib/form/Form';
 import CandidateContext from "../../Providers/Candidate";
 import UploadDocuments from "./CandidateViewPage/UploadDocments";
-
+const BASE = import.meta.env.VITE_BASE;
 
 
 
@@ -65,14 +65,14 @@ import UploadDocuments from "./CandidateViewPage/UploadDocments";
       uid: "1",
       name: candidateSingle[0]?.resume,
       status: "done", // Set the status to 'done' for default files
-      url: `https://apiv1.technoladders.com/${candidateSingle[0]?.resume}`, // Set the URL of the default file
+      url: `${BASE}${candidateSingle[0]?.resume}`, // Set the URL of the default file
     },
   ];
   const props = {
     name: "file",
     multiple: true,
     defaultFileList,
-    action: "https://apiv1.technoladders.com/test",
+    action: `${BASE}test`,
     beforeUpload: (file) => {
         // Define the allowed file types (e.g., PDF, PNG, JPG)
         const allowedTypes = ["application/pdf", "image/jpeg", "image/png", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"];

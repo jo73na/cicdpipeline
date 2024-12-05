@@ -8,7 +8,7 @@ import {EnvironmentOutlined,EyeTwoTone} from "@ant-design/icons";
 
 
 const { Dragger } = Upload;
-
+const BASE = import.meta.env.VITE_BASE;
 
 
 
@@ -81,7 +81,7 @@ const CandidateTable = ({handlePageChange,setPagination,setFilterData,filteredDa
  const props = {
     name: "file",
     multiple: false,
-    action: "https://apiv1.technoladders.com/test",
+    action: `${BASE}test`,
    
     onChange(info) {
       const { status } = info.file;
@@ -329,7 +329,7 @@ const CandidateTable = ({handlePageChange,setPagination,setFilterData,filteredDa
  
 //           {
 //             record.resume?
-//             <a href={`https://apiv1.technoladders.com/${record?.resume}`} target="_blank" rel="noopener noreferrer">
+//             <a href={`${BASE}${record?.resume}`} target="_blank" rel="noopener noreferrer">
 //             <Tooltip placement="bottomRight" title="Download">
               
 //                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="15" viewBox="0 0 13 15" fill="none">
@@ -364,7 +364,7 @@ const CandidateTable = ({handlePageChange,setPagination,setFilterData,filteredDa
  
 // // //           {
 // // //             record.resume?
-// // //             <a href={`https://apiv1.technoladders.com/${record?.resume}`} target="_blank" rel="noopener noreferrer">
+// // //             <a href={`${BASE}${record?.resume}`} target="_blank" rel="noopener noreferrer">
 // // //             <Tooltip placement="bottomRight" title="Download">
               
 // // //                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="15" viewBox="0 0 13 15" fill="none">

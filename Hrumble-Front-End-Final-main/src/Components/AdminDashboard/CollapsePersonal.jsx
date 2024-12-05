@@ -57,7 +57,7 @@ const CollapsePersonal = () => {
   ];
 
   const props = {
-    action: "https://apiv1.technoladders.com/test",
+    action: `${BASE}test`,
     name: "file",
     multiple: false,
     defaultFileList: aadharfile,
@@ -87,7 +87,7 @@ const CollapsePersonal = () => {
   };
 
   const props1 = {
-    action: "https://apiv1.technoladders.com/test",
+    action: `${BASE}test`,
     name: "file",
     multiple: false,
     defaultFileList: panfile,
@@ -117,7 +117,7 @@ const CollapsePersonal = () => {
   };
 
   const props2 = {
-    action: "https://apiv1.technoladders.com/test",
+    action: `${BASE}test`,
     name: "file",
     multiple: false,
     defaultFileList: esicfile,
@@ -147,7 +147,7 @@ const CollapsePersonal = () => {
   };
 
   const props3 = {
-    action: "https://apiv1.technoladders.com/test",
+    action: `${BASE}test`,
     name: "file",
     multiple: false,
     defaultFileList: uanfile,

@@ -9,6 +9,8 @@ import Dragger from "antd/es/upload/Dragger";
 
 
 import ClientContext from "../../Providers/ClientProvider";
+
+const BASE = import.meta.env.VITE_BASE;
 const { RangePicker } = DatePicker;
 const { Option } = Select;
 
@@ -48,7 +50,7 @@ const AssignEmployeePopup = ({ params,handleopenDrawer}) => {
     name: "file",
     multiple: false,
 
-    action: `https://apiv1.technoladders.com/test`,
+    action: `${BASE}test`,
     onChange(info) {
       const { status } = info.file;
       if (info.fileList.length > 1) {

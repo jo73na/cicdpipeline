@@ -62,6 +62,7 @@ const  Settings  =lazy(()=>import( './../Components/Settings/index'));
 import Units from './../Components/Construction/Projects/Units';
 import EditProjects from "../Components/Construction/Projects/EditProjects";
 import AddJobs from "../Components/JobDashboard/AddJobs";
+import LeaveHistory from "../Components/Leaves/AdminLeavePage/LeaveHistory"
 
 
 const RoutesDynamic = [
@@ -388,6 +389,13 @@ const RoutesDynamic = [
     exact: true,
 
     component: <AddJobs/>,
+  },
+
+  {
+    path: "/leavehistory",
+    exact: true,
+
+    component: <LeaveHistory/>,
   },
  
 ];

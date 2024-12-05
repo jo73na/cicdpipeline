@@ -122,7 +122,7 @@ const InfoEducational = () => {
       ];
     
       const props = {
-        action: "https://apiv1.technoladders.com/test",
+        action: `${BASE}test`,
         name: "file",
         multiple: false,
         defaultFileList: experienceFile,
@@ -152,7 +152,7 @@ const InfoEducational = () => {
       };
     
       const props1 = {
-        action: "https://apiv1.technoladders.com/test",
+        action: `${BASE}test`,
         name: "file",
         multiple: false,
         defaultFileList: offerFile,
@@ -182,7 +182,7 @@ const InfoEducational = () => {
       };
     
       const props2 = {
-        action: "https://apiv1.technoladders.com/test",
+        action: `${BASE}test`,
         name: "file",
         multiple: false,
         defaultFileList: separationFile,
@@ -212,7 +212,7 @@ const InfoEducational = () => {
       };
     
       const props3 = {
-        action: "https://apiv1.technoladders.com/test",
+        action: `${BASE}test`,
         name: "file",
         multiple: false,
         defaultFileList: payslip1File,
@@ -242,7 +242,7 @@ const InfoEducational = () => {
       };
     
       const props4 = {
-        action: "https://apiv1.technoladders.com/test",
+        action: `${BASE}test`,
         name: "file",
         multiple: false,
         defaultFileList: payslip2File,
@@ -272,7 +272,7 @@ const InfoEducational = () => {
       };
     
       const props5 = {
-        action: "https://apiv1.technoladders.com/test",
+        action: `${BASE}test`,
         name: "file",
         multiple: false,
         defaultFileList: payslip3File,
@@ -302,7 +302,7 @@ const InfoEducational = () => {
       };
     
       const props6 = {
-        action: "https://apiv1.technoladders.com/test",
+        action: `${BASE}test`,
         name: "file",
         multiple: false,
         defaultFileList: hikeFile,

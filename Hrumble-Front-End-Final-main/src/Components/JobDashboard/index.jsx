@@ -12,7 +12,8 @@ import CookieUtil from './../../Utils/Cookies';
 import AssignVendor from './Assignvendor';
 import AddJobs from './AddJobs';
 import EditDirectHiring from './EditForms/EditDirectHiring';
- 
+import ViewJobContext from '../../Providers/ViewJob';
+
 const stripHtml = (html) => {
     const doc = new DOMParser().parseFromString(html, 'text/html');
     return doc.body.textContent || "";
@@ -58,8 +59,9 @@ const JobDashboard = () => {
         pagination,
         handlePageChange,
         openaddjob,
-        handleClickjobTable,
+        handleClickjobTable,editDrawer,handleEditJob,handleAssign
     } = useContext(JobContext);
+    const {} = useContext(ViewJobContext);
  
     const navigate = useNavigate();
     const role = CookieUtil.get("role");
@@ -104,13 +106,11 @@ const JobDashboard = () => {
         return { submission, interview, offered, joined, ClientSubmission };
     };
  
-    const handleVendorChange = (vendorId) => {
-      handleClickjobTable(vendorId);
-        setvendorjob(vendorId);
-        setOpenAssign(true);
-        
-    };
- 
+    const handleClickAssign=(id)=>{
+        setvendorjob(id)
+            setOpenAssign(true)
+       }
+
     useEffect(() => {
         fetchJob();
     }, [pagination.current, pagination.pageSize]);
@@ -118,6 +118,13 @@ const JobDashboard = () => {
     const handleopenDrawerJob = () => {
         setOpenaddjob(!openaddjob);
     };
+
+    useEffect(() => {
+        console.log("Edit Drawer State:", editDrawer);
+      }, [editDrawer]);
+      useEffect(() => {
+        console.log("Edit Drawer State:", openAssign);
+      }, [openAssign]);
  
     return (
         <>
@@ -130,7 +137,6 @@ const JobDashboard = () => {
                             <Tab.Container defaultActiveKey={'Grid'}>
                                 <div className="d-flex justify-content-between align-items-center mb-4">
                                     <h4 className="heading mb-0">Jobs</h4>
-                                   
                                 </div>
                             </Tab.Container>
                         </div>
@@ -158,8 +164,6 @@ const JobDashboard = () => {
                                     </h4>
                                     <div></div>
                                     <div></div>
-                                 
-                                   
                             </div>
                             <div className='flex align-items-center justify-content-around'>
                                                      
@@ -169,8 +173,6 @@ const JobDashboard = () => {
                                         >+ Add New Jobs
                                         </Link>
                                        
-                                     
-                               
                                 <CSVLink {...csvlink} className="btn btn-primary light btn-sm">
                                     <i className="fa-solid fa-file-excel" /> Export Report
                                 </CSVLink>
@@ -299,7 +301,7 @@ const JobDashboard = () => {
                                                                             <EditOutlined
                                                                                 className="text-primary"
                                                                                 style={{ fontSize: "18px", cursor: "pointer" }}
-                                                                                 onClick={() => setSelectedJobId(item?._id)}
+                                                                                onClick={(e) => handleEditJob(item?._id)}
                                                                             />
                                                                             <UserAddOutlined
                                                                                 style={{
@@ -307,7 +309,7 @@ const JobDashboard = () => {
                                                                                     cursor: "pointer",
                                                                                     color: "var(--color-primary)"
                                                                                 }}
-                                                                                onClick={() => handleVendorChange(item?._id)}
+                                                                                onClick={(e)=>handleClickAssign(item?._id)}
                                                                             />
                                                                         </div>
                                                                     </td>
@@ -357,34 +359,35 @@ const JobDashboard = () => {
             </Modal>
             <Modal
     title="Edit Job"
-    open={!!selectedJobId}
-    onCancel={() => setSelectedJobId(null)}
+    onCancel={()=>handleEditJob(false)}
+    open={editDrawer}
+    
     footer={null}
     width={750}
 >
     <EditDirectHiring
-        jobId={selectedJobId}
-        closeForm={() => setSelectedJobId(null)}
+        // jobId={editDrawer}
+        // closeForm={() => handleEditJob()}
     />
 </Modal>
  
-            <Drawer
+            <Modal
                 title="Assign"
                 placement="right"
-                onClose={()=>setOpenAssign(false)}
+                onCancel={()=>setOpenAssign(false)}
                 closable={openAssign}
+                footer={null}
                 size="large"
                 open={openAssign}
                 height={50}
                 width={400}
                 className="rotate-modal"
        >
-         <AssignVendor onClose={() => setOpenAssign(false)}/>
-       </Drawer>   
-       
-        
+         <AssignVendor  onCancel={()=>setOpenAssign(false)}/>
+       </Modal>   
         </>
     );
  };
+ 
  
  export default JobDashboard;

@@ -243,11 +243,11 @@ const TalentDeploymentForm = ({
           return false;
         }
 
-        const salaryAmount = values.salary;
-        if (salaryAmount <= 0) {
-          message.error("Salary amount must be greater than 0!");
-          return false;
-        }
+        // const salaryAmount = values.salary;
+        // if (salaryAmount <= 0) {
+        //   message.error("Salary amount must be greater than 0!");
+        //   return false;
+        // }
       }
 
       // Step 3 Validation
@@ -255,10 +255,7 @@ const TalentDeploymentForm = ({
         const values = await form.validateFields(clientFields);
 
         const Cbudget = values.vendor_clientbillable;
-        if (Cbudget <= 0) {
-          message.error("Budget should be greater than 0!");
-          return false;
-        } else if (
+        if (
           !values.client_id &&
           !values.clientBudget &&
           !values.end_client &&
@@ -600,7 +597,7 @@ const TalentDeploymentForm = ({
                 </Select>
               </Form.Item>
             </Col>
-            <Col span={9}>
+            {/* <Col span={9}>
               <Form.Item
                 label="Salary"
                 name="salary"
@@ -652,8 +649,8 @@ const TalentDeploymentForm = ({
                   placeholder={salaryType === "Per Hour" ? "1,000" : "1,00,000"}
                 />
               </Form.Item>
-            </Col>
-            <Col span={6}>
+            </Col> */}
+            <Col span={9}>
               <Form.Item
                 label="Skills"
                 name="skils"
@@ -722,10 +719,10 @@ const TalentDeploymentForm = ({
                 />
               </Form.Item>
             </Col>
-            <Col span={8}>
+            <Col span={10}>
               <Form.Item
                 label="Client Budget"
-                name="vendor_clientbillable"
+                name="salary"
                 rules={[
                   {
                     required: true,
@@ -742,6 +739,7 @@ const TalentDeploymentForm = ({
                 }}
               >
                 <Input
+                addonBefore={<p className="m_10">₹</p>}
                   addonAfter={
                     job_type === "Full Time" ? (
                       <p
@@ -786,7 +784,7 @@ const TalentDeploymentForm = ({
                 />
               </Form.Item>
             </Col>
-            <Col span={8}>
+            <Col span={6}>
               <Form.Item
                 name="end_client"
                 label="End Client"
@@ -887,18 +885,15 @@ const TalentDeploymentForm = ({
         <div
           style={{ display: "flex", justifyContent: "flex-end", marginTop: 20 }}
         >
-          <Button
+          <button type='button' className='btn btn-danger light ms-1 btn-sm'
             onClick={onDiscard}
             style={{
-              background: "#FF5E5E",
-              borderColor: "white",
-              color: "#ffdede",
               borderRadius: "10px",
               marginRight: 8,
             }}
           >
             Discard
-          </Button>
+          </button>
 
           {activeStep > 0 && (
             <Button

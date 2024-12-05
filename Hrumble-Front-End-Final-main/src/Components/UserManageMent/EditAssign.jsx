@@ -30,7 +30,7 @@ const EditAssign = () => {
       employee_id: assignEdit?._id,
       report_manager: reportManagerEmail,
       cc: CCEmail,
-      status: assignEdit?.status || 'active', 
+      userstatus: assignEdit?.userstatus || 'active', 
     });
   }, [assignEdit, form]);
   
@@ -66,7 +66,7 @@ const EditAssign = () => {
                         label="Report Manager"
                         name= "report_manager"
                         rules={[
-                          { required: true, message: " Report Manager is Required" },
+                          { required: false, message: " Report Manager is Required" },
                         ]}
                       >
                         <Select options={reportmanagers}
@@ -90,7 +90,7 @@ const EditAssign = () => {
           </Form.Item>
           <Form.Item
   label="Status"
-  name="status"
+  name="userstatus"
   initialValue="active" 
   rules={[
     { required: false, message: "Status is Required" },

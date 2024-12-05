@@ -8,7 +8,7 @@ import { useContext } from "react";
 import Dragger from "antd/es/upload/Dragger";
 
 
-
+const BASE = import.meta.env.VITE_BASE;
 const { RangePicker } = DatePicker;
 const { Option } = Select;
 
@@ -48,7 +48,7 @@ const AssignEmployeePopup = ({ params,handleopenDrawer}) => {
     name: "file",
     multiple: false,
 
-    action: `https://apiv1.technoladders.com/test`,
+    action: `${BASE}test`,
     onChange(info) {
       const { status } = info.file;
       if (info.fileList.length > 1) {
