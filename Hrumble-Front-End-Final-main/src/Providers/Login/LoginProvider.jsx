@@ -10,7 +10,7 @@ const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const INACTIVITY_TIMEOUT = 30 * 60 * 1000; 
 const POLLING_INTERVAL = 10 * 60 * 1000; 
-const IDLE_WARNING_TIME = INACTIVITY_TIMEOUT - 2 * 60 * 1000; 
+const IDLE_WARNING_TIME = INACTIVITY_TIMEOUT - 1 * 60 * 1000; 
 
 const LoginProvider = (props) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -23,6 +23,7 @@ const LoginProvider = (props) => {
   });
 
   const inactivityTimer = useRef(null);
+  const warningTimer = useRef(null);
   const sessionExpiryTimer = useRef(null);
   const sessionValidityIntervalRef = useRef(null);
 
@@ -33,8 +34,7 @@ const LoginProvider = (props) => {
       startSessionTimer(new Date(sessionExpiresAt));
     }
     startInactivityTimer();
-    
-    // Start periodic session validity check
+
     sessionValidityIntervalRef.current = setInterval(checkSessionValidity, POLLING_INTERVAL);
 
     document.addEventListener('mousemove', resetInactivityTimer);
@@ -44,89 +44,70 @@ const LoginProvider = (props) => {
       document.removeEventListener('mousemove', resetInactivityTimer);
       document.removeEventListener('keydown', resetInactivityTimer);
       clearTimers();
-      if (sessionValidityIntervalRef.current) {
-        clearInterval(sessionValidityIntervalRef.current);
-      }
+      if (sessionValidityIntervalRef.current) clearInterval(sessionValidityIntervalRef.current);
     };
   }, []);
 
   const startSessionTimer = (sessionExpiresAt) => {
-    clearTimeout(sessionExpiryTimer.current); // Clear existing timer
+    clearTimeout(sessionExpiryTimer.current);
     const timeLeft = new Date(sessionExpiresAt) - new Date();
     sessionExpiryTimer.current = setTimeout(logout, timeLeft);
   };
-  
 
   const startInactivityTimer = () => {
     clearTimeout(inactivityTimer.current);
-    inactivityTimer.current = setTimeout(() => {
-      handleInactivityLogout();
-    }, INACTIVITY_TIMEOUT);
+    inactivityTimer.current = setTimeout(handleInactivityLogout, INACTIVITY_TIMEOUT);
+    startWarningTimer();
   };
 
-  const resetInactivityTimer = useRef(debounce(() => {
-    startInactivityTimer();
-  }, 300)).current;
-  
-  useEffect(() => {
-    document.addEventListener('mousemove', resetInactivityTimer);
-    document.addEventListener('keydown', resetInactivityTimer);
-    return () => {
-      document.removeEventListener('mousemove', resetInactivityTimer);
-      document.removeEventListener('keydown', resetInactivityTimer);
-    };
-  }, [resetInactivityTimer]);
-  
-  
-
-  useEffect(() => {
-    const warningTimer = setTimeout(() => {
-      snackbar('You will be logged out soon due to inactivity.', 'warning');
+  const startWarningTimer = () => {
+    clearTimeout(warningTimer.current);
+    warningTimer.current = setTimeout(() => {
+      setSnackbar({
+        open: true,
+        message: 'You will be logged out soon due to inactivity.',
+        severity: 'warning',
+      });
     }, IDLE_WARNING_TIME);
-  
-    return () => clearTimeout(warningTimer);
-  }, []);
-  
+  };
+
+
+
   const clearTimers = () => {
     clearTimeout(sessionExpiryTimer.current);
     clearTimeout(inactivityTimer.current);
+    clearTimeout(warningTimer.current);
   };
 
+
   const handleInactivityLogout = () => {
-    // Remove only inactivity-related session cookies
     CookieUtil.remove('session_token');
     CookieUtil.remove('session_data');
-    
-    // Navigate to login page
-    window.location.href = "/login";
-    
-  
+    window.location.href = '/login';
   };
+
 
   const logout = () => {
     clearTimers();
-    // Stop session validity checking
     if (sessionValidityIntervalRef.current) {
       clearInterval(sessionValidityIntervalRef.current);
     }
 
-    // Remove ALL cookies for a full logout
-    CookieUtil.remove("admin_token");
-    CookieUtil.remove("is_admin");
-    CookieUtil.remove("admin");
-    CookieUtil.remove("admin_id");
-    CookieUtil.remove("session_expires_at");
-    CookieUtil.remove("role");
+    CookieUtil.remove('admin_token');
+    CookieUtil.remove('is_admin');
+    CookieUtil.remove('admin');
+    CookieUtil.remove('admin_id');
+    CookieUtil.remove('session_expires_at');
+    CookieUtil.remove('role');
     CookieUtil.remove('session_token');
     CookieUtil.remove('session_data');
     CookieUtil.remove('company');
-    localStorage.clear(); 
-    window.location.href = "/login";
+    localStorage.clear();
+    window.location.href = '/login';
     setSnackbar({
       open: true,
       message: 'Logged out successfully.',
       severity: 'info',
-      color:'warning'
     });
   };
 
@@ -187,19 +168,30 @@ const LoginProvider = (props) => {
     }
   };
 
+  const resetInactivityTimer = debounce(() => {
+    const sessionData = CookieUtil.get('session_data');
+    if (sessionData) {
+      const parsedSessionData = JSON.parse(sessionData);
+      // Update lastActivityAt timestamp
+      parsedSessionData.lastActivityAt = new Date().toISOString();
+      CookieUtil.set('session_data', JSON.stringify(parsedSessionData), { path: '/' });
+    }
+    startInactivityTimer();
+  }, 300);
+  
   const checkSessionValidity = () => {
     const sessionData = CookieUtil.get('session_data');
     if (!sessionData) {
       handleInactivityLogout();
       return;
     }
-
+  
     const { sessionExpiresAt, lastActivityAt } = JSON.parse(sessionData);
     const now = new Date();
-
+  
     if (new Date(sessionExpiresAt) < now) {
-      logout(); // Full logout for session expiry
-    } else if (now - new Date(lastActivityAt) > 15 * 60 * 1000) { // 15 minutes inactivity
+      logout();
+    } else if (now - new Date(lastActivityAt) > INACTIVITY_TIMEOUT) {
       handleInactivityLogout();
     }
   };

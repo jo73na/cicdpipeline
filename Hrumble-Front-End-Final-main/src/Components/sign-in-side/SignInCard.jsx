@@ -55,28 +55,28 @@ export default function SignInCard() {
   const theme = useTheme();
 
   // Check session validity on component mount
-  useEffect(() => {
-    const checkSessionStatus = () => {
-      const sessionData = CookieUtil.get('session_data');
-      if (sessionData) {
-        try {
-          const { sessionExpiresAt } = JSON.parse(sessionData);
-          const now = new Date();
+  // useEffect(() => {
+  //   const checkSessionStatus = () => {
+  //     const sessionData = CookieUtil.get('session_data');
+  //     if (sessionData) {
+  //       try {
+  //         const { sessionExpiresAt } = JSON.parse(sessionData);
+  //         const now = new Date();
           
-          if (new Date(sessionExpiresAt) > now) {
-            setIsSessionValid(true);
-            navigate("/dashboard");
-            return true;
-          }
-        } catch (error) {
-          console.error("Error parsing session data:", error);
-        }
-      }
-      return false;
-    };
+  //         if (new Date(sessionExpiresAt) > now) {
+  //           setIsSessionValid(true);
+  //           navigate("/dashboard");
+  //           return true;
+  //         }
+  //       } catch (error) {
+  //         console.error("Error parsing session data:", error);
+  //       }
+  //     }
+  //     return false;
+  //   };
 
-    checkSessionStatus();
-  }, [navigate]);
+  //   checkSessionStatus();
+  // }, [navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
