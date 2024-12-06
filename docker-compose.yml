@@ -37,6 +37,8 @@ services:
       ADMIN_EMAIL: sangeeth@technoladders.com
     depends_on:
       - zivelogin-mongo
+    volumes:
+      - backend_uploads:/uploads
 
   zivelogin-mongo:
     image: mongo:latest
@@ -106,4 +108,6 @@ services:
 
 volumes:
   mongodb_data:
+    driver: local
+  backend_uploads:
     driver: local

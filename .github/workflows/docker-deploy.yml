@@ -29,11 +29,12 @@ jobs:
             fi
           "
 
-      # Step 3: Create the MongoDB Data Volume (if missing)
-      - name: Ensure MongoDB Volume Exists
+      # Step 3: Ensure MongoDB and Backend Data Volumes Exist
+      - name: Ensure MongoDB Volume and Backend data Exists
         run: |
           ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "
-            docker volume inspect mongodb_data || docker volume create mongodb_data
+            docker volume inspect mongodb_data || docker volume create mongodb_data &&
+            docker volume inspect backend_uploads || docker volume create backend_uploads
           "
 
       # Step 4: Stop and Remove Containers (Preserve Volumes)
