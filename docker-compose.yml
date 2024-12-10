@@ -39,7 +39,7 @@ services:
     depends_on:
       - zivelogin-mongo
     volumes:
-      - backend_uploads:/uploads
+      - /root/upload_backup/uploads:/uploads
 
   zivelogin-mongo:
     image: mongo:latest
