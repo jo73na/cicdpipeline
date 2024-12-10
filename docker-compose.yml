@@ -35,7 +35,7 @@ services:
       OUTLOOK_SMTP_PORT: 587
       EMAIL_FROM: "No Reply (Hrumbles.ai)"
       ADMIN_EMAIL: sangeeth@technoladders.com
-      UPLOAD_PATH: /root/upload_backup/uploads
+      UPLOAD_PATH: /uploads
     depends_on:
       - zivelogin-mongo
     volumes:
