@@ -3,8 +3,8 @@ import {Link, useNavigate, useParams} from 'react-router-dom';
 import { Dropdown,Tab, Nav } from 'react-bootstrap';
 import {Button, Spin, Space , Tooltip, message} from 'antd';
 import { MailOutlined, CopyOutlined } from '@ant-design/icons';
-import AiForm from "./AI_INTEGRATION/AiForm";
-import { FileText } from 'lucide-react';
+import AiForm from "./AIntegration/AiForm"
+import { FileText ,Download} from 'lucide-react';
 import CountUp from 'react-countup';
 import { Drawer, Modal } from 'antd';
 import AddInterViewPopup from './AddInterview';
@@ -16,6 +16,7 @@ import ViewJobContext from '../../Providers/ViewJob';
 import UserManagementContext from '../../Providers/UserMangement';
 import { Breadcrumb } from '../UtlilsComponent/Breadcrumb';
 import { CSVLink } from 'react-csv';
+import jsPDF from 'jspdf';
 import CandidateView from './Candidateview'
  
  
@@ -23,7 +24,6 @@ const stripHtml = (html) => {
     const doc = new DOMParser().parseFromString(html, 'text/html');
     return doc.body.textContent || "";
   };
- 
  
 const ViewJob = () => {
      let params =useParams()
@@ -64,9 +64,6 @@ const ViewJob = () => {
         { label: "Email", key: "email" },
         { label: "Phone No", key: "phone" },
         { label: "Status", key: "status" },
-        // { label: "Created On", key: "created_at" },
-        // { label: "Status", key: "status" },
-        // { label: "Client Submissions", key: "ClientSubmission" },
     ];
    
     const csvlink = {
@@ -79,9 +76,6 @@ const ViewJob = () => {
         handleClickjobTable(params?.id)
         setCopy(false)
     },[])
- 
-   
- 
        let redColor=[
        "Internal screen Reject",
        "Internal Duplicate",
@@ -171,8 +165,6 @@ const ViewJob = () => {
           " Position Hold"
             ]
  
-           
- 
       const profit =(item)=>{
        
        let result;
@@ -253,6 +245,33 @@ const ViewJob = () => {
           },
  
         ]
+ 
+ 
+        const extractOverallScore = (analysisText) => {
+            if (!analysisText) return null;
+         
+            try {
+              // Multiple regex patterns to catch different score formats
+              const scorePatterns = [
+                /Overall\s*Score\s*[:]\s*(\d+)/i,
+                /Total\s*Score\s*[:]\s*(\d+)/i,
+                /Match\s*Score\s*[:]\s*(\d+)/i
+              ];
+         
+              for (let pattern of scorePatterns) {
+                const match = analysisText.match(pattern);
+                if (match && match[1]) {
+                  return match[1];
+                }
+              }
+             
+              return null;
+            } catch (error) {
+              console.error('Error extracting score:', error);
+              return null;
+            }
+          };
+ 
         const handleAnalyzeResume = (e, itemId, resume) => {
             e.stopPropagation(); // Prevent row selection
             setAnalyzingId(itemId);
@@ -261,15 +280,21 @@ const ViewJob = () => {
           };
        
           const handleAnalysisComplete = (result) => {
+            const overallScore = extractOverallScore(result.rawText);
             setAnalysisResults(prev => ({
               ...prev,
-              [result.id]: result
+              [result.id]: {
+                ...result,
+                overallScore: extractOverallScore(result.rawText)
+              }
             }));
+         
             setIsAnalyzing(false);
             setAnalyzingId(null);
           };
        
           const openAnalysisModal = (result) => {
+           
             setCurrentAnalysisResult(result);
             setModalVisible(true);
           };
@@ -278,7 +303,100 @@ const ViewJob = () => {
             setModalVisible(false);
             setCurrentAnalysisResult(null);
           };
-   
+ 
+          const downloadAnalysisPDF = (analysisText) => {
+            if (!analysisText) {
+              message.error('No analysis result available');
+              return;
+            }
+         
+            try {
+              // Create a new jsPDF instance
+              const doc = new jsPDF({
+                orientation: 'portrait',
+                unit: 'mm',
+                format: 'a4'
+              });
+         
+              // Page dimensions
+              const pageWidth = doc.internal.pageSize.getWidth();
+              const pageHeight = doc.internal.pageSize.getHeight();
+              const margins = 20;
+              const maxLineWidth = pageWidth - (margins * 2);
+         
+              // Professional color scheme
+              const colors = {
+                primary: [41, 128, 185],    // Professional blue
+                text: [44, 62, 80],          // Dark blue-gray
+                watermark: [200, 200, 200]   // Light gray for watermark
+              };
+         
+              // Watermark function for all pages
+              const addWatermark = () => {
+                doc.setTextColor(200,200,200);
+                doc.setFontSize(20);
+                doc.setFont('helvetica');
+                doc.text('HRUMBLES.AI', pageWidth / 2, pageHeight / 2, {
+                  angle: -45,
+                  align: 'center',
+                  maxWidth: pageWidth
+                });
+              };
+         
+              // Header function for all pages
+              const addHeader = (pageNum, totalPages) => {
+                // Company name
+                doc.setFontSize(10);
+                doc.setTextColor(colors.text[0], colors.text[1], colors.text[2]);
+                doc.setFont('helvetica', 'bold');
+                doc.text('Hrumbles.ai - Resume Analysis', margins, 15);
+         
+                // Page number
+                doc.text(`Page ${pageNum} of ${totalPages}`, pageWidth - margins, 15, {
+                  align: 'right'
+                });
+         
+                // Separator line
+                doc.setLineWidth(0.3);
+                doc.line(margins, 20, pageWidth - margins, 20);
+              };
+         
+              // Title for the document
+              doc.setFontSize(16);
+              doc.setTextColor(colors.primary[0], colors.primary[1], colors.primary[2]);
+              doc.setFont('helvetica', 'bold');
+              doc.text('Resume Analysis Report', margins, 30);
+         
+              // Prepare content
+              doc.setFontSize(11);
+              doc.setTextColor(colors.text[0], colors.text[1], colors.text[2]);
+              doc.setFont('helvetica', 'normal');
+              const splitText = doc.splitTextToSize(analysisText, maxLineWidth);
+              let verticalPosition = 45;
+              for (let i = 0; i < splitText.length; i++) {
+                // Check if we need a new page
+                if (verticalPosition > pageHeight - margins) {
+                  doc.addPage();
+                  addWatermark();
+                  addHeader(doc.internal.getNumberOfPages(), Math.ceil(splitText.length / 40));
+                  verticalPosition = 30;
+                }
+         
+                // Add text
+                doc.text(splitText[i], margins, verticalPosition);
+                verticalPosition += 7; // Compact line spacing
+              }
+              doc.setPage(1);
+              addWatermark();
+              addHeader(1, Math.ceil(splitText.length / 40));
+  
+              doc.save(`Resume_Analysis_${new Date().toISOString().split('T')[0]}.pdf`);
+         
+            } catch (error) {
+              console.error('PDF download failed', error);
+              message.error('Failed to download PDF');
+            }
+          };
     return (
         <>
         {
@@ -295,7 +413,7 @@ const ViewJob = () => {
                     </div>
                     <div>
                     <div className="">
-                    
+           
                  <div
                   className='d_f j_c_f_e mb-1'>  
                                     <CSVLink {...csvlink} className="btn btn-primary light btn-sm "><i className="fa-solid fa-file-excel" /> Export Report </CSVLink>                  
@@ -333,7 +451,6 @@ const ViewJob = () => {
                 </div>
                 <div className="card">
         <div className="card-header border-0 pb-0 flex-wrap">
-            {/* <h4 className="heading mb-0">Literary success</h4> */}
         </div>
         <div className="card-body px-2 pb-0">
              <div>
@@ -385,8 +502,7 @@ const ViewJob = () => {
                                 <thead>
                                     <tr>
                                         <th>Candidate Name</th>
-                                        {/* <th>Contact No</th>
-                                        <th>Email address</th> */}
+                                    
                                         <th>Candidate Owner</th>
                                         {
  
@@ -402,78 +518,69 @@ const ViewJob = () => {
                                     {allCandidates?.map((item, ind)=>{
                                         tableData.push({
                                             name:item.first_name+item.last_name,
-                                            // email:item.email_id,
-                                            // phone:item?.phone_no,
+                                      
                                             status:item.status
                                         })
- 
                                         return (
                                             <tr>
                                             <td>
                                                 <div className="d-flex align-items-center">
-                                                    {/* <img src={item.image} className="avatar avatar-xl" alt="" /> */}
                                                     <div className="ms-2 cat-name d-flex align-items-center" onClick={(e)=>handleOpenDrawer(e,item?._id)}>
                                                         <p className="mb-0 me-2">{`${item.first_name} ${item.last_name||""}`}</p>
-                                                     
-                                                         
                                                     </div>
                                                 </div>
                                             </td>
-                                             
-     
-   
+                                           
                                             <td>{ item?.candidate_owner?.name}</td>
                                             {
   filter?.options?.includes("View Profit") &&
   <td><span>{profit(item)}</span></td>
       }
-{/* {generateProgressBar(getStatusConfig(item?.status))} */}
 <td>
-            {/* Button for triggering resume analysis */}
             <Button
-              style={{
-                borderRadius: '8px',
-                backgroundColor: 'black',
-                color: 'white',
-                position: 'relative'
-              }}
-              type="primary"
-              onClick={(e) => handleAnalyzeResume(e, item?._id, item?.resume)}
-              loading={isAnalyzing && analyzingId === item?._id}
-            >
-              {isAnalyzing && analyzingId === item?._id
-                ? 'Analyzing...'
-                : (analysisResults[item?._id]
-                  ? 'View Report'
-                  : 'Analyze Resume')}
-            </Button>
- 
-            {/* Hidden AiForm for analysis */}
-            {(isAnalyzing || !analysisResults[item?._id]) && (
-              <AiForm
-                key={item?._id}
-                id={item?._id}
-                resume={item?.resume}
-                job_description={stripHtml(item?.job_id?.job_description)}
-                onAnalysisComplete={handleAnalysisComplete}
-              />
-            )}
- 
-            {/* Conditional rendering for analysis result tooltip */}
-            {analysisResults[item?._id] && (
-              <Tooltip title="View Analysis">
-                <FileText
-                  className="ml-2 cursor-pointer text-blue-600 absolute"
-                  style={{ top: '50%', transform: 'translateY(-50%)' }}
-                  onClick={() => openAnalysisModal(analysisResults[item?._id])}
-                />
-              </Tooltip>
-            )}
-          </td>                                          
-                                             
-                                            {/* <td>{item.view}%</td> */}
-                                            <td>
-         {/* <span className="badge badge-secondary light border-0 ms-1">{item?.status}</span> */}
+    style={{
+      borderRadius: '8px',
+      backgroundColor: 'black',
+      color: 'white',
+      position: 'relative'
+    }}
+    type="primary"
+    onClick={(e) => handleAnalyzeResume(e, item?._id, item?.resume)}
+    loading={isAnalyzing && analyzingId === item?._id}
+    disabled={!!analysisResults[item?._id]} // Disable if already analyzed
+  >
+    {isAnalyzing && analyzingId === item?._id
+      ? 'Validating...'
+      : (analysisResults[item?._id]
+        ? `Completed`
+        : 'Validate Resume')}
+  </Button>
+            {isAnalyzing && analyzingId === item?._id && (
+  <AiForm
+    key={item?._id}
+    id={item?._id}
+    resume={item?.resume}
+    job_description={stripHtml(item?.job_id?.job_description)}
+    onAnalysisComplete={handleAnalysisComplete}
+  />
+)}
+  {analysisResults[item?._id] && (
+    <div className="ml-2 flex items-center">
+      <Tooltip title="View Analysis">
+        <FileText
+          className="cursor-pointer text-blue-600"
+          onClick={() => openAnalysisModal(analysisResults[item?._id])}
+        />
+      </Tooltip>
+      <Tooltip title="Download Analysis">
+        <Download
+          className="ml-2 cursor-pointer text-green-600"
+          onClick={() => downloadAnalysisPDF(analysisResults[item?._id].rawText)}
+        />
+      </Tooltip>
+    </div>
+  )}
+          </td>                               <td>            
                                             <Dropdown className="task-dropdown-2"
                                             onClick={()=>AddInterView(item?._id)}
                                              >
@@ -485,7 +592,7 @@ const ViewJob = () => {
                                                                "Pending":
                                                                "Testing"
                                                             }>{item.status}</Dropdown.Toggle>
-                                                        
+                                                         
                                                         </Dropdown>    
                                                 </td>
                                             <td>
@@ -501,7 +608,8 @@ const ViewJob = () => {
                                               }}
                                               onClick={(e) => showCandidateModalEdit(item?._id)}></i>
                                              </div>
-                                            </td>
+                                           </td>
+                                           
                                         </tr>
                                         )
 })}
@@ -514,12 +622,9 @@ const ViewJob = () => {
                             <table className="table  card-table border-no success-tbl">
                                 <thead>
                                 <th>Candidate Name</th>
-                                        {/* <th>Contact No</th>
-                                        <th>Email address</th> */}
+                             
                                         <th>Candidate Owner</th>
-                                       
                                         <th>Status</th>
-                                        {/* <th>Action</th> */}
                                 </thead>
                                 <tbody>
                                 {viewall[0]?.screening?.map((item, ind)=>(
@@ -533,15 +638,10 @@ const ViewJob = () => {
                                                     </div>  
                                                 </div>
                                             </td>
-                                            {/* <td>{item?.phone_no}</td>
-                                            <td>{item.email_id}</td> */}
                                             <td>{ item?.Owner}</td>
                                              <td>
                                                         <span className="badge badge-primary light border-0 me-1">{item.status}</span>
- 
                                              </td>
-                                          
-                                           
                                         </tr>
                                     ))}
                                 </tbody>
@@ -558,7 +658,6 @@ const ViewJob = () => {
                                         <th>Email address</th> */}
                                         <th>Candidate Owner</th>
                                         <th>Status</th>
-                                       
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -573,15 +672,13 @@ const ViewJob = () => {
                                                     </div>  
                                                 </div>
                                             </td>
-                                            {/* <td>{item?.phone_no}</td>
-                                            <td>{item.email_id}</td> */}
+                                     
                                             <td>{ item?.Owner}</td>
                                              <td>
                                                         <span className="badge badge-primary light border-0 me-1">{item.status}</span>
  
                                              </td>
-                                    
-                                         
+ 
                                         </tr>
                                     ))}
                                 </tbody>
@@ -594,8 +691,7 @@ const ViewJob = () => {
                                 <thead>
                                 <tr>
                                         <th>Candidate Name</th>
-                                        {/* <th>Contact No</th>
-                                        <th>Email address</th> */}
+                                    
                                         <th>Candidate Owner</th>
                                         <th>Status</th>
                                     </tr>
@@ -612,15 +708,14 @@ const ViewJob = () => {
                                                     </div>  
                                                 </div>
                                             </td>
-                                            {/* <td>{item?.phone_no}</td>
-                                            <td>{item.email_id}</td> */}
+                                  
                                             <td>{ item?.Owner}</td>
                                            
                                              <td>
                                                         <span className="badge badge-primary light border-0 me-1">{item.status}</span>
  
                                              </td>
-                                          
+                                         
                                         </tr>
                                     ))}
                                 </tbody>
@@ -633,13 +728,11 @@ const ViewJob = () => {
                                 <thead>
                                 <tr>
                                         <th>Candidate Name</th>
-                                        {/* <th>Contact No</th>
-                                        <th>Email address</th> */}
+                                  
                                         <th>Candidate Owner</th>
-                                        {/* <th>Profit</th> */}
-                                        {/* <th>Progress</th> */}
+                                   
                                         <th>Status</th>
-                                        {/* <th>Action</th> */}
+                                 
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -654,13 +747,12 @@ const ViewJob = () => {
                                                     </div>  
                                                 </div>
                                             </td>
-                                            {/* <td>{item?.phone_no}</td>
-                                            <td>{item.email_id}</td> */}
+                                   
                                             <td>{ item?.Owner}</td>
                                              <td>
                                                         <span className="badge badge-primary light border-0 me-1">{item.status}</span>
                                              </td>
-                                       
+                                         
                                         </tr>
                                     ))}
                                 </tbody>
@@ -673,13 +765,11 @@ const ViewJob = () => {
                                 <thead>
                                 <tr>
                                         <th>Candidate Name</th>
-                                        {/* <th>Contact No</th>
-                                        <th>Email address</th> */}
+                             
                                         <th>Candidate Owner</th>
-                                        {/* <th>Profit</th>
-                                        <th>Progress</th> */}
+                                      
                                         <th>Status</th>
-                                        {/* <th>Action</th> */}
+                                       
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -694,13 +784,12 @@ const ViewJob = () => {
                                                     </div>  
                                                 </div>
                                             </td>
-                                            {/* <td>{item?.phone_no}</td>
-                                            <td>{item.email_id}</td> */}
+                                      
                                             <td>{ item?.Owner}</td>
                                              <td>
                                                         <span className="badge badge-primary light border-0 me-1">{item.status}</span>
                                              </td>
-                                          
+                                         
                                         </tr>
                                     ))}
                                 </tbody>
@@ -723,13 +812,14 @@ const ViewJob = () => {
         width={800}
       >
         {currentAnalysisResult && (
-          <div>
-            <pre style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>
+          <div style={{ maxHeight: '60vh', overflowY: 'auto' }}>
+            <pre style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word'}}>
               {currentAnalysisResult.rawText}
             </pre>
           </div>
         )}
       </Modal>
+ 
 <Modal
 title=""
 placement="right"
@@ -738,8 +828,6 @@ onCancel={handleInterviewClose}
 okButtonProps={{ style: { display: 'none' } }}
 cancelButtonProps={{ style: { display: 'none' } }}
  
- 
-// open={viewInterviewDrawer}
 height={50}
 width={700}
  
@@ -753,8 +841,6 @@ width={700}
     onClose={()=>setViewCandidateDrawer(false)}
     //  loading={true}
     closable={viewCandidateDrawer}
-    // size="large"
-   
     open={viewCandidateDrawer}
     height={50}
     width={650}
@@ -765,16 +851,12 @@ width={700}
         <CandidateView />
     }
     </Drawer>
- 
-   
     <Drawer
     title="Add Candidate"
     placement="right"
     onClose={showEmployeModal}
     // loading={true}
     closable={addButtonCan}
-    // size="large"
-   
     open={addButtonCan}
     height={50}
     width={660}

@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import ViewJobContext from './../../../Providers/ViewJob/index'; // Ensure this context is properly imported
+import ViewJobContext from '../../../Providers/ViewJob/index'; // Ensure this context is properly imported
  
 function AiForm({ id, resume, job_description, onAnalysisComplete }) {
   const [loading, setLoading] = useState(false);
