@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useState } from "react";
 import {
   Box,
   Button,
@@ -36,19 +36,14 @@ const Card = styled(MuiCard)(({ theme }) => ({
 
 export default function SignInCard() {
   const [form, setForm] = useState({ email_id: "", password: "", remember: true });
-  const [otp, setOtp] = useState("");
-  const [isOtpSent, setIsOtpSent] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [isSessionValid, setIsSessionValid] = useState(false);
 
   const {
     login,
-    sendOtp,
-    validateOtp,
     isLoading,
     snackbar,
     setSnackbar,
-    isLoadingOtp,
   } = useContext(LoginContext);
 
   const navigate = useNavigate();
@@ -86,21 +81,13 @@ export default function SignInCard() {
       return;
     }
 
-    if (!isOtpSent) {
-      // Validate email and password before sending OTP
-      const isValid = await login(form);
-      if (isValid) {
-        // Send OTP
-        await sendOtp(form.email_id);
-        setIsOtpSent(true);
-      }
+    // Validate email and password
+    const isValid = await login(form);
+    if (isValid) {
+      navigate("/dashboard");
+      window.location.reload();
     } else {
-      // Handle OTP verification
-      const isVerified = await validateOtp(form.email_id, otp);
-      if (isVerified) {
-        navigate("/dashboard");
-        window.location.reload();
-      }
+      setSnackbar({ open: true, message: "Login failed. Please check your credentials.", severity: "error" });
     }
   };
 
@@ -121,136 +108,98 @@ export default function SignInCard() {
           color: theme.palette.text.primary,
         }}
       >
-        {isOtpSent ? "Verify OTP" : "Sign in"}
+        Sign in
       </Typography>
       <form onSubmit={handleSubmit}>
         <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-          {!isOtpSent ? (
-            <>
-              <FormControl>
-                <TextField
-                  type="email"
-                  name="email_id"
-                  placeholder="your@email.com"
-                  value={form.email_id}
-                  onChange={(e) =>
-                    setForm({ ...form, email_id: e.target.value })
-                  }
-                  fullWidth
-                  variant="outlined"
-                  required
-                  sx={{
-                    fontFamily: "Mulish, sans-serif",
-                    fontSize: "14px",
-                    fontWeight: 500,
-                  }}
-                />
-              </FormControl>
+          <FormControl>
+            <TextField
+              type="email"
+              name="email_id"
+              placeholder="your@email.com"
+              value={form.email_id}
+              onChange={(e) =>
+                setForm({ ...form, email_id: e.target.value })
+              }
+              fullWidth
+              variant="outlined"
+              required
+              sx={{
+                fontFamily: "Mulish, sans-serif",
+                fontSize: "14px",
+                fontWeight: 500,
+              }}
+            />
+          </FormControl>
 
-              <FormControl>
-                <TextField
-                  name="password"
-                  type={showPassword ? "text" : "password"}
-                  placeholder="••••••"
-                  value={form.password}
-                  onChange={(e) =>
-                    setForm({ ...form, password: e.target.value })
-                  }
-                  fullWidth
-                  variant="outlined"
-                  required
-                  sx={{
-                    fontFamily: "Mulish, sans-serif",
-                    fontSize: "14px",
-                    fontWeight: 500,
-                  }}
-                  InputProps={{
-                    endAdornment: (
-                      <IconButton
-                        onClick={() => setShowPassword(!showPassword)}
-                        edge="end"
-                      >
-                        {showPassword ? <VisibilityOff /> : <Visibility />}
-                      </IconButton>
-                    ),
-                  }}
-                />
-              </FormControl>
-
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={form.remember}
-                    onChange={(e) =>
-                      setForm({ ...form, remember: e.target.checked })
-                    }
-                    color="primary"
-                  />
-                }
-                label={
-                  <Typography
-                    sx={{
-                      fontFamily: "Mulish, sans-serif",
-                      fontSize: "14px",
-                      fontWeight: 500,
-                      color: theme.palette.text.primary,
-                    }}
+          <FormControl>
+            <TextField
+              name="password"
+              type={showPassword ? "text" : "password"}
+              placeholder="••••••"
+              value={form.password}
+              onChange={(e) =>
+                setForm({ ...form, password: e.target.value })
+              }
+              fullWidth
+              variant="outlined"
+              required
+              sx={{
+                fontFamily: "Mulish, sans-serif",
+                fontSize: "14px",
+                fontWeight: 500,
+              }}
+              InputProps={{
+                endAdornment: (
+                  <IconButton
+                    onClick={() => setShowPassword(!showPassword)}
+                    edge="end"
                   >
-                    Remember me
-                  </Typography>
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                ),
+              }}
+            />
+          </FormControl>
+
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={form.remember}
+                onChange={(e) =>
+                  setForm({ ...form, remember: e.target.checked })
                 }
+                color="primary"
               />
-
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                disabled={isLoadingOtp}
+            }
+            label={
+              <Typography
                 sx={{
-                  transition: "0.3s ease",
                   fontFamily: "Mulish, sans-serif",
                   fontSize: "14px",
                   fontWeight: 500,
+                  color: theme.palette.text.primary,
                 }}
               >
-                Send OTP
-              </Button>
-            </>
-          ) : (
-            <>
-              <FormControl>
-                <TextField
-                  name="otp"
-                  placeholder="Enter OTP"
-                  value={otp}
-                  onChange={(e) => setOtp(e.target.value)}
-                  fullWidth
-                  variant="outlined"
-                  required
-                  sx={{
-                    fontFamily: "Mulish, sans-serif",
-                    fontSize: "14px",
-                    fontWeight: 500,
-                  }}
-                />
-              </FormControl>
+                Remember me
+              </Typography>
+            }
+          />
 
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                disabled={isLoading}
-                sx={{
-                  transition: "0.3s ease",
-                  fontFamily: "Mulish, sans-serif",
-                  fontSize: "14px",
-                  fontWeight: 500,
-                }}
-              >
-                Verify OTP
-              </Button>
-            </>
-          )}
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            disabled={isLoading}
+            sx={{
+              transition: "0.3s ease",
+              fontFamily: "Mulish, sans-serif",
+              fontSize: "14px",
+              fontWeight: 500,
+            }}
+          >
+            Login
+          </Button>
         </Box>
       </form>
 

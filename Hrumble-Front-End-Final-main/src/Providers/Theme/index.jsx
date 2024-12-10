@@ -1,4 +1,4 @@
-import React, { createContext, useEffect, useState, useReducer } from "react";
+import React, { createContext, useEffect, useState, useReducer, useCallback } from "react";
 
 export const ThemeContext = createContext();
 const reducer = (previousState, updatedState) => ({
@@ -7,17 +7,18 @@ const reducer = (previousState, updatedState) => ({
 });
 
 const initialState = {
-  sideBarStyle : { value: "full", label: "Full"},
-  sidebarposition : { value: "fixed", label: "Fixed"},
-  headerposition : { value: "fixed", label: "Fixed"},
-  sidebarLayout : { value: "vertical", label: "Vertical"},
-  primaryColor : "color_1",
-  secondaryColor : "color_1",
-  navigationHader: "color_2",
-  haderColor: "color_1",
-  sidebarColor: "color_3",
-  background : {value:"light", label:"Light"},
-  containerPositionSize: {value: "wide-boxed", label: "Wide Boxed"},
+  sideBarStyle: { value: "full", label: "Full" },
+  sidebarposition: { value: "fixed", label: "Fixed" },
+  headerposition: { value: "fixed", label: "Fixed" },
+  sidebarLayout: { value: "vertical", label: "Vertical" },
+  contentColor: "#F3F0EC",
+  primaryColor: "#88a67e",
+  secondaryColor: "color_1",
+  navigationHader: "#343A40",
+  haderColor: "#343A40",
+  sidebarColor: "#343A40",
+  background: { value: "light", label: "Light" },
+  containerPositionSize: { value: "wide-boxed", label: "Wide Boxed" },
   iconHover: false,
   menuToggle: false,
   windowWidth: 0,
@@ -25,14 +26,15 @@ const initialState = {
 };
 
 const ThemeContextProvider = (props) => {
-const [sidebariconHover, setSidebariconHover] = useState(false);
-const [state, dispatch] = useReducer(reducer, initialState);	
-const { 
+  const [sidebariconHover, setSidebariconHover] = useState(false);
+  const [state, dispatch] = useReducer(reducer, initialState);	
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const { 
     sideBarStyle, 
     sidebarposition,
     headerposition,
     sidebarLayout,
-    primaryColor , 
+    primaryColor, 
     secondaryColor,
     navigationHader, 
     haderColor,
@@ -43,55 +45,66 @@ const {
     menuToggle,
     windowWidth,
     windowHeight,
-} = state;
+    contentColor,
+  } = state;
 
   const body = document.querySelector("body");  
+  
+  // Improved toggle sidebar function with prevention of multiple rapid toggles
+  const toggleSidebar = useCallback(() => {
+    // Prevent multiple rapid toggles
+    setIsSidebarOpen((prev) => !prev);
+  }, []);
+
   const ChangeIconSidebar = (value) => {
-    if(sideBarStyle.value==="icon-hover"){
-      if(value){
-        setSidebariconHover(true);
-      }else{
-        setSidebariconHover(false);
-      }
+    if(sideBarStyle.value === "icon-hover"){
+      setSidebariconHover(value);
     }
-  }
+  };
   
   const openMenuToggle = () => {    
     sideBarStyle.value === "overly"  
-      ? dispatch({menuToggle : true})
-      : dispatch({menuToggle: false})
+      ? dispatch({menuToggle: true})
+      : dispatch({menuToggle: false});
   };
+
   const changeBackground = (name) => {
     body.setAttribute("data-theme-version", name.value);
     dispatch({background: name});
   };
   
   useEffect(() => {
-	  const body = document.querySelector("body");  
-		let resizeWindow = () => {			
-      dispatch({windowWidth : window.innerWidth});
-      dispatch({windowHeight : window.innerHeight});
-			window.innerWidth >= 768 && window.innerWidth < 1024
-			? body.setAttribute("data-sidebar-style", "mini")
-			: window.innerWidth <= 768
-			? body.setAttribute("data-sidebar-style", "overlay")
-			: body.setAttribute("data-sidebar-style", "full");
-		};
+    const resizeWindow = () => {
+      dispatch({ 
+        windowWidth: window.innerWidth, 
+        windowHeight: window.innerHeight 
+      });
+
+      // Responsive sidebar style
+      if (window.innerWidth >= 768 && window.innerWidth < 1024) {
+        body.setAttribute("data-sidebar-style", "mini");
+      } else if (window.innerWidth <= 768) {
+        body.setAttribute("data-sidebar-style", "overlay");
+      } else {
+        body.setAttribute("data-sidebar-style", "full");
+      }
+    };
+    
     resizeWindow();
     window.addEventListener("resize", resizeWindow);
     return () => window.removeEventListener("resize", resizeWindow);
-  }, []);
-
+  }, [dispatch]);
+  
   return (
     <ThemeContext.Provider
       value={{
         body,       
         sidebarposition,        
-	    	primaryColor,
+        primaryColor,
         secondaryColor,
         navigationHader,
-		    windowWidth,
-		    windowHeight,       
+        windowWidth,
+        windowHeight,       
         sideBarStyle,               
         headerposition,        
         sidebarLayout,        
@@ -104,8 +117,11 @@ const {
         openMenuToggle,
         changeBackground,
         background,
-        containerPositionSize,		    
-	}}
+        containerPositionSize,	
+        contentColor, 
+        isSidebarOpen, 
+        toggleSidebar,
+      }}
     >
       {props.children}
     </ThemeContext.Provider>

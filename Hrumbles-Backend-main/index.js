@@ -42,9 +42,11 @@ app.use((req, res, next) => {
 app.use(cookieParser());
 
 
-app.use('/uploads', express.static(path.join(__dirname, '/uploads')))
-app.use('/resumeparser', (req,res)=>{
-  const resumeFilePath = './uploads/naukri_avinashlavale[3y_0m].pdf';
+const uploadPath = process.env.UPLOAD_PATH || path.join(__dirname, 'uploads');
+app.use('/uploads', express.static(uploadPath));
+
+app.use('/resumeparser', (req, res) => {
+  const resumeFilePath = path.join(uploadPath, 'naukri_avinashlavale[3y_0m].pdf');
 
   parsePDF(resumeFilePath).then((pdfText) => {
     // Parse PDF text

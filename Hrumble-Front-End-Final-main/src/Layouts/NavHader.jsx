@@ -19,7 +19,13 @@ const NavHader = () => {
   }, [toggleSidebar]);
 
   return (
-    <div className={`nav-header transition-all duration-300 ${!isSidebarOpen ? "expanded" : "collapsed"}`}>
+    <div
+      className={`nav-header transition-all duration-300`}
+      style={{
+        width: isSidebarOpen ? '199px' : '79px', // Dynamic width based on sidebar state
+        height: '65px', // Match the height of the HeaderBar
+      }}
+    >
       <Link 
         to="/dashboard" 
         onClick={handleLogoClick} 

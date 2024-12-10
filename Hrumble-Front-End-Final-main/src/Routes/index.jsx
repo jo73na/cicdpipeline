@@ -6,7 +6,7 @@ import {
   useLocation,
 } from "react-router-dom";
 import { ConfigProvider } from "antd";
-import {  themefuction } from "../Utils/ThemeCustomization";
+import {  ThemeContext } from "../Providers/Theme/index";
 import Loader from "../Utils/Loader";
 import RoutesDynamic from "./Routes";
 import Layouts from "../Layouts";
@@ -26,6 +26,8 @@ import SignUp from "../Components/sign-up/SignUp"
 
 
 const MainRoutes = () => {
+
+  const { primaryColor, secondaryColor } = useContext(ThemeContext);
   
   const Wrapper = ({ children }) => {
     const location = useLocation();
@@ -44,14 +46,17 @@ const MainRoutes = () => {
   //   Category,
   //   Product,
   // };
-  let Custom =themefuction("#757b48")
+  
 
   return (
     <>
       <ConfigProvider
-        theme={{
-          token: Custom,
-        }}
+       theme={{
+        token: {
+          colorPrimary: primaryColor,
+          colorSecondary: secondaryColor,
+        },
+      }}
       >
         <Router>
           <Wrapper>

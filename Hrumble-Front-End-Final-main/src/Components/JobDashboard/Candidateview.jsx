@@ -1,4 +1,4 @@
-import { useContext} from 'react';
+import { useContext, useEffect} from 'react';
 import {Button, Tabs } from 'antd';
 import BasicInfo from './CandidateBasiceInfo';
 import TimelineComponent from './CandidateTimeline';
@@ -25,7 +25,9 @@ const CandidateView=()=>{
   navigate(`/candidates/${CandidateView?.candidateoriginal_id}`)
 
  }
- 
+ useEffect(() => {
+  console.log("Resume:", CandidateView.resume);
+})
 
 //Tabs Items
 const items = [

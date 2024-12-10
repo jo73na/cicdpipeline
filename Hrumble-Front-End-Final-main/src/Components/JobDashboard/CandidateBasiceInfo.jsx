@@ -21,9 +21,9 @@ const BasicInfo =()=> {
   const [Billableamount,setBillableAmount]=useState(0)
  const role = CookieUtil.get("role");
 
- useEffect(() => {
-  console.log("Resume:", CandidateView.resume);
-})
+//  useEffect(() => {
+//   console.log("Resume:", CandidateView.resume);
+// })
 const resumename = (data) => {
   const match = data.match(/(\d+)([a-zA-Z0-9_[\] -]+\.[a-zA-Z0-9]+)/);
 

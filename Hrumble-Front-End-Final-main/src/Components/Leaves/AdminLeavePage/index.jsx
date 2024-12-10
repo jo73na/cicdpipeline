@@ -1,10 +1,11 @@
 import { useContext, useEffect } from 'react';
 import Loader from '../../../Utils/Loader';
-import { Button, Input, Table, Select } from 'antd';
+import { Button, Input, Table, Select, Tooltip } from 'antd';
 import LeaveContext from '../../../Providers/Leaves';
 import { useNavigate } from 'react-router-dom';
 import moment from 'moment';
 import { Dropdown } from 'react-bootstrap';
+import dayjs from 'dayjs';
 
 const { Search } = Input;
 
@@ -22,12 +23,18 @@ const AdminLevePage = () => {
 
   const mappedData = nonApprovedLeaves?.map((item, i) => (
     <tr key={i}>
+           <td>{dayjs(item.createdAt).format("DD-MM-YYYY")}</td>
+
       <td><span>{item?.employee_id?.name || '-'}</span></td>
       <td><span>{item?.leave_id?.leave_title}</span></td>
       <td><span>{moment(item?.startDate).format('DD-MM-YYYY')}</span></td>
       <td><span>{moment(item?.endDate).format('DD-MM-YYYY')}</span></td>
       <td><span>{item.no_of_days}</span></td>
-      <td><span>{item?.reason}</span></td>
+      <td>
+      <Tooltip title={item?.reason || '-'}>
+                    <span className="truncate">{item?.reason || '-'}</span>
+                  </Tooltip>
+                  </td>
       <td>
         <Dropdown className="task-dropdown-2">
           <Dropdown.Toggle
@@ -47,9 +54,9 @@ const AdminLevePage = () => {
           </Dropdown.Menu>
         </Dropdown>
       </td>
-      <td style={{ textAlign: 'left' }}>
+      {/* <td style={{ textAlign: 'left' }}>
         <span>{item.approved_by ? item?.approved_by?.name : '-'}</span>
-      </td>
+      </td> */}
     </tr>
   ));
 
@@ -67,20 +74,21 @@ const AdminLevePage = () => {
         </button>
       </div>
       <div className="table-responsive mt-3">
-        <table className="table card-table border-no success-tbl">
+        <table className="table-custom card-table border-no success-tbl">
           <thead>
             <tr>
+              <th>Applied Date</th>
               <th>Employee Name</th>
               <th>Leave Type</th>
-              <th>Start Date</th>
-              <th>End Date</th>
+              <th>From Date</th>
+              <th>To Date</th>
               <th>No. of Days</th>
               <th>Reason</th>
               <th>Status</th>
-              <th>Approved By</th>
+              {/* <th>Approved By</th> */}
             </tr>
           </thead>
-          <tbody>
+          <tbody className="tablebody-custom">
             {mappedData}
           </tbody>
         </table>

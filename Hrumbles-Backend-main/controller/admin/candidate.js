@@ -29,9 +29,11 @@ const methods = { authAdmin };
 
  function storeFileds() {
   console.log("file working")
+  const uploadPath = process.env.UPLOAD_PATH || "./uploads/";
+
   const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-      cb(null, "./uploads/");
+      cb(null, uploadPath);
     },
     filename: function (req, file, cb) {
       cb(null, Date.now() + Math.random() + path.extname(file.originalname));

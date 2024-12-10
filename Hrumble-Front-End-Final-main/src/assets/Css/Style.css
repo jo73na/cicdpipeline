@@ -43587,12 +43587,15 @@ background: "#ebc1c1"
 }
 
 /* Addjobs Form Input Salary type */
-.table th,
-.table td {
+.table-custom th,
+.table-custom td {
   text-align: center;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  font-size: 12px;
+  row-gap: 2px;
+  overflow: visible;
 }
 
 .reason-column {
@@ -43639,3 +43642,34 @@ background: "#ebc1c1"
   text-overflow: ellipsis;
 }
 
+.task-drop-menu {
+  max-height: none; /* Remove any max-height restrictions */
+  overflow: visible; /* Allow the dropdown to overflow its container */
+ /* Ensure it appears above other elements */
+}
+
+.table-custom td {
+  overflow: visible; /* Prevent the dropdown from being cut off */
+}
+
+.table-custom tbody tr {
+  line-height: 1; /* Adjust line height */
+  height: 10px; /* Set a specific height for rows */
+}
+
+.table-custom tbody td {
+  padding: 5px; /* Adjust padding for cells */
+}
+
+/* NavHader.css */
+
+
+
+
+.ant-select-single.ant-select-sm{
+  height: auto;
+}
+
+.ant-select-selector {
+ background-color: #FFECCC;
+}

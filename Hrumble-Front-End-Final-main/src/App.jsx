@@ -1,6 +1,6 @@
 import { lazy } from "react";
-
 import './assets/Css/Style.css';
+// import './assets/Css/CleanedStyle.css';
 import './assets/Css/MasterCss.css';
 import './assets/Css/Responsive.css';
 import MainRoutes from './Routes';
@@ -44,6 +44,8 @@ import SalesandMargettingProvider from './Providers/SalesandMargetting/SalesandM
 import SpaceProvider from "./Providers/Space/SpaceProvider";
 import ProjectProvider from "./Providers/Construction/Projects/ProjectProvider";
 import  SignUpProvider from './Providers/SignUpProvider/SignUpProvider';
+import   ThemeContextProvider  from "./Providers/Theme";
+
 
 function App() {
   return (
@@ -69,7 +71,9 @@ function App() {
                                           <FAQProvider>
               
                                               <SignUpProvider>
+                                              <ThemeContextProvider>
                                               <MainRoutes />
+                                              </ThemeContextProvider>
                                               </SignUpProvider>
                                           
                                           </FAQProvider>

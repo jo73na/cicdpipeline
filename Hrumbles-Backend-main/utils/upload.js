@@ -1,5 +1,7 @@
 const multer = require('multer');
-const DIR = "./uploads/";
+const path = require('path');
+
+const DIR = process.env.UPLOAD_PATH || "./uploads/";
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, DIR);
@@ -7,7 +9,7 @@ const storage = multer.diskStorage({
   filename: (req, file, cb) => {
     var d = new Date();
     var randomName = d.getTime();
-      console.log(file.name);
+      console.log(file.originalname);
     const fileName = file.originalname.toLowerCase().split(" ").join("-");
     cb(null,  fileName);
   },

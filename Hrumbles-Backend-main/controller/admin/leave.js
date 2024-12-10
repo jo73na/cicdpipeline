@@ -28,6 +28,7 @@ router.post('/publicholidays', methods.publicholidays )
 
 methods.leaverequest =asyncHandler(async (req, res) => {
    req.body.employee_id = req.user._id
+   req.body.appliedDate = new Date();
    console.log("req.body",req.body)
   try {
      console.log("req.user",req.user.salary_type)
@@ -198,91 +199,65 @@ success(res, 200, true, "Update Successfully",await crud.insertOne(workingdays, 
    router.post('/working/:id', methods.getWorkingDaysAdd)
 
 
-   methods.approved =asyncHandler(async (req, res) => {
+   methods.approved = asyncHandler(async (req, res) => {
     const { id } = req.params;
     validateId(id);
-    const check = await crud.getOneDocumentById(leave_request,id,{},{populate:"leave_id employee_id"});
-    console.log("check",check)
-    if (!check) throw new Error('Data not Found!')
+    const check = await crud.getOneDocumentById(leave_request, id, {}, { populate: "leave_id employee_id" });
+    
+    if (!check) throw new Error('Data not Found!');
+
     try {
+        console.log("Current Leave Request Status:", check.status); // Log the current status
 
-    if(check.status == "Pending"){
-      const currentDate = new Date(check.startDate);
-      const dataArray=[]
-      // Function to format a date as "YYYY-MM-DD"
-      for (let i = 0; i < check?.no_of_days; i++) {
-        // Use toISOString() to get the date string in the format "YYYY-MM-DDTHH:mm:ss.sssZ"
-        const formatDate = (date) => {
-          const year = date.getFullYear();
-          const month = String(date.getMonth() + 1).padStart(2, '0');
-          const day = String(date.getDate()).padStart(2, '0');
-        
-          return `${year}-${month}-${day}`;
-        };
-        
-        // Format the current date
-        const currentDateString = formatDate(currentDate);
-        const yesterdayDate = new Date(currentDate);
-        yesterdayDate.setDate(currentDate.getDate() - 1);
-        
-        // Function to format a date as "YYYY-MM-DD"
-        const formatDate1 = (date) => {
-          const year = date.getFullYear();
-          const month = String(date.getMonth() + 1).padStart(2, '0');
-          const day = String(date.getDate()).padStart(2, '0');
-        
-          return `${year}-${month}-${day}`;
-        };
-        
-        // Format yesterday's date
-        const yesterdayDateString = formatDate1(yesterdayDate);
-        const providedStartTime = `${yesterdayDateString}T18:30:00.000Z`;
-        const providedEndTime = `${currentDateString}T18:30:00.000Z`;
-        dataArray.push({
-          StartTime:providedStartTime,
-          EndTime:providedEndTime,
-          employee_id:check?.employee_id,
-          leave_id:check?.leave_id?._id,
-          leave_title:check?.leave_id?.leave_title,
-          type:"Approved",
-          status:"Leave"
-        })
+        if (check.status === "Pending" || check.status === "Approved" || check.status === "Rejected") {
+            const currentDate = new Date(check.startDate);
+            const dataArray = [];
 
-        
-        
-        // Increment the current date by one day for the next iteration
-        currentDate.setDate(currentDate.getDate() + 1);
-      }
-   
+            // Loop to create event data
+            for (let i = 0; i < check?.no_of_days; i++) {
+                const formatDate = (date) => {
+                    const year = date.getFullYear();
+                    const month = String(date.getMonth() + 1).padStart(2, '0');
+                    const day = String(date.getDate()).padStart(2, '0');
+                    return `${year}-${month}-${day}`;
+                };
 
-      // Get tomorrow's date by adding one day
-   
+                const currentDateString = formatDate(currentDate);
+                const yesterdayDate = new Date(currentDate);
+                yesterdayDate.setDate(currentDate.getDate() - 1);
+                const yesterdayDateString = formatDate(yesterdayDate);
+                const providedStartTime = `${yesterdayDateString}T18:30:00.000Z`;
+                const providedEndTime = `${currentDateString}T18:30:00.000Z`;
 
-// Assuming you have the provided StartTime and EndTime strings
+                dataArray.push({
+                    StartTime: providedStartTime,
+                    EndTime: providedEndTime,
+                    employee_id: check?.employee_id,
+                    leave_id: check?.leave_id?._id,
+                    leave_title: check?.leave_id?.leave_title,
+                    type: "Approved",
+                    status: "Leave"
+                });
 
-      if(check?.employee_id?.salary_type == "Non Billable"){
+                currentDate.setDate(currentDate.getDate() + 1);
+            }
 
-        let eventscreate= await crud.updateMany(hrlogged,{leave_id:id},{type:"Approved"})
-         console.log("ffff",eventscreate)
-      success(res, 200, true, 'Update Successfully', await crud.updateById(leave_request, id, {...req.body,approved_by:req.user._id}, { new: true }));
+            if (check?.employee_id?.salary_type === "Non Billable") {
+                await crud.updateMany(hrlogged, { leave_id: id }, { type: "Approved" });
+            } else {
+                await crud.insertMany(event, dataArray);
+            }
 
-      }
-      else{
-        let eventscreate= await crud.insertMany(event,dataArray)
-       
-
-      success(res, 200, true, 'Update Successfully', await crud.updateById(leave_request, id, {...req.body,approved_by:req.user._id}, { new: true }));
-       
-      }
-    }
-    else{
-      throw new Error("Already Approved");
-
-    }
+            success(res, 200, true, 'Update Successfully', await crud.updateById(leave_request, id, { ...req.body, approved_by: req.user._id }, { new: true }));
+        } else {
+            console.log("Leave request is already approved or rejected."); // Log this for debugging
+            throw new Error("Already Approved");
+        }
     } catch (err) {
-      throw new Error(err);
-    } 
-  })
+        console.error("Error in approving leave request:", err); // Log the error
+        throw new Error(err);
+    }
+});
   
    router.put('/status/:id', methods.authAdmin,methods.approved )
 

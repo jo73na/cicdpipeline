@@ -150,33 +150,28 @@ const LeaveProvider =(props) => {
         }
     }
 
-    const handleChangeStatus= async(id,e)=>{
-       
-        const api=`${BASE_URL}/leave/status/${id}`
-        let senddata={
-            status:e
-        }
+    const handleChangeStatus = async (id, newStatus) => {
+        const api = `${BASE_URL}/leave/status/${id}`;
+        const sendData = {
+            status: newStatus
+        };
         try {
-            await axios.put(api,senddata,{
+            const resp = await axios.put(api, sendData, {
                 headers: {
-                  Authorization: `Bearer ${token}`,
-                  // Other headers if needed
-                },}).then((resp) => {
-                notification.success({
-                    message: resp?.data?.message,
-                    duration:1,
-                  });   
-                  fetchrequestleaves()
+                    Authorization: `Bearer ${token}`,
+                }
             });
+           
+            fetchrequestleaves();
         } catch (error) {
-            
-   notification.error({
-    message:"Already Approved ",
-    
-    duration:1,
-  }); 
+            console.error("Error updating leave status:", error.response); // Log the full response
+            notification.error({
+                message: "Failed to update status",
+                description: error.response?.data?.message || "An error occurred while updating the status.",
+                duration: 2,
+            });
         }
-    }
+    };
 
 
 

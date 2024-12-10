@@ -82,7 +82,7 @@ const LoginProvider = (props) => {
 
   const handleInactivityLogout = () => {
     CookieUtil.remove('session_token');
-    CookieUtil.remove('session_data');
+    // CookieUtil.remove('session_data');
     window.location.href = '/login';
   };
 

@@ -8,6 +8,7 @@ const LEAVESCHEMA = {
   description:String,
   status:String,
   created_by:{ type:mongoose.Schema.Types.ObjectId, ref:"admin_login", default:null, },
+  appliedDate: { type: Date, default: Date.now }
    
      
     

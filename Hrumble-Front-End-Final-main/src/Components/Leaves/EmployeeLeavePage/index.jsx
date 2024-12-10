@@ -17,6 +17,7 @@ import { SVGICON } from './../../../Utils/SVGICON';
 
 
 
+
 const {Search}=Input
 const EmployeeLevePage = () => {
   const {Loading,fetchavailableLeaves,totalleaves,Addleaverequest,fetchrequestleaves,requestleaves}=useContext(LeaveContext)
@@ -56,7 +57,8 @@ let senddata={
   ...values,
    no_of_days: parseInt(daysDifference < 1? 1: daysDifference),
    endDate:  values?.endDate?.$d,
-   startDate:  values?.startDate?.$d
+   startDate:  values?.startDate?.$d,
+   appliedDate: new Date()
 }
    Addleaverequest(senddata)
   
@@ -88,6 +90,8 @@ let senddata={
          </div>
      </td> */}
      {/* <td><span>{index + 101}</span></td> */}
+     <td>{dayjs(item.createdAt).format("YYYY-MM-DD")}</td>
+
      <td>
          <div className="products">
              <div>
@@ -100,8 +104,8 @@ let senddata={
              </div>	
          </div>
      </td>
-     <td><span>{dayjs(item?.startDate).format("YYYY-MM-DD")}</span></td>
-     <td><span>{dayjs(item?.startDate).format("YYYY-MM-DD")}</span></td>
+     <td><span>{dayjs(item?.startDate).format("DD-MM-YYYY")}</span></td>
+     <td><span>{dayjs(item?.startDate).format("DD-MM-YYYY")}</span></td>
      <td><span>{item.no_of_days}</span></td>
      <td><span>{item?.reason}</span></td>
      <td><span>
@@ -115,6 +119,7 @@ let senddata={
       }
       </span></td>
      <td><span>{item.approved_by? item?.approved_by?.name:"-"}</span></td>
+     
     
      {/* <td>
          <span>{item.enddate}</span>
@@ -254,6 +259,7 @@ let senddata={
                                                    </div>
                                                </th> */}
                                                {/* <th>#</th> */}
+                                               <th>Applied Date</th>
                                                <th>Leave Title</th>
                                                <th>Strat Date</th>
 
@@ -331,7 +337,7 @@ let senddata={
           
             name="leave_id" 
             label="Leave Title"
-            rules={[{ required: true, message: 'Please enter Leave Title' }]}
+            rules={[{ required: false, message: 'Please enter Leave Title' }]}
           >
             <Select placeholder="Select Leave Title"
              options={leavedata}/>
