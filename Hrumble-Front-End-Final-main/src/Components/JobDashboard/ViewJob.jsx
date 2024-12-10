@@ -16,6 +16,7 @@ import ViewJobContext from '../../Providers/ViewJob';
 import UserManagementContext from '../../Providers/UserMangement';
 import { Breadcrumb } from '../UtlilsComponent/Breadcrumb';
 import { CSVLink } from 'react-csv';
+import CandidateView from './Candidateview'
  
  
 const stripHtml = (html) => {
@@ -44,7 +45,7 @@ const ViewJob = () => {
   console.log("permission", permission);
   let filter = permission?.find((item) => item?.name == "Jobs");
  
-     const {CandidateView,setViewCandidateDrawer,AddInterView,handleInterviewClose,viewInterviewDrawer,viewall,handleClickjobTable,Loading,jobSingle,viewjobCount,allCandidates,handleStatusEdit,addButtonCan,setAddButtonCan,showEmployeModal,setEditButtonJob,showEmployeModalEdit,editButtonJob,editButtonCanEmploy,viewCandidateDrawer,handleCloseviewDrawer,showCandidateModalEdit,setEditButtonCanEmploy,handleopenCandidateDrawer, handleClick}=useContext(ViewJobContext)
+     const {setViewCandidateDrawer,AddInterView,handleInterviewClose,viewInterviewDrawer,viewall,handleClickjobTable,Loading,jobSingle,viewjobCount,allCandidates,handleStatusEdit,addButtonCan,setAddButtonCan,showEmployeModal,setEditButtonJob,showEmployeModalEdit,editButtonJob,editButtonCanEmploy,viewCandidateDrawer,handleCloseviewDrawer,showCandidateModalEdit,setEditButtonCanEmploy,handleopenCandidateDrawer, handleClick}=useContext(ViewJobContext)
      const cardCounter = [
         {number:  viewjobCount[0]?.submissionCount , countText:'purple', title:'Internal Submission'},
         {number: viewjobCount[0]?.clientSubmissionCount,countText:'warning',  title:'Client Submission'},
