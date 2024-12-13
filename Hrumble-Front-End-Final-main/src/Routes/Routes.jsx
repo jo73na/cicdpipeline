@@ -62,7 +62,9 @@ const  Settings  =lazy(()=>import( './../Components/Settings/index'));
 import Units from './../Components/Construction/Projects/Units';
 import EditProjects from "../Components/Construction/Projects/EditProjects";
 import AddJobs from "../Components/JobDashboard/AddJobs";
-import LeaveHistory from "../Components/Leaves/AdminLeavePage/LeaveHistory"
+import LeaveHistory from "../Components/Leaves/AdminLeavePage/LeaveHistory";
+import LeaveApproval from "../Components/Leaves/AdminLeavePage/LeaveApproval";
+import TimelineLeave from "../Components/Leaves/AdminLeavePage/TimelineLeave";
 
 
 const RoutesDynamic = [
@@ -397,6 +399,20 @@ const RoutesDynamic = [
 
     component: <LeaveHistory/>,
   },
+  {
+    path: "/leaveapproval",
+    exact: true,
+
+    component: <LeaveApproval/>,
+  },
+
+  {
+    path: "/leaveTimeline",
+    exact: true,
+
+    component: <TimelineLeave/>,
+  },
+
  
 ];
 export default RoutesDynamic;

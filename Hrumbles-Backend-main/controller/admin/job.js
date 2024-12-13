@@ -182,7 +182,7 @@ methods.getAll = asyncHandler(async (req, res) => {
 ]
 if (req?.query?.status) {
   aggregate.unshift({
-    $match: { status: { $in: req?.query?.status } }
+    $match: { status: { $in: [req?.query?.status] } }
   });
 }
 

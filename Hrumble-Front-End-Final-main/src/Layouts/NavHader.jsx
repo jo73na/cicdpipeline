@@ -1,11 +1,35 @@
-import React, { useContext, useCallback } from "react";
+import React, { useState,useContext, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ThemeContext } from "../Providers/Theme/index";
 import { SVGICON } from "../Utils/SVGICON";
 import logo from "/images/Hricon.svg";
 
-const NavHader = () => {
-  const { isSidebarOpen, toggleSidebar } = useContext(ThemeContext);
+
+
+const NavHader = ({toggleSideBar,collapsed}) => {
+  const {  body,       
+    sidebarposition,        
+    primaryColor,
+    secondaryColor,
+    navigationHader,
+    windowWidth,
+    windowHeight,       
+    sideBarStyle,               
+    headerposition,        
+    sidebarLayout,        
+    haderColor,       
+    sidebarColor,
+    iconHover,
+    ChangeIconSidebar,
+    menuToggle,
+    sidebariconHover,
+    openMenuToggle,
+    changeBackground,
+    background,
+    containerPositionSize,	
+    contentColor, 
+    isSidebarOpen}
+ =useContext(ThemeContext);
   const navigate = useNavigate();
 
   const handleLogoClick = useCallback((e) => {
@@ -13,17 +37,16 @@ const NavHader = () => {
     navigate("/dashboard");
   }, [navigate]);
 
-  const handleToggleSidebar = useCallback((e) => {
-    e.preventDefault(); // Prevent default link behavior
-    toggleSidebar();
-  }, [toggleSidebar]);
+
+
 
   return (
     <div
-      className={`nav-header transition-all duration-300`}
+      className={`nav-header`}
       style={{
-        width: isSidebarOpen ? '199px' : '79px', // Dynamic width based on sidebar state
-        height: '65px', // Match the height of the HeaderBar
+        width: collapsed ? '200px' : '80px', 
+        height: '60px',
+        backgroundColor:navigationHader,
       }}
     >
       <Link 
@@ -34,16 +57,16 @@ const NavHader = () => {
         <img 
           src={logo} 
           alt="logo" 
-          className="transition-all duration-300"
-          width={isSidebarOpen ? 50 : 30} 
+          
+          width={collapsed ? 40 : 30} 
         />
       </Link>
 
       <div
-        className="nav-control cursor-pointer"
-        onClick={handleToggleSidebar}
+        className="nav-control cursor-pointer "
+        onClick={toggleSideBar}
       >
-        <div className={`hamburger transition-all duration-300 ${isSidebarOpen ? "is-active" : ""}`}>
+        <div className={`hamburger ${collapsed ? "is-active" : ""}`}>
           <span className="line">{SVGICON.NavHeaderIcon}</span>
         </div>
       </div>

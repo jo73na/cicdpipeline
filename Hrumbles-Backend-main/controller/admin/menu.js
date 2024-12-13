@@ -128,13 +128,13 @@ const accessList= [
   {
     module:"Accounts",
     url:"/invoice-expence",
-    icon:"Invoicelogo",
+    icon:"Accountslogo",
     component:"Accounts",
     children:[
        {
          name :"Invoice",
          path:"/invoice",
-    icon:"InvoiceLogo",
+    icon:"Invoicelogo",
 
        },
        {
@@ -159,18 +159,18 @@ const accessList= [
     module:"Leads",
      url:"/leads",
      component:"Invoicelogo",
-     icon:"Invoicelogo",
+     icon:"LeadsLogo",
      children:[
       {
         name :"Company",
         path:"/account",
-     icon:"Invoicelogo",
+     icon:"Companylogo",
 
       },
       {
        name :"Contacts",
        path:"/contacts",
-   icon:"candidatesLogo",
+   icon:"ContactsLogo",
 
      },
      ],
@@ -179,17 +179,7 @@ const accessList= [
   
     ]
   },
-  {
-    module:"Contacts",
-     url:"/contacts",
-     component:"ProfilesEmployee",
-     icon:"candidatesLogo",
-    
-    permissions:[
-      "View Contacts",
-  
-    ]
-  },
+ 
   // {
   //   module:"Reports",
   //   url:"/Reports",
@@ -234,7 +224,7 @@ const accessList= [
     module:"User Management",
      url:"/usermanagement",
      component:"UserManageMent",
-     icon:"candidatesLogo",
+     icon:"UsermanagementLogo",
     
     permissions:[
       "Add Employee",
@@ -254,17 +244,7 @@ const accessList= [
 
     ]
   },
-  {
-    module:"Company",
-    url:"/company",
-    icon:"Companylogo",
-    component:"Company",
-    permissions:[
-      "View Company",
-     
-
-    ]
-  },
+  
   // {
   //   module:"UserSettings",
   //    url:"/editEmployee",
@@ -643,22 +623,12 @@ const accessListPermission= [
 
   ]
 },
-{
-  module:"Company",
-   url:"/account",
-   component:"Invoicelogo",
-   icon:"account",
-  
-  permissions:[
-    "View Profile"
 
-  ]
-},
 {
   module:"Contacts",
    url:"/contacts",
    component:"ProfilesEmployee",
-   icon:"candidatesLogo",
+   icon:"Companylogo",
   
   permissions:[
     "View Profile"

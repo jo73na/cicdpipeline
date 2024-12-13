@@ -8,47 +8,40 @@ import { useNavigate } from 'react-router-dom';
 import moment from 'moment';
 import { Dropdown } from 'react-bootstrap';
 import dayjs from 'dayjs';
-import { LeftOutlined, EditOutlined } from '@ant-design/icons';
-
-
 
 
 
 
 const headers = [
-  { label: "Applied Date", key: "createdAt" }, 
-  { label: "Employee Name", key: "employee_id.name" },
-  { label: "Leave Type", key: "leave_id.leave_title" },
-  { label: "From Date", key: "startDate" },
-  { label: "To Date", key: "endDate" },
-  { label: "No. of Days", key: "no_of_days" },
-  { label: "Reason", key: "reason" },
-  { label: "Status", key: "status" },
-    { label: "Approved By", key: "approved_by.name" },
-];
+    { label: "Applied Date", key: "createdAt" }, 
+    { label: "Employee Name", key: "employee_id.name" },
+    { label: "Leave Type", key: "leave_id.leave_title" },
+    { label: "From Date", key: "startDate" },
+    { label: "To Date", key: "endDate" },
+    { label: "No. of Days", key: "no_of_days" },
+    { label: "Reason", key: "reason" },
+    { label: "Status", key: "status" },
+  ];
 
 
 
-const LeaveHistory = () => {
+const LeaveApproval = () => {
     const { requestleaves, fetchrequestleaves, handleChangeStatus } = useContext(LeaveContext);
     const navigate = useNavigate();
-    const [editingId, setEditingId] = useState(null);
   
     useEffect(() => {
       fetchrequestleaves();
     }, []);
-    const approvedLeaves = requestleaves?.filter(
-      (leave) => leave.status === 'Approved' || leave.status === 'Rejected'
-    );
+    const nonApprovedLeaves = requestleaves?.filter((item) => item.status !== 'Approved' && item.status !== 'Rejected');
 
     const [currentPage , setCurrentPage] = useState(1);
     const recordsPage = 5;
     const lastIndex = currentPage * recordsPage;
     const firstIndex = lastIndex - recordsPage;   
     // const records = tableData.slice(firstIndex, lastIndex);
-    const npage = Math.ceil(approvedLeaves.length / recordsPage);
+    const npage = Math.ceil(nonApprovedLeaves.length / recordsPage);
     const number = [...Array(npage).keys()].map((_, idx) => idx + 1);
-    const records = approvedLeaves.slice(firstIndex, lastIndex);
+    const records = nonApprovedLeaves.slice(firstIndex, lastIndex);
 
     
     function prePage (){
@@ -72,48 +65,13 @@ const LeaveHistory = () => {
         filename: "csvfile.csv"
     }
     
-
-    const handleStatusChange = async (id, newStatus) => {
-      if (newStatus === "Approved" || newStatus === "Rejected") {
-        try {
-          await handleChangeStatus(id, newStatus);
-          notification.success({
-            message: `Leave request ${newStatus} successfully!`,
-            duration: 2,
-          });
-          setEditingId(null); // Reset editing state after successful update
-        } catch (error) {
-          // Check if the error message is "Already Approved"
-          if (error.response && error.response.data.message === "Error: Already Approved") {
-            notification.error({
-              message: 'Update Failed',
-              description: 'This leave request has already been approved.',
-              duration: 2,
-            });
-          } else {
-            notification.error({
-              message: 'Failed to update leave request',
-              description: error.message,
-              duration: 2,
-            });
-          }
-        }
-      } else {
-        notification.warning({
-          message: 'Invalid status',
-          description: 'Please select either "Approved" or "Rejected".',
-          duration: 2,
-        });
-      }
-    };
-
     return (
         <>
           <div className="card">
                 <div className="card-body p-0">
                     <div className="table-responsive active-projects style-1">
                         <div className="tbl-caption">
-                            <h4 className="heading mb-0">Leave History</h4>
+                            <h4 className="heading mb-0">Leave Approval</h4>
                             <div>                            
                                 <CSVLink {...csvlink} className="btn btn-primary light btn-sm "><i className="fa-solid fa-file-excel" /> Export Report </CSVLink>                             
                             </div>
@@ -128,12 +86,9 @@ const LeaveHistory = () => {
                                         <th>Leave Type</th>
                                         <th>From Date</th>
                                         <th>To Date</th>
-                                        <th >No. of Days</th>
+                                        <th>No. of Days</th>
                                         <th>Reason</th>
                                         <th>Status</th>
-                                        <th>Approved By</th>
-                                        <th>Action</th>
-
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -158,7 +113,8 @@ const LeaveHistory = () => {
 </td>
 
                                             <td className="pe-0">
-                                            {moment(item?.startDate).format('DD-MM-YYYY')}
+                                           {moment(item?.startDate).format('DD-MM-YYYY')}
+
                                             </td>
                                             <td className="pe-0">
                                             {moment(item?.endDate).format('DD-MM-YYYY')}
@@ -166,76 +122,29 @@ const LeaveHistory = () => {
                                             <td className="pe-0 table-number">
                                                {item.no_of_days}
                                             </td> 
-                                            <td className="pe-0 ">
+                                            <td className="pe-0">
                                             <Tooltip title={item?.reason || '-'}>
                     <span className="truncate">{item?.reason || '-'}</span>
                   </Tooltip>
                                             </td> 
                                             <td className="pe-0">
-                                            {editingId === item._id ? (
-    <Dropdown className="task-dropdown-2">
-      <Dropdown.Toggle
-        as="div"
-        className={`badge ${
-          item.status === "Approved"
-            ? "badge-success"
-            : item.status === "Rejected"
-            ? "badge-danger"
-            : "badge-warning"
-        } light border-0 me-1`}
-      >
-        {item.status === "Approved"
-          ? "Approved"
-          : item.status === "Rejected"
-          ? "Rejected"
-          : "Pending"}
-      </Dropdown.Toggle>
-      <Dropdown.Menu className="task-drop-menu">
-        <Dropdown.Item
-          onClick={() => {
-            handleStatusChange(item._id, "Approved");
-            setEditingId(null);
-          }}
-        >
-          Approve
-        </Dropdown.Item>
-        <Dropdown.Item
-          onClick={() => {
-            handleStatusChange(item._id, "Rejected");
-            setEditingId(null);
-          }}
-        >
-          Reject
-        </Dropdown.Item>
-      </Dropdown.Menu>
-    </Dropdown>
-  ) : (
-    <span
-      className={`badge ${
-        item.status === "Approved"
-          ? "badge-success"
-          : item.status === "Rejected"
-          ? "badge-danger"
-          : "badge-warning"
-      } light border-0 me-1`}
-    >
-      {item.status === "Approved"
-        ? "Approved"
-        : item.status === "Rejected"
-        ? "Rejected"
-        : "Pending"}
-    </span>
-  )}
-                                            </td>
-                                            <td className="pe-0">
-                                            {item.approved_by ? item?.approved_by?.name : '-'}
-                                            </td> 
-                                            <td className="pe-0 table-number" style={{ textAlign: "center", verticalAlign: "middle" }}>
-                                            <EditOutlined
-                    className="text-primary"
-                    style={{ fontSize: "18px", cursor: "pointer" }}
-                    onClick={() => setEditingId(item._id)} // Set the editing ID when clicked
-                  />
+                                            <Dropdown className="task-dropdown-2">
+          <Dropdown.Toggle
+            as="div"
+            className={
+              item.status === 'Approved' ? 'Complete' :
+              item.status === 'Pending' ? 'Testing' :
+              'Pending'
+            }
+          >
+            {item.status}
+          </Dropdown.Toggle>
+          <Dropdown.Menu className="task-drop-menu">
+            <Dropdown.Item onClick={() => handleChangeStatus(item?._id, 'Pending')}>Pending</Dropdown.Item>
+            <Dropdown.Item onClick={() => handleChangeStatus(item?._id, 'Approved')}>Approved</Dropdown.Item>
+            <Dropdown.Item onClick={() => handleChangeStatus(item?._id, 'Rejected')}>Rejected</Dropdown.Item>
+          </Dropdown.Menu>
+        </Dropdown>
                                             </td>
                                         </tr>
                                     ))}
@@ -246,7 +155,7 @@ const LeaveHistory = () => {
                                 <div className='dataTables_info'>
                                     Showing {lastIndex-recordsPage + 1} to{" "}
                                     {lastIndex} 
-                                    {" "}of {approvedLeaves.length} entries
+                                    {" "}of {nonApprovedLeaves.length} entries
                                 </div>
                                 <div
                                     className="dataTables_paginate paging_simple_numbers justify-content-center"
@@ -289,4 +198,4 @@ const LeaveHistory = () => {
 
 
 
-export default LeaveHistory;
+export default LeaveApproval;

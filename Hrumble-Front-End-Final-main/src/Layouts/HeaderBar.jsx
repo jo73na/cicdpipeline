@@ -54,6 +54,7 @@ const NotificationBlog =({classChange}) =>{
 
 const HeaderBar = () => {
   const logindata = JSON.parse(Cookies.get("admin"));
+  
 
   const logout = () => {
     Cookies.remove("admin_token");
@@ -82,7 +83,7 @@ const HeaderBar = () => {
 		});
 	}, []); 
 	
-	const {background, changeBackground } = useContext(ThemeContext);
+	const {background, changeBackground, haderColor} = useContext(ThemeContext);
 	const handleThemeMode = () => {
 		if(background.value === 'dark'){
 			changeBackground({ value: "light", label: "Light" });
@@ -92,25 +93,25 @@ const HeaderBar = () => {
 	}
 
   return (
-    <div className={`header ${headerFix ? "is-fixed" : ""}`}>
+    <div className={`header ${headerFix ? "is-fixed" : ""}`} style={{ backgroundColor: haderColor }}>
     <div className="header-content">
       <nav className="navbar navbar-expand">
             <div className="collapse navbar-collapse justify-content-between">
               <div className="header-left">					
               </div>
               <div className="header-right d-flex align-items-center">
-                  <div className="input-group search-area">
+                  {/* <div className="input-group search-area">
                       <input type="text" className="form-control" placeholder="Search here..." />
                       <span className="input-group-text">
                           <Link to={"#"}>
                               {SVGICON.SearchIcon}
                           </Link>
                       </span>
-                  </div>
+                  </div> */}
                   <ul className="navbar-nav ">	
                       <li className="nav-item dropdown notification_dropdown">
                           <Link to={'#'} className="nav-link bell dz-theme-mode"
-                               onClick={()=>handleThemeMode()}
+                            //    onClick={()=>handleThemeMode()}
                           >
                               {background.value === "dark" ?
                                   <svg  xmlns="http://www.w3.org/2000/svg"  width="24px" height="24px" viewBox="0 0 24 24" version="1.1" className="svg-main-icon">
@@ -131,7 +132,7 @@ const HeaderBar = () => {
                           </Link>
                       </li>	
                       <Dropdown as="li" className="nav-item dropdown notification_dropdown">
-                          <Dropdown.Toggle className="nav-link i-false c-pointer" variant="" as="a">
+                          <Dropdown.Toggle className="nav-link no-arrow i-false c-pointer" variant="" as="a">
                               {SVGICON.BellIcon}						
                           </Dropdown.Toggle>
                           <Dropdown.Menu align="end" className="mt-2 dropdown-menu dropdown-menu-end">
@@ -155,12 +156,12 @@ const HeaderBar = () => {
                           </Dropdown.Menu>
                       </Dropdown>	
                       <Dropdown as="li" className="nav-item dropdown notification_dropdown ">
-                          <Dropdown.Toggle variant="" as="a" className="nav-link  i-false c-pointer" onClick={() => onNote()}>
+                          <Dropdown.Toggle variant="" as="a" className="nav-link no-arrow i-false c-pointer" onClick={() => onNote()}>
                                   {SVGICON.MailIcon}						
                           </Dropdown.Toggle>
                       </Dropdown>	
                       <Dropdown as="li" className="nav-item dropdown notification_dropdown ">
-                          <Dropdown.Toggle variant="" as="a" className="nav-link   i-false c-pointer" role="button">
+                          <Dropdown.Toggle variant="" as="a" className="nav-link no-arrow i-false c-pointer" role="button">
                               {SVGICON.CalenderIcon}
                           </Dropdown.Toggle>
                           <Dropdown.Menu  className=" dropdown-menu dropdown-menu-end" align="end">
@@ -268,10 +269,10 @@ const HeaderBar = () => {
                       </Dropdown>	
                       <li className="nav-item ps-3">
                           <Dropdown className="header-profile2">
-                              <Dropdown.Toggle className="nav-link i-false" as="div">
+                              <Dropdown.Toggle className="nav-link no-arrow i-false" as="div">
                                   <div className="header-info2 d-flex align-items-center">
                                       <div className="header-media">
-                                          <img src={Male} alt="" />
+                                          <img src={Male}  alt="Profile Pic"   />
                                       </div>										
                                       
                                   </div>
@@ -280,7 +281,7 @@ const HeaderBar = () => {
                                   <div className="card border-0 mb-0">
                                       <div className="card-header py-2">
                                           <div className="products">
-                                              <img src={Female} className="avatar avatar-md" alt="" />
+                                          <img src={Male}  alt="Profile Pic" style={{height: "25px", width:"25px"}}/>
                                               <div>
                                                   <h6>{logindata?.name}</h6>
                                                   <span>{logindata?.role}</span>	

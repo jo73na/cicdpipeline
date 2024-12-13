@@ -1,97 +1,96 @@
-import { useContext, useEffect } from 'react';
-import Loader from '../../../Utils/Loader';
-import { Button, Input, Table, Select, Tooltip } from 'antd';
-import LeaveContext from '../../../Providers/Leaves';
+import React, { useRef, useEffect, useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import moment from 'moment';
-import { Dropdown } from 'react-bootstrap';
-import dayjs from 'dayjs';
-
-const { Search } = Input;
+import LeaveApproval from '../AdminLeavePage/LeaveApproval';
+import LeaveHistory from './LeaveHistory';
+import TimelineLeave from './TimelineLeave';
+import LeaveContext from '../../../Providers/Leaves';
 
 const AdminLevePage = () => {
-  const { requestleaves, fetchrequestleaves, handleChangeStatus } = useContext(LeaveContext);
   const navigate = useNavigate();
+  const leftSideRef = useRef(null); // Ref for the left side container
+  const [leftSideHeight, setLeftSideHeight] = useState(0);
+  const { requestleaves, fetchrequestleaves, handleChangeStatus } = useContext(LeaveContext);
 
+  // Calculate the height of the left-side components
   useEffect(() => {
-    fetchrequestleaves();
-  }, []);
-  
+    if (leftSideRef.current) {
+      setLeftSideHeight(leftSideRef.current.offsetHeight);
+    }
+  }, [leftSideRef]);
 
+  // Grouping the counts by status
+  const statusCounts = requestleaves.reduce(
+    (acc, item) => {
+      acc[item.status] = (acc[item.status] || 0) + 1;
+      return acc;
+    },
+    { Approved: 0, Pending: 0, Rejected: 0 } // Initial values for all statuses
+  );
 
-  const nonApprovedLeaves = requestleaves?.filter((item) => item.status !== 'Approved' && item.status !== 'Rejected');
-
-  const mappedData = nonApprovedLeaves?.map((item, i) => (
-    <tr key={i}>
-           <td>{dayjs(item.createdAt).format("DD-MM-YYYY")}</td>
-
-      <td><span>{item?.employee_id?.name || '-'}</span></td>
-      <td><span>{item?.leave_id?.leave_title}</span></td>
-      <td><span>{moment(item?.startDate).format('DD-MM-YYYY')}</span></td>
-      <td><span>{moment(item?.endDate).format('DD-MM-YYYY')}</span></td>
-      <td><span>{item.no_of_days}</span></td>
-      <td>
-      <Tooltip title={item?.reason || '-'}>
-                    <span className="truncate">{item?.reason || '-'}</span>
-                  </Tooltip>
-                  </td>
-      <td>
-        <Dropdown className="task-dropdown-2">
-          <Dropdown.Toggle
-            as="div"
-            className={
-              item.status === 'Approved' ? 'Complete' :
-              item.status === 'Pending' ? 'Testing' :
-              'Pending'
-            }
-          >
-            {item.status}
-          </Dropdown.Toggle>
-          <Dropdown.Menu className="task-drop-menu">
-            <Dropdown.Item onClick={() => handleChangeStatus(item?._id, 'Pending')}>Pending</Dropdown.Item>
-            <Dropdown.Item onClick={() => handleChangeStatus(item?._id, 'Approved')}>Approved</Dropdown.Item>
-            <Dropdown.Item onClick={() => handleChangeStatus(item?._id, 'Rejected')}>Rejected</Dropdown.Item>
-          </Dropdown.Menu>
-        </Dropdown>
-      </td>
-      {/* <td style={{ textAlign: 'left' }}>
-        <span>{item.approved_by ? item?.approved_by?.name : '-'}</span>
-      </td> */}
-    </tr>
-  ));
+  // Status-based card configuration
+  const statusCards = [
+    { title: 'Approved', count: statusCounts.Approved, color: 'success' },
+    { title: 'Pending', count: statusCounts.Pending, color: 'warning' },
+    { title: 'Rejected', count: statusCounts.Rejected, color: 'danger' },
+  ];
 
   return (
     <>
       <div className="d_f a_i_c f_d_c_xs m_b_5 m_t_5 g_20 f_d_c_sm">
         <p className="heading_text">Leaves</p>
+         {/* Button Section */}
+         <div style={{ flex: '1', display: 'flex', justifyContent: 'flex-end' }}>
+          <button
+            type="button"
+            className="btn btn-primary btn-sm"
+            onClick={() => navigate('/leave-management')}
+          >
+            Manage Leaves
+          </button>
+        </div>
       </div>
-      <div className="d_f a_i_c mt-3">
-        <button type="primary" className="btn btn-primary btn-sm me-3" onClick={() => navigate('/leave-management')}>
-          Leave Management
-        </button>
-        <button type="primary" className="btn btn-primary btn-sm" onClick={() => navigate('/leavehistory')}>
-          Leave History
-        </button>
-      </div>
-      <div className="table-responsive mt-3">
-        <table className="table-custom card-table border-no success-tbl">
-          <thead>
-            <tr>
-              <th>Applied Date</th>
-              <th>Employee Name</th>
-              <th>Leave Type</th>
-              <th>From Date</th>
-              <th>To Date</th>
-              <th>No. of Days</th>
-              <th>Reason</th>
-              <th>Status</th>
-              {/* <th>Approved By</th> */}
-            </tr>
-          </thead>
-          <tbody className="tablebody-custom">
-            {mappedData}
-          </tbody>
-        </table>
+      {/* <div style={{ display: 'flex', alignContent: 'center', justifyContent:'center' }}> */}
+        {/* Cards Section */}
+        <div
+  className="card"
+  style={{
+    flex: '1',
+    marginTop: '2rem',
+    marginBottom: '-2px',
+  }}
+>
+  <div className="card-body px- py-2">
+    <div className="row">
+      {statusCards.map((card, index) => (
+        <div
+          className="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12 mb-2"
+          key={index}
+          style={{
+            maxWidth: '200px', 
+            margin: '0 auto', 
+          }}
+        >
+          <div className="d-flex align-items-baseline">
+            <h1 className={`mb-0 fs-28 fw-bold me-2 text-${card.color}`}>{card.count}</h1>
+            <h6 className="mb-0">{card.title}</h6>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</div>
+
+
+      {/* </div> */}
+      <div className="mt-4 d-flex">
+        <div ref={leftSideRef} className="col-lg-8 col-md-12 d-flex flex-column">
+          <div>
+            <LeaveApproval />
+          </div>
+          <LeaveHistory />
+        </div>
+        {/* Right side: Timeline */}
+        <TimelineLeave leftSideHeight={leftSideHeight} />
       </div>
     </>
   );

@@ -7,12 +7,15 @@ import Male from  "/images/male.png" ;
 import SpaceLogo from  "/images/Space.png" ;
 import FeMale from  "/images/women.png" ;
 import ToggleLogo from "/images/Toggle.svg";
-import JobsLogo from "/images/Jobs.svg";
+import JobsLogo from "/images/Hricon.svg";
 import DashboardLogo from "/images/Dashboard.svg";
-import clientlogo from "/images/Clients.svg";
+import clientlogo from "/images/Hricon.svg";
+import Accountslogo from "/images/Hricon.svg";
+
 import candidatesLogo from "/images/UserManagement.svg";
 import TimesheetLogo from "/images/TimeSheet.svg";
 import LeavesLogo from "/images/Leaves.svg";
+import LeadsLogo from "/images/Leaves.svg";
 import ProfileLogo from "/images/Profile.svg";
 import Invoicelogo from "/images/Invoice.svg";
 import Settingslogo from "/images/Settings.svg";
@@ -21,6 +24,9 @@ import InvoiceLogo from "/images/InvoiceIcon.svg";
 import ExpenseLogo from "/images/ExpenseIcon.svg";
 import TeamLogo from "/images/Teamicon.svg";
 import GoalLogo from "/images/target-account.svg";
+import UsermanagementLogo from "/images/target-account.svg";
+import ContactsLogo from "/images/target-account.svg";
+
 
 import { BellOutlined, MoreOutlined } from "@ant-design/icons";
 import Cookies from "../Utils/Cookies";
@@ -29,6 +35,12 @@ import UserManagementContext from "../Providers/UserMangement";
 import {ThemeContext} from "../Providers/Theme/index"
 import NavHader from "./NavHader";
 import HeaderBar from "./HeaderBar";
+import { SVGICON } from "../Utils/SVGICON";
+import { DashboardOutlined, WorkOutlineOutlined, PersonSearchOutlined, UploadFileOutlined, DescriptionOutlined, EditCalendarOutlined, CalendarMonthOutlined, AccountBalanceOutlined, Diversity3Outlined, ContactsOutlined, TrackChangesOutlined,
+  FolderOutlined, ManageAccountsOutlined, SettingsOutlined, ApartmentOutlined, ReceiptLongOutlined, HailOutlined, AttachMoneyOutlined, PercentOutlined
+ } from '@mui/icons-material';
+
+
 // import { BASE } from "../Utils/api";
 const { Header, Content, Sider } = Layout;
 
@@ -36,9 +48,9 @@ const BASE = import.meta.env.VITE_BASE;
 
 const MobileMenu = lazy(() => import("../Layouts/MobileMenu"));
 
-const SideBar = () => {
+const SideBar = ({collapsed}) => {
     const location = useLocation();
-    const currentPath = location.pathname; // Get the current route
+    const currentPath = location.pathname; 
     const {  body,       
         sidebarposition,        
         primaryColor,
@@ -64,7 +76,7 @@ const SideBar = () => {
      =useContext(ThemeContext);
     const { permission } = useContext(UserManagementContext);
   
-    const [collapsed, setCollapsed] = useState(false);
+    
     const [openKeys, setOpenKeys] = useState([]);
     
     function getItem(label, key, icon, children) {
@@ -84,10 +96,12 @@ const SideBar = () => {
       menu.push(
         getItem(
           <Link to="/dashboard">
-            <span>Dashboard</span>
+            <span >Dashboard</span>
           </Link>,
           "/dashboard",
-          <img src={DashboardLogo} />
+          <span className="sidebar-icon">
+          <DashboardOutlined style={{ fontSize: '18px' }} />
+        </span>
         )
       );
     }
@@ -99,17 +113,21 @@ const SideBar = () => {
       TimesheetLogo,
       LeavesLogo,
       ProfileLogo,
+      Accountslogo,
       Invoicelogo,
       PlusOutlined,
       Settingslogo,
       Companylogo,
       UserOutlined,
       FolderOpenOutlined,
-      InvoiceLogo,
+      LeadsLogo,
       ExpenseLogo,
       SpaceLogo,
       TeamLogo,
       GoalLogo,
+      UsermanagementLogo,
+      Invoicelogo,
+      ContactsLogo
     };
   
     permission?.forEach((item, i) => {
@@ -120,28 +138,50 @@ const SideBar = () => {
               <span>{item.name}</span>
             </Link>
           ) : (
-            <span>{item.name}</span>
+            <span >{item.name}</span>
           ),
           `${item.path}`, // Use the path as the key
-          item.icon === "PlusOutlined" ? (
-            <PlusOutlined />
+           <span className="sidebar-icon">
+         { item.icon === "PlusOutlined" ? (
+            <UploadFileOutlined style={{fontSize: '18px'}} />
           ) : item.icon === "UserOutlined" ? (
             <UserOutlined />
           ) : item.icon === "account" ? (
             <HeatMapOutlined />
           ) : item.icon === "FolderOpenOutlined" ? (
-            <FolderOpenOutlined />
+            <FolderOutlined style={{fontSize: '18px'}}/>
           ) : item.icon === "ReconciliationOutlined" ? (
-            <ReconciliationOutlined />
+            <DescriptionOutlined style={{fontSize: '18px'}} />
+          ) :  item.icon === "JobsLogo" ? (
+            <WorkOutlineOutlined style={{fontSize: '18px'}}/>
+          ) : item.icon === "candidatesLogo" ? (
+            <PersonSearchOutlined style={{fontSize: '18px'}}/>
+          ) : item.icon === "TimesheetLogo" ? (
+            <EditCalendarOutlined style={{fontSize: '18px'}}/>
+          ) :  item.icon === "LeavesLogo" ? (
+            <CalendarMonthOutlined style={{fontSize: '18px'}}/>
+          ) : item.icon === "Accountslogo" ? (
+            <AccountBalanceOutlined style={{fontSize: '18px'}}/>
+          ) : item.icon === "LeadsLogo" ? (
+            <Diversity3Outlined style={{fontSize: '18px'}}/>
+          ) : item.icon === "GoalLogo" ? (
+            <TrackChangesOutlined style={{fontSize: '18px'}}/>
+          ) : item.icon === "UsermanagementLogo" ? (
+            <ManageAccountsOutlined style={{fontSize: '18px'}}/>
+          ) : item.icon === "Settingslogo" ? (
+            <SettingsOutlined style={{fontSize: '18px'}}/>
+          ) :  item.icon === "clientlogo" ? (
+            <HailOutlined style={{fontSize: '18px'}}/>
           ) : (
             <img
               style={{
-                width: "18px",
-                height: "18px",
+                width: "24px",
+                height: "24px",
               }}
               src={IconMapping[item.icon]}
             />
-          ),
+          )}
+          </span>, 
           item?.children?.length > 0 &&
             item.children.map((subItem) =>
               getItem(
@@ -149,7 +189,8 @@ const SideBar = () => {
                   <span>{subItem.name}</span>
                 </Link>,
                 `${subItem.path}`,
-                subItem.icon === "PlusOutlined" ? (
+                <span className="sidebar-icon">
+                {subItem.icon === "PlusOutlined" ? (
                   <PlusOutlined />
                 ) : subItem.icon === "UserOutlined" ? (
                   <UserOutlined />
@@ -159,6 +200,14 @@ const SideBar = () => {
                   <FolderOpenOutlined />
                 ) : subItem.icon === "ReconciliationOutlined" ? (
                   <ReconciliationOutlined />
+                ) : subItem.icon === "Invoicelogo" ? (
+                  <ReceiptLongOutlined style={{fontSize: '18px'}} />
+                ) : subItem.icon === "ExpenseLogo" ? (
+                  <AttachMoneyOutlined style={{fontSize: '18px'}} />
+                ) : subItem.icon === "Companylogo" ? (
+                  <ApartmentOutlined style={{fontSize: '18px'}}/>
+                ) : subItem.icon === "ContactsLogo" ? (
+                  <ContactsOutlined style={{fontSize: '18px'}}/>
                 ) : (
                   <img
                     style={{
@@ -167,7 +216,8 @@ const SideBar = () => {
                     }}
                     src={IconMapping[subItem.icon]}
                   />
-                )
+                )}
+                </span>,
               )
             )
         )
@@ -176,25 +226,29 @@ const SideBar = () => {
   
     return (
       <Sider
-        collapsed={!isSidebarOpen}
+        collapsed={!collapsed}
         // onCollapse={(value) => setCollapsed(value)}
+        // width={200}
         className="desktop_menu"
+        style={{backgroundColor:sidebarColor}}
       >
-        <Menu
-          items={menu}
-          mode="inline"
-          selectedKeys={[currentPath]} // Dynamically set the selected key
-          onOpenChange={(keys) => setOpenKeys(keys)} // Handle open keys for dropdowns
-          openKeys={openKeys}
-          theme="light"
-          style={{
-            height: "100%",
-            borderRight: `1px solid`,
-            backgroundColor: sidebarColor,
-            color: "#fff",
-          }}
-          size="large"
-        />
+      
+          <Menu    
+            items={menu}
+            mode="inline"
+            selectedKeys={[currentPath]} 
+            openKeys={openKeys}
+            onOpenChange={(keys) => setOpenKeys(keys)} 
+            theme="light"
+            style={{
+              height: "100%",
+              backgroundColor: "transparent", 
+              borderRight: "none",
+              overflowY: "auto", 
+              // overflowX: "hidden", 
+            }}
+          />
+       
       </Sider>
     );
   };

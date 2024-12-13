@@ -1,3 +1,4 @@
+import { SidebarOpen } from "lucide-react";
 import React, { createContext, useEffect, useState, useReducer, useCallback } from "react";
 
 export const ThemeContext = createContext();
@@ -14,21 +15,23 @@ const initialState = {
   contentColor: "#F3F0EC",
   primaryColor: "#88a67e",
   secondaryColor: "color_1",
-  navigationHader: "#343A40",
-  haderColor: "#343A40",
-  sidebarColor: "#343A40",
+  navigationHader: "#2A2E33",
+  haderColor: "#F3F0EC",
+  sidebarColor: "#2A2E33",
   background: { value: "light", label: "Light" },
   containerPositionSize: { value: "wide-boxed", label: "Wide Boxed" },
   iconHover: false,
   menuToggle: false,
   windowWidth: 0,
   windowHeight: 0,
+  chartBarcolor:"red"
 };
 
 const ThemeContextProvider = (props) => {
   const [sidebariconHover, setSidebariconHover] = useState(false);
   const [state, dispatch] = useReducer(reducer, initialState);	
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  
   const { 
     sideBarStyle, 
     sidebarposition,
@@ -49,12 +52,7 @@ const ThemeContextProvider = (props) => {
   } = state;
 
   const body = document.querySelector("body");  
-  
-  // Improved toggle sidebar function with prevention of multiple rapid toggles
-  const toggleSidebar = useCallback(() => {
-    // Prevent multiple rapid toggles
-    setIsSidebarOpen((prev) => !prev);
-  }, []);
+
 
   const ChangeIconSidebar = (value) => {
     if(sideBarStyle.value === "icon-hover"){
@@ -62,11 +60,6 @@ const ThemeContextProvider = (props) => {
     }
   };
   
-  const openMenuToggle = () => {    
-    sideBarStyle.value === "overly"  
-      ? dispatch({menuToggle: true})
-      : dispatch({menuToggle: false});
-  };
 
   const changeBackground = (name) => {
     body.setAttribute("data-theme-version", name.value);
@@ -114,13 +107,13 @@ const ThemeContextProvider = (props) => {
         ChangeIconSidebar,
         menuToggle,
         sidebariconHover,
-        openMenuToggle,
+        
         changeBackground,
         background,
         containerPositionSize,	
         contentColor, 
         isSidebarOpen, 
-        toggleSidebar,
+       
       }}
     >
       {props.children}

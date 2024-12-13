@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Mulish&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
 @import url('https://fonts.cdnfonts.com/css/sf-pro-display');
 
 @font-face {
@@ -12,14 +12,14 @@
   padding: 0;
   margin: 0;
   box-sizing: border-box;
-  font-family: "Mulish", sans-serif;
+  font-family: "Poppins", sans-serif;
   font-optical-sizing: auto !important;
    /* font-weight: 00;  */
      font-style: normal;
  
  
   /* font-style: normal !important; */
-  /* font-size:12px;  */
+  font-size:12px; 
 }
   
 button {
@@ -37,7 +37,7 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: "Mulish";
+  font-family: "Poppins";
   margin: 0;
   padding: 0;
 }
@@ -256,7 +256,7 @@ h6 {
 }
 
 .ant-tabs-tab-btn {
-  font-family: Mulish;
+  font-family: Poppins;
   font-size: 12px;
   font-style: normal;
   font-weight: 700;
@@ -271,7 +271,7 @@ h6 {
 
 .ant-form-item-label{
   color: #303030;
- font-family: Mulish;
+ font-family: Poppins;
 font-size: 14px;
 font-style: normal;
 font-weight: 600;
@@ -301,7 +301,7 @@ line-height: normal;
   }
   .ant-collapse-header-text {
     /* color: #30409f; */
-    font-family: Mulish;
+    font-family: Poppins;
     font-size: 13px;
     font-style: normal;
     font-weight: 700;
@@ -310,7 +310,7 @@ line-height: normal;
 .login_name{
   color: #191919;
 
-font-family: Mulish;
+font-family: Poppins;
 font-size: 14px;
 font-style: normal;
 font-weight: 700;
@@ -318,8 +318,8 @@ line-height: normal;
 }
 .heading_text{
   color: #303030;
-font-family: Mulish;
-font-size: 16px !important;
+font-family: Poppins;
+font-size: 14px !important;
 font-style: normal;
 font-weight: 700;
 line-height: normal;
@@ -331,7 +331,7 @@ margin-bottom: 5px;
   flex-shrink: 0;
   color: #7A7A7A;
 
-font-family: Mulish;
+font-family: Poppins;
 font-size: 14px;
 font-style: normal;
 font-weight: 500;
@@ -1200,7 +1200,7 @@ gap: 8px;
   border-radius: 10px;
   height: 32.5px;
   color: #FFF;
-  font-family: Mulish;
+  font-family: Poppins;
   font-size: 8px !important;
   font-style: normal;
   font-weight: 500;
@@ -3594,7 +3594,7 @@ ul {
   }
     .heading_text{
       color: #303030;
-    font-family: Mulish;
+    font-family: Poppins;
     font-size: 10px !important;
     font-style: normal;
     font-weight: 700;
@@ -4394,7 +4394,7 @@ ul {
 }
   .heading_text{
     color: #303030;
-  font-family: Mulish;
+  font-family: Poppins;
   font-size: 12px !important;
   font-style: normal;
   font-weight: 700;
@@ -5990,5 +5990,8 @@ ul {
 @media screen and (max-width:280px) {
     
 }
+
+
+
 
 

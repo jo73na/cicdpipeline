@@ -1,22 +1,19 @@
 import { useContext,useEffect,lazy } from 'react';
-
+ 
 import Loader from '../../Utils/Loader';
 import CookieUtil from '../../Utils/Cookies';
-
-import icon1 from "/images/Stopwatch.svg";
-import icon2 from "/images/Stopwatchblue.svg"
 const GraphDashboard = lazy(() => import("./GraphDashboard"));
 const Interview = lazy(() => import("./Interview"));
-
+ 
 const ClientBarChart = lazy(() => import("./ClientBarChart"));
 import DashboardContext from '../../Providers/DashboardProvider';
-
+ 
 // import TimeSheetHr from './TimeSheetHr';
 import EmployeeTimeTracker from './Timer';
-
+ 
 import {  Modal,Progress} from 'antd';
-
-
+ 
+ 
 import Items from "/images/items.png"
 const EmployeeDashboard = lazy(() => import("./EmployeeDashboard"));
 import {DollarOutlined,TrophyOutlined,HomeOutlined, UserSwitchOutlined, FireOutlined,HeatMapOutlined,RiseOutlined,SlackOutlined,ContactsOutlined } from '@ant-design/icons';
@@ -28,57 +25,66 @@ import ProjectOverviewChart from '../UtlilsComponent/ProjectOveviewTab';
 import InvoiceExpenceChart from './InvoiceExpenceChart';
 import GoalCard from '../../Utils/GoalCard';
 // import { GoalContext } from '../../Providers/Goal/GoalProvider';
-
-
-
-
+ 
+import {Link} from 'react-router-dom';
+// import loadable from "@loadable/component";
+// import pMinDelay from "p-min-delay";
+import RevenueChart from "./Element/RevenueChart";
+import EarningChart from "./Element/EarningChart";
+import ExpensesBarChart from './Element/ExpenseChart';
+import ProjectOverviewTab from './Element/ProjectOverViewTab';
+import UpcomingBlog from './Element/UpcomingBlog';
+import CalenderData from './Element/CalenderData'
+import ThemeContext from '../../Providers/Theme/index'
+ 
+ 
+ 
+ 
 const Employee=()=>{
 //  const {Loading} = useContext(JobContext);
+ 
 const {count,handleClickmanualy,handleCancel,clientSubmissionCount,Opengoal,goal,fetchDashboard,Loading,handleDateChange,monthemployee,handledatabaseChange,weekSubmission} =useContext(DashboardContext)
 let role =CookieUtil.get("role")
-
-
+ 
  let data = JSON.parse(CookieUtil.get('admin'));
 //  console.log("name",name)
-
+ 
 // Get the current date
 const currentDate = new Date();
-
+ 
 // Find the start date of the current week (Sunday)
 const startDate = new Date(currentDate);
 startDate.setDate(currentDate.getDate() - currentDate.getDay());
-
+ 
 // Find the end date of the current week (Saturday)
 const endDate = new Date(startDate);
 endDate.setDate(startDate.getDate() + 6);
-
+ 
+console.log("CLientSUbmissionCOunt:", clientSubmissionCount)
+ 
  // Format the dates in the desired format
 const startDateStr = `${startDate.getDate()} ${startDate.toLocaleString('default', { month: 'short' })}`;
 const endDateStr = `${endDate.getDate()} ${endDate.toLocaleString('default', { month: 'short' })}`;
-
-// Create the date range string
-const dateRange = `${startDateStr} - ${endDateStr}`;
-
-
-
-
+ 
+const PrimaryCol =  "#88a67e";
+const SecondaryCol = "#F8B940";
+const Head1 = " ClientSubmission";
+const Head2 = "Onboarding";
+ 
 // Get the current date
 const currentDate1 = new Date();
-
+ 
 // Get the first day of the current month
 const firstDayOfMonth = new Date(currentDate1.getFullYear(), currentDate1.getMonth(), 1);
-
+ 
 // Get the last day of the current month
 const lastDayOfMonth = new Date(currentDate1.getFullYear(), currentDate.getMonth() + 1, 0);
-
+ 
 // Format the dates in the desired format
 const startDateStr1 = `${firstDayOfMonth.toLocaleString('default', { month: 'short' })} ${firstDayOfMonth.getFullYear()}`;
-const endDateStr1 = `${lastDayOfMonth.toLocaleString('default', { month: 'short' })} ${lastDayOfMonth.getFullYear()}`;
-
-// Create the date range string
-const dateRange1 = `${startDateStr1}`;
-
-
+ 
+ 
+ 
   const option=[
    {
       label:"This Week",
@@ -93,141 +99,380 @@ const dateRange1 = `${startDateStr1}`;
    value:"Year"
 }
 ]
-
+ 
 useEffect(() => {
    fetchDashboard()
 }, [])
-
-
-function calculatePercentage(part, total) {
-   return (part / total) * 100;
-}
-
-
-const  color =["primary","secondary","info", "danger","success"]
-
-//  const color = ["#ffb800","#42cdff","#52fb6a","#f555ff","#FF6600" ]
- const backround = ["#ffeec3","#d1f3ff","#ceffd5","#fccaff","#ffeec3"]
- const icon =[
-   <UserSwitchOutlined/>,
-   <TrophyOutlined />,
-   // <HomeOutlined />,
-   <DollarOutlined />,
-   // <ContactsOutlined />,
-   <RiseOutlined/>,
-    <SlackOutlined />,
-
- ]
-
-
- const iconBoxCard = [
-  {icon:'fa-solid fa-person', bg:'success', number:count?.totalCandidates||0, title:'Total Candidates'},
-  {icon:'fa-solid fa-briefcase', bg:'primary', number:count?.totalCompany||0, title:'Total Company'},
-  {icon:'fa-solid fa-users ', bg:'secondary', number:count?.totalConatcs||0, title:'Total Contacts '},
-  // {icon:'fa-solid fa-hand-holding-dollar', bg:'danger', number:'$1500', title:'Total Sales'},
-];
-
-   
-    return( 
+ 
+ 
+ 
+ 
+ 
+ 
+    return(
      <>
-     
      {
         Loading ? <Loader />
-
+ 
      :
      <>
-
       <p className='heading_text' style={{paddingBottom:'15px', paddingLeft:'3px', paddingTop:'10px'}}>  {role === "SuperAdmin"?" Admin Dashboard":"Dashboard"} </p>
-
       {
          role  == "Employee" ?
          // <EmployeeHoursTracker/>
           <EmployeeDashboard/>
-          
           // <p> Welcome to Employee Dashboard</p>
-
-        
          :
-     
-
          <div>
            
-      
       {
          role === "SuperAdmin" ?
          <>
-             <div className='container-fluid' style={{marginLeft: '-10px'}}>
-               <div className='row mt-1'>
-               {iconBoxCard.map((item, index)=>(
-                            <div className="col-xl-3 col-sm-6" key={index}>
-                                <div className="card box-hover">
-                                    <div className="card-body">
-                                        <div className="d-flex align-items-center">
-                                            <div className={`icon-box icon-box-lg bg-${item.bg}-light rounded`}>
-                                                <i className={`${item.icon} text-${item.bg}`}></i>
-                                            </div>
-                                            <div className="total-projects ms-3">
-                                                <h3 className={`text-${item.bg} count mb-2`}>{item.number}</h3> 
-                                                <span>{item.title}</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        ))}
-
-               </div>
-           
-          
-            <div className='col_1  g_10 col_1_sm g_5_sm col_1_md'>
-         <div className='card p_10'>
-
-            
-         <GraphDashboard  options={option}/>
-         </div>
-     
-      <div className='card p_10'>
-         <ClientBarChart  options={option} />
-      </div>
-
-      <div className='card p_10'>
-         <InvoiceExpenceChart  options={option} />
-      </div>
-      </div>
-
-             </div>
-     
-        
+      <div className="container-fluid">
+        <div className="row ">
        
-
-      
+            <div className="col-xl-3">
+             
+                      <div className="col-xl-12 col-xxl-12 col-sm-3 col-md-3 col-lg-6">
+                        <div className="card bg-primary text-white">
+                          <div className="card-header border-0">
+                            <div className="revenue-date">
+                              <span>Revenue</span>
+                              <h4 className="text-white">$310.435</h4>
+                            </div>
+                            {/* <div className="avatar-list avatar-list-stacked me-2">
+                            </div> */}
+                          </div>
+                        <div className="card-body pb-0 custome-tooltip d-flex align-items-center j_c_c">                              
+                            <RevenueChart />
+                      </div>
+                        </div>
+                      </div>
+                      <div className="col-xl-12 col-xxl-12 col-sm-3 col-md-3 col-lg-6">
+                        <div className="card bg-secondary text-white">
+                          <div className="card-header border-0">
+                            <div className="revenue-date">
+                              <span className="text-black">Expenses</span>
+                              <h4 className="text-black">$920.035</h4>
+                            </div>
+                          </div>
+                          <div className="card-body pb-0 custome-tooltip d-flex align-items-center j_c_c">
+                            <ExpensesBarChart />
+                          </div>
+                        </div>
+                      </div>
+                     
+                     
+                   
+                    </div>
+               
+ 
+               
+                 <div className="col-xl-3 col-xxl-12 col-sm-3 col-md-3 col-lg-6">
+                    <div className="card ">
+                        <div className="card-header border-0 pb-0">
+                            <h4 className="heading mb-0">Total Earning</h4>
+                        </div>
+                        <EarningChart/>
+                    </div>
+               
+                      </div>
+                     
+                 
+                 
+                     
+                  <div className="col-xl-3  col-lg-6">
+            <div className="card  pb-0">
+              <div className="card-header border-0 pb-0">
+                <h4 className="card-title">To Do List</h4>
+              </div>
+              <div className="card-body">
+                <div
+                  style={{ height: "370px" }}
+                  id="DZ_W_Todo4"
+                  className="widget-media dz-scroll height370  ps--active-y"
+                >
+                  <ul className="timeline">
+                    <li>
+                      <div className="timeline-panel">
+                        <div className="form-check custom-checkbox checkbox-success check-lg me-3">
+                          <input
+                            type="checkbox"
+                            className="form-check-input"
+                            id="customCheckBox1"
+                            required=""
+                          />
+                          <label
+                            className="form-check-label"
+                            htmlFor="customCheckBox1"
+                          ></label>
+                        </div>
+                        <div className="media-body">
+                          <h5 className="mb-0">Get up</h5>
+                          <small className="text-muted">
+                            29 July 2022 - 02:26 PM
+                          </small>
+                        </div>
+                     
+                      </div>
+                    </li>
+                    <li>
+                      <div className="timeline-panel">
+                        <div className="form-check custom-checkbox checkbox-warning check-lg me-3">
+                          <input
+                            type="checkbox"
+                            className="form-check-input"
+                            id="customCheckBox2"
+                            required=""
+                          />
+                          <label
+                            className="form-check-label"
+                            htmlFor="customCheckBox2"
+                          ></label>
+                        </div>
+                        <div className="media-body">
+                          <h5 className="mb-0">Stand up</h5>
+                          <small className="text-muted">
+                            29 July 2022 - 02:26 PM
+                          </small>
+                        </div>
+                       
+                      </div>
+                    </li>
+                    <li>
+                      <div className="timeline-panel">
+                        <div className="form-check custom-checkbox checkbox-primary check-lg me-3">
+                          <input
+                            type="checkbox"
+                            className="form-check-input"
+                            id="customCheckBox3"
+                            required=""
+                          />
+                          <label
+                            className="form-check-label"
+                            htmlFor="customCheckBox3"
+                          ></label>
+                        </div>
+                        <div className="media-body">
+                          <h5 className="mb-0">Don't give up the fight.</h5>
+                          <small className="text-muted">
+                            29 July 2022 - 02:26 PM
+                          </small>
+                        </div>
+                       
+                      </div>
+                    </li>
+                    <li>
+                      <div className="timeline-panel">
+                        <div className="form-check custom-checkbox checkbox-info check-lg me-3">
+                          <input
+                            type="checkbox"
+                            className="form-check-input"
+                            id="customCheckBox4"
+                            required=""
+                          />
+                          <label
+                            className="form-check-label"
+                            htmlFor="customCheckBox4"
+                          ></label>
+                        </div>
+                        <div className="media-body">
+                          <h5 className="mb-0">Do something else</h5>
+                          <small className="text-muted">
+                            29 July 2022 - 02:26 PM
+                          </small>
+                        </div>
+                       
+                      </div>
+                    </li>
+                    <li>
+                      <div className="timeline-panel">
+                        <div className="form-check custom-checkbox checkbox-success check-lg me-3">
+                          <input
+                            type="checkbox"
+                            className="form-check-input"
+                            id="customCheckBox5"
+                            required=""
+                          />
+                          <label
+                            className="form-check-label"
+                            htmlFor="customCheckBox5"
+                          ></label>
+                        </div>
+                        <div className="media-body">
+                          <h5 className="mb-0">Get up</h5>
+                          <small className="text-muted">
+                            29 July 2022 - 02:26 PM
+                          </small>
+                        </div>
+                       
+                      </div>
+                    </li>
+                    <li>
+                      <div className="timeline-panel">
+                        <div className="form-check custom-checkbox checkbox-warning check-lg me-3">
+                          <input
+                            type="checkbox"
+                            className="form-check-input"
+                            id="customCheckBox6"
+                            required=""
+                          />
+                          <label
+                            className="form-check-label"
+                            htmlFor="customCheckBox6"
+                          ></label>
+                        </div>
+                        <div className="media-body">
+                          <h5 className="mb-0">Stand up</h5>
+                          <small className="text-muted">
+                            29 July 2022 - 02:26 PM
+                          </small>
+                        </div>
+                       
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+                <div className='col-xl-2 col-xxl-4 '>
+                  <div>
+                    <CalenderData/>
+                  </div>
+                </div>
+                </div>
+                 
+                  <div className = "container-fluid ">
+                    <div className = "row">
+                     
+                        <div className="col-xl-8 ">
+                          <ProjectOverviewTab height={220}/>
+                        </div>
+                        <div className="col-xl-4  col-lg-6">
+            <div className="card shadow">
+              <div className="card-header border-0 pb-0">
+                <h4 className="card-title">Events</h4>
+               
+              </div>
+              <div className="card-body">
+                <div
+                  style={{ height: "270px" }}
+                  id="DZ_W_TimeLine1"
+                  className="widget-timeline dz-scroll style-1 height370  ps--active-y"
+                >
+                  <ul className="timeline">
+                    <li>
+                      <div className="timeline-badge primary"></div>
+                      <Link
+                        className="timeline-panel text-muted"
+                        to="/widget-basic"
+                      >
+                        <span>10 minutes ago</span>
+                        <h6 className="mb-0">
+                          Youtube, a video-sharing website, goes live{" "}
+                          <strong className="text-primary">$500</strong>.
+                        </h6>
+                      </Link>
+                    </li>
+                    <li>
+                      <div className="timeline-badge info"></div>
+                      <Link
+                        className="timeline-panel text-muted"
+                        to="/widget-basic"
+                      >
+                        <span>20 minutes ago</span>
+                        <h6 className="mb-0">
+                          New order placed{" "}
+                          <strong className="text-info">#XF-2356.</strong>
+                        </h6>
+                        <p className="mb-0">
+                          Quisque a consequat ante Sit amet magna at volutapt...
+                        </p>
+                      </Link>
+                    </li>
+                    <li>
+                      <div className="timeline-badge danger"></div>
+                      <Link
+                        className="timeline-panel text-muted"
+                        to="/widget-basic"
+                      >
+                        <span>30 minutes ago</span>
+                        <h6 className="mb-0">
+                          john just buy your product{" "}
+                          <strong className="text-warning">Sell $250</strong>
+                        </h6>
+                      </Link>
+                    </li>
+                    <li>
+                      <div className="timeline-badge success"></div>
+                      <Link
+                        className="timeline-panel text-muted"
+                        to="/widget-basic"
+                      >
+                        <span>15 minutes ago</span>
+                        <h6 className="mb-0">
+                          StumbleUpon is acquired by eBay.{" "}
+                        </h6>
+                      </Link>
+                    </li>
+                    <li>
+                      <div className="timeline-badge warning"></div>
+                      <Link
+                        className="timeline-panel text-muted"
+                        to="/widget-basic"
+                      >
+                        <span>20 minutes ago</span>
+                        <h6 className="mb-0">
+                          Mashable, a news website and blog, goes live.
+                        </h6>
+                      </Link>
+                    </li>
+                    <li>
+                      <div className="timeline-badge dark"></div>
+                      <Link
+                        className="timeline-panel text-muted"
+                        to="/widget-basic"
+                      >
+                        <span>20 minutes ago</span>
+                        <h6 className="mb-0">
+                          Mashable, a news website and blog, goes live.
+                        </h6>
+                      </Link>
+                    </li>
+                  </ul>
+                </div>
+           
+            </div>
+          </div>
+                      </div>
+                    </div>
+                   
+                   
+                  </div>
+                </div>
+             
+          <div className="col">
+            <div className='row'>
+              <div className="col-xl-6  ">
+              <EarningChart  DetailHead ={Head1} Primarycolor={PrimaryCol}  />
+              </div>
+              <div className="col-xl-6 ">
+              <EarningChart  DetailHead={Head2} Primarycolor={SecondaryCol} />
+              </div>
+              </div>
+          </div>
          </>
          :
          role == "Sales" ?
          <SalesandMarketting/> :
       <>
-      
       <div className="row">  
       <div className="col-xl-4">
            <div className='row'>
-              {/* <div className='col-xl-12'>
-              <div className="card upgrade">
-          
-          <div className="card-body">
-              <div className="text-center">
-                  <img src={Items} alt="" />
-              </div>
-              <h4>Hii {data.name} Welcome to Your Dashboard</h4>
-
-          </div>
-      </div>
-              </div> */}
-          
        <EmployeeTimeTracker/>
-
            </div>
-       
-     </div> 
+     </div>
      <div className="col-xl-8">
   <div className={`col_${goal?.senddata?.length > 2 ? "3" : goal?.senddata?.length === 2 ? "2" : "1"} g_5`}>
     {
@@ -243,7 +488,6 @@ const  color =["primary","secondary","info", "danger","success"]
                 }]}
                 goals={[item.goaltype_name]} // Goal name for the Y-axis
               />
-
             </div>
           </div>
         );
@@ -251,42 +495,11 @@ const  color =["primary","secondary","info", "danger","success"]
     }
   </div>
 </div>
-
-
-   
-
-  {/* <div
-   className="col_3">
-  <div className="card">
-                  <div className="card-header border-0 pb-0">
-                    <div className="clearfix">
-                      <h3 className="card-title">Blood pressure</h3>
-                      <span>In the normal</span>
-                    </div>
-                    <div className="clearfix text-center">
-                      <h3 className="text-primary mb-0">120/89</h3>
-                      <span>mmHG</span>
-                    </div>
-                  </div>
-                  <div className="card-body text-center">
-                  <Progress
-      percent={50}
-      status="active"
-      strokeColor={{
-        from: '#108ee9',
-        to: '#87d068',
-      }}
-    />
-                    <GoalCard/>
-                  </div>
-                </div>
-              
-  </div> */}
+ 
  <div className="col-xl-4">
  <div className="row">
      <div className="col-xl-12">
      <Interview/>
-         
      </div>
      <div className="col-xl-12">
          {/* <AllProjectBlog /> */}
@@ -295,10 +508,7 @@ const  color =["primary","secondary","info", "danger","success"]
 </div>
 <div className='card p_10'>
 <ClientBarChart  options={option} login={true} />
-         
       </div>
-    
-           
       <div className='col-xl-12'>
                   <div className='row'>
                   <div className="col-xl-12">
@@ -310,12 +520,7 @@ const  color =["primary","secondary","info", "danger","success"]
                            <Card.Header className="card-header flex-wrap border-0">
                                <div>
              <h4 className="heading mb-0">Performance</h4>                
-
-                                 {/* <Card.Title>Default Accordion</Card.Title>
-                                 <Card.Text className="m-0 subtitle">
-                                   Default accordion. Add <code>accordion</code> class in root
-                                 </Card.Text> */}
-                               </div> 
+                               </div>
                                <Nav as="ul" className="nav nav-tabs dzm-tabs" id="myTab" role="tablist">
                                    <Nav.Item as="li" className="nav-item" role="presentation">
                                      <Nav.Link as="button"  type="button" eventKey="Preview">My Activity</Nav.Link>
@@ -328,62 +533,51 @@ const  color =["primary","secondary","info", "danger","success"]
                            <Tab.Content className="tab-content" id="myTabContent">
                              <Tab.Pane eventKey="Preview">
                                      <ProjectOverviewChart height={300}/>
-                                    
                              </Tab.Pane>
                              <Tab.Pane eventKey="Code">
-             <h4 className="heading mb-0 p-2 text-primary"> Client Submissions</h4>                
-
+             <h4 className="heading mb-0 p-2 text-primary"> Client Submissions</h4>
      { !Loading  &&
-     
       <AnalyticsEarning ClientSubmissionCount={clientSubmissionCount}/>
       }
-
                                   {/* <h1>Hii Sathish</h1> */}
                              </Tab.Pane>
-                           </Tab.Content>    
-                         </Tab.Container>  
+                           </Tab.Content>
+                         </Tab.Container>
                      </Card>
                  </Col>
-                    
-             
-               </Row>{" "}                     
+               </Row>{" "}
              </div>  
                                  </div>
-                    
+                   
              </div>
              </div>
    </div>
-         
        {/* <TimeSheetHr/> */}
+ 
+       <div class = "row">
+        <div class = "col-xl-12">
+        </div>
+       </div>
       </>
-         
-       
-      } 
-  
-  
+      }
+ 
          </div>
        
       }
-
-
        </>
-      
+     
    }  
    <Modal
     title="Add Manualy Goal"
     open={Opengoal}  onCancel={handleCancel}
     okButtonProps={{ style: { display: 'none' } }}
     cancelButtonProps={{ style: { display: 'none' } }}
-    
     >
      <Addmanualy/>
-       
     </Modal>
-        
-        
         </>
     )
 }
-
-
+ 
+ 
 export default Employee;

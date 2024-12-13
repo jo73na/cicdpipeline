@@ -233,9 +233,7 @@ const ViewJob = () => {
             handleopenCandidateDrawer(id)
         }
  
-        let breadcrumb =[ {
-            title: <Link to="/">Home</Link> ,
-          },
+        let breadcrumb =[ 
           {
             title: <Link to="/jobs">Jobs</Link> ,
           },

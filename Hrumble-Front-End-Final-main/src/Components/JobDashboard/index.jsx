@@ -63,6 +63,11 @@ const JobDashboard = () => {
     } = useContext(JobContext);
     const {} = useContext(ViewJobContext);
  
+    console.log("searchjob:", searchjob)
+    const filteredJobs = openJobs?.filter((job) =>
+        job.job_title.toLowerCase().includes(searchjob.toLowerCase()) ||
+        job.job_id.toString().includes(searchjob.toUpperCase())
+    );
     const navigate = useNavigate();
     const role = CookieUtil.get("role");
     const admin_id = CookieUtil.get("admin_id");
@@ -208,7 +213,7 @@ const JobDashboard = () => {
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    {openJobs?.map((item, index) => {
+                                                {filteredJobs?.map((item, index) => {
                                                         const { submission, interview, joined, offered, ClientSubmission } = calculateCounts(item.screening, item._id);
                                                         tableData.push({
                                                             submission,

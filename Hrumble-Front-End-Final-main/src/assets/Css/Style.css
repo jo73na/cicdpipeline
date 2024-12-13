@@ -14715,7 +14715,7 @@ label {
   position: absolute;
   top: 0;
   background-color: var(--nav-headbg);
-  transition: all .2s ease;
+  transition: all .1s ease;
   z-index: 5; }
   .nav-header .logo-compact {
     display: none; }
@@ -14861,7 +14861,7 @@ label {
     display: none; }
 
 .header {
-  height: 4.375rem;
+  height: 4.25rem;
   z-index: 1;
   position: relative;
   padding: 0rem;
@@ -34526,19 +34526,17 @@ td.text-ov {
         line-height: 2.125rem;
         padding: 0 0.45rem; } }
   .dataTables_wrapper .dataTables_paginate span .paginate_button {
-    height: 24px;
-    width: 24px;
-    padding: 0;
-    margin-left: 0rem;
-    margin: 0 0.125rem;
-    line-height: 25px;
-    text-align: center;
     font-size: 13px;
+    height: 24px !important; 
+    width: 24px !important;
+    background: transparent;
     border-radius: 0.375rem;
-    border: 0 !important;
+    padding: 0 0.45rem;
+    line-height: 25px;
+    /* margin: 0 0.625rem !important;  */
+    display: inline-block !important; 
     color: var(--primary) !important;
-    cursor: pointer;
-    box-shadow: none !important; }
+    box-shadow: none !important;}
     .dataTables_wrapper .dataTables_paginate span .paginate_button.current {
       color: #fff !important;
       background: var(--primary) !important; }
@@ -35800,7 +35798,7 @@ table.dataTable thead .sorting_asc {
 				}
 			} */ }
   .active-projects thead tr th {
-    font-size: 13px;
+    font-size: 14px;
     padding: 0.625rem 1.25rem;
     font-weight: 500;
     background-color: var(--rgba-primary-1);
@@ -43587,19 +43585,21 @@ background: "#ebc1c1"
 }
 
 /* Addjobs Form Input Salary type */
-.table-custom th,
+
+
+/* .table-custom th,
 .table-custom td {
   text-align: center;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  font-size: 12px;
+  font-size: 14px;
   row-gap: 2px;
   overflow: visible;
-}
+} */
 
 .reason-column {
-  max-width: 200px; /* Adjust as per need */
+  max-width: 200px; 
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -43648,21 +43648,165 @@ background: "#ebc1c1"
  /* Ensure it appears above other elements */
 }
 
-.table-custom td {
-  overflow: visible; /* Prevent the dropdown from being cut off */
-}
+/* .table-custom td {
+  overflow: visible; 
+} */
 
-.table-custom tbody tr {
-  line-height: 1; /* Adjust line height */
-  height: 10px; /* Set a specific height for rows */
-}
-
+/* .table-custom tbody tr {
+  line-height: 1;
+  height: 10px; 
+} */
+/* 
 .table-custom tbody td {
-  padding: 5px; /* Adjust padding for cells */
+  padding: 5px; 
+} */
+
+.table-number{
+  text-align: center;
+  justify-content: center;
+  
 }
 
 /* NavHader.css */
 
+.brand-logo {
+  display: flex;
+  align-items: center;
+}
+
+.nav-control {
+  margin-left: auto; /* Push the nav control to the right */
+}
+/* .desktop_menu .ant-menu-item{
+  margin-top: 20px;
+} */
+ 
+
+.desktop_menu .ant-menu-item:hover {
+  background-color: #343A40 !important; /* Sidebar hover background */
+}
+
+
+.desktop_menu .ant-menu-item a {
+  color: white !important; /* Link text color */
+}
+
+.desktop_menu .ant-menu-item a:hover {
+  color: #F1B440 !important;
+}
+
+
+.ant-menu-light .ant-menu-item-selected {
+  color:#F1B440;
+}
+
+
+.desktop_menu .ant-menu-item-selected {
+  background-color: #282C34 !important; /* Selected item background */
+  color: #F1B440 !important; /* Selected item text color */
+}
+.desktop_menu .ant-menu-item-selected a {
+  color: #F1B440 !important; /* Selected/active text color */
+}
+
+/* Header Styles */
+.ant-layout-header {
+  color: white !important; /* Header text color */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3); /* Header border */
+}
+
+/* Hover Background for Main and Submenu Items */
+.desktop_menu .ant-menu-item:hover,
+.desktop_menu .ant-menu-submenu:hover {
+  background-color: #343A40 !important; /* Sidebar hover background */
+}
+
+/* Text Color for Main and Submenu Links */
+.desktop_menu .ant-menu-item a,
+.desktop_menu .ant-menu-submenu-title {
+  color: white !important; /* Default link text color */
+}
+
+/* Hover Text Color for Main and Submenu Links */
+.desktop_menu .ant-menu-item a:hover,
+.desktop_menu .ant-menu-submenu-title:hover {
+  color: #F1B440 !important; /* Hover text color */
+}
+
+/* Selected/Active State for Main and Submenu Items */
+.desktop_menu .ant-menu-item-selected a,
+.desktop_menu .ant-menu-submenu-selected {
+  background-color: #282C34 !important; /* Selected item background */
+  color: #F1B440 !important; /* Selected text color */
+}
+
+/* Default icon color */
+.desktop_menu .sidebar-icon svg,
+.desktop_menu .sidebar-icon img {
+  color: white !important; /* Set default color to white */
+}
+
+/* Change icon color on hover */
+.desktop_menu .ant-menu-item:hover .sidebar-icon svg,
+.desktop_menu .ant-menu-item:hover .sidebar-icon img 
+{
+  color: #F1B440 !important; /* Change to your desired hover color */
+}
+
+/* Change icon color when selected */
+.desktop_menu .ant-menu-item-selected .sidebar-icon svg,
+.desktop_menu .ant-menu-item-selected .sidebar-icon img {
+  color: #F1B440 !important; /* Change to your desired selected color */
+}
+/* Default icon color for dropdown and submenu */
+.desktop_menu .ant-dropdown .sidebar-icon svg,
+.desktop_menu .ant-dropdown .sidebar-icon img,
+.desktop_menu .ant-menu-submenu .sidebar-icon svg,
+.desktop_menu .ant-menu-submenu .sidebar-icon img {
+  color: white !important; /* Set default color to white */
+}
+
+/* Change icon color on hover for dropdown */
+.desktop_menu .ant-dropdown:hover .sidebar-icon svg,
+.desktop_menu .ant-dropdown:hover .sidebar-icon img {
+  color: #F1B440 !important; /* Change to your desired hover color */
+}
+
+/* Change icon color when selected for dropdown */
+.desktop_menu .ant-dropdown .ant-dropdown-menu-item-selected .sidebar-icon svg,
+.desktop_menu .ant-dropdown .ant-dropdown-menu-item-selected .sidebar-icon img {
+  color: #F1B440 !important; /* Change to your desired selected color */
+}
+
+/* Change icon color on hover for submenu */
+.desktop_menu .ant-menu-submenu:hover .sidebar-icon svg,
+.desktop_menu .ant-menu-submenu:hover .sidebar-icon img {
+  color: #F1B440 !important; /* Change to your desired hover color */
+}
+
+/* Change icon color when selected for submenu */
+.desktop_menu .ant-menu-submenu-selected .sidebar-icon svg,
+.desktop_menu .ant-menu-submenu-selected .sidebar-icon img {
+  color: #F1B440 !important; /* Change to your desired selected color */
+}
+/* .nav-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+  background-color: #343a40;
+  transition: width 0.3s ease; 
+} */
+
+
+/* .brand-logo img {
+  transition: width 0.3s ease; 
+} */
+
+.hamburger {
+  cursor: pointer;
+  /* transition: transform 0.3s ease-in-out;  */
+}
 
 
 
@@ -43673,3 +43817,28 @@ background: "#ebc1c1"
 .ant-select-selector {
  background-color: #FFECCC;
 }
+/* ////////////////////////// */
+
+
+
+.no-arrow::after {
+  display: none !important;
+}
+
+/* .transition-menu{
+  transition: all 0.1s ease !important;
+} */
+
+.desktop_menu{
+  width: 15rem;
+  padding-bottom: 10px;
+  height: 100%;
+  /* position: absolute; */
+  /* top: 4.375rem; */
+  padding-top: 1rem;
+  z-index: 6;
+  /* background-color: var(--sidebar-bg); */
+  transition: all .1s ease;
+  box-shadow: 0rem 0.9375rem 1.875rem 0rem rgba(0, 0, 0, 0.02);
+}
+
