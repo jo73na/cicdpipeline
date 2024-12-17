@@ -107,21 +107,15 @@ const  options = {
 
 const  ExpensesBarChart = () => {
 
-  const {companybar,clientData,invoicechart,count,ClientSelectDatas} = useContext(DashboardContext);
+  const {invoicechart} = useContext(DashboardContext);
  
-    
-  const   series = [
-    {
-        name: 'Expsense ',
-        data: invoicechart?.data1
-    }, 
-    // {
-        // [50, 90, 90,90,90,90],
-    //   name: 'Cycling',
-    //   data: [50, 60, 55,75,25,30]
-    // }, 
-];
+  const data2 = invoicechart?.data2 || [];  
 
+   
+    const series = data2.length > 0 ? [{
+        name: 'Expense',
+        data: data2.slice(0, 12),  
+    }] : [];
     return (
         <div id="chartBar" className="chartBar">
             <ReactApexChart

@@ -82,6 +82,7 @@ const DashboardProvider = (props) => {
     let InvoiceExpense = `${BASE_URL}/invoiceChart`;
     let params = {
        admin_id: token,
+       date: new Date().toISOString(),
     };
    
     setLoading(true);
@@ -316,8 +317,10 @@ const DashboardProvider = (props) => {
       params.startOfWeek = e[0]?.format("YYYY-MM-DD");
       params.endOfWeek = e[1]?.format("YYYY-MM-DD");
       params.no_of_days = parseInt(daysDifference < 1? 1: daysDifference)
+      params.date = new Date().toISOString();
     } else {
       HRDataapi = `${BASE_URL}/HR/Month`;
+      params.date = new Date().toISOString();
     }
     try {
       await axios.get(HRDataapi, { params }).then((resp) => {
@@ -334,6 +337,7 @@ const DashboardProvider = (props) => {
     sethrSelect(e);
     let params = {
       hr: e,
+      date: new Date().toISOString(), 
     };
     if (Hrdatepicker && Hrdatepicker?.length > 0) {
       let timeDifference =  Hrdatepicker[1]?.$d?.getTime() -  Hrdatepicker[0]?.$d?.getTime();

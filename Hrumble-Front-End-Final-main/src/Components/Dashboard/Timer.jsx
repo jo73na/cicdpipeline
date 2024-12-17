@@ -6,6 +6,7 @@ import MailSend from "./MailSend";
 import { Card } from "react-bootstrap";
 import DashboardContext from "../../Providers/DashboardProvider";
 import SocialNetworkRadialChart from "../UtlilsComponent/SocialNetworkRadialChart";
+import CalenderData from "./Element/CalenderData";
 
 // import Button from 'antd/lib/button'
 
@@ -323,7 +324,6 @@ const EmployeeTimeTracker = () => {
                   Logout
                 </button> 
                              </>
-
                                }
                           </Card.Header>
         <div className="card-body py-0">
@@ -339,8 +339,6 @@ const EmployeeTimeTracker = () => {
               >
                 <SocialNetworkRadialChart percentage ={percentage} />
                 <p className="dashborad_timer">{formatTime(totalBreakTime)}</p>
-
-    
                 {/* <Progress
                   type="circle"
                   percent={percentage}
@@ -358,7 +356,6 @@ const EmployeeTimeTracker = () => {
                className=""
                
               >
-                
                 <SocialNetworkRadialChart percentage={Math.round(percentage,2)} />
                 
               </div>
@@ -495,7 +492,9 @@ const EmployeeTimeTracker = () => {
            
            
         </div>
+        
     </div>
+    
     
   );
 };

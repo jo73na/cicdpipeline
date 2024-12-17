@@ -39,6 +39,7 @@ const  ProjectOverviewChart = (props) =>{
      const [lable,setLable]=useState(getCurrentWeekLabels())
 
    const {Hrresults,fetchstatus}=useContext(DashboardContext)
+   console.log("WshabnamHRRR:::", Hrresults.ClientSubmission)
     const chartRef = useRef();
     const  series = [
         // {

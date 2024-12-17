@@ -343,7 +343,6 @@ const TimesheetSchdular = ({ setAddLogButtonCount }) => {
                 <ViewsDirective>
                   <ViewDirective option="Month" />
                 </ViewsDirective>
-
                 <Inject services={[Month]} />
               </ScheduleComponent>
             </Link>

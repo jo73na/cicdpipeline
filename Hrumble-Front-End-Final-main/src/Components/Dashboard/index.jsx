@@ -24,7 +24,7 @@ import { SalesandMarketting } from './SalesandMargetting';
 import ProjectOverviewChart from '../UtlilsComponent/ProjectOveviewTab';
 import InvoiceExpenceChart from './InvoiceExpenceChart';
 import GoalCard from '../../Utils/GoalCard';
-// import { GoalContext } from '../../Providers/Goal/GoalProvider';
+import  GoalContext  from '../../Providers/Goal/GoalProvider';
  
 import {Link} from 'react-router-dom';
 // import loadable from "@loadable/component";
@@ -36,6 +36,9 @@ import ProjectOverviewTab from './Element/ProjectOverViewTab';
 import UpcomingBlog from './Element/UpcomingBlog';
 import CalenderData from './Element/CalenderData'
 import ThemeContext from '../../Providers/Theme/index'
+import SubmissionChart from "./Element/ClientSubmissionChart";
+import OnboardingChart from "./Element/OnboardingChart";
+
  
  
  
@@ -43,7 +46,7 @@ import ThemeContext from '../../Providers/Theme/index'
 const Employee=()=>{
 //  const {Loading} = useContext(JobContext);
  
-const {count,handleClickmanualy,handleCancel,clientSubmissionCount,Opengoal,goal,fetchDashboard,Loading,handleDateChange,monthemployee,handledatabaseChange,weekSubmission} =useContext(DashboardContext)
+const {count,handleClickmanualy,handleCancel,clientSubmissionCount,Opengoal,goal,fetchDashboard,Loading,handleDateChange,monthemployee,handledatabaseChange,weekSubmission,invoicechart} =useContext(DashboardContext)
 let role =CookieUtil.get("role")
  
  let data = JSON.parse(CookieUtil.get('admin'));
@@ -106,9 +109,23 @@ useEffect(() => {
  
  
  
- 
- 
- 
+const datacount1 = Array.isArray(invoicechart?.data1)
+  ? invoicechart.data1.reduce((acc, curr) => acc + (typeof curr === 'number' ? curr : 0), 0)
+  : 0;
+
+const datacount2 = Array.isArray(invoicechart?.data2)
+  ? invoicechart.data2.reduce((acc, curr) => acc + (typeof curr === 'number' ? curr : 0), 0)
+  : 0;
+
+// Calculate total data count
+const totalDataCount = (Array.isArray(invoicechart?.data1) && Array.isArray(invoicechart?.data2)) 
+    ? invoicechart.data1.map((value, index) => value - (invoicechart.data2[index] || 0))
+    : [];
+
+    const totalEarnings = Array.isArray(totalDataCount)
+    ? totalDataCount.reduce((acc, curr) => acc + (typeof curr === 'number' ? curr : 0), 0)
+    : 0;
+    
     return(
      <>
      {
@@ -133,12 +150,12 @@ useEffect(() => {
        
             <div className="col-xl-3">
              
-                      <div className="col-xl-12 col-xxl-12 col-sm-3 col-md-3 col-lg-6">
+                      <div className="col-xl-12 col-xxl-12 col-sm-12 col-md-12 col-lg-12">
                         <div className="card bg-primary text-white">
                           <div className="card-header border-0">
                             <div className="revenue-date">
                               <span>Revenue</span>
-                              <h4 className="text-white">$310.435</h4>
+                              <h4 className="text-white">₹ {datacount1}</h4>
                             </div>
                             {/* <div className="avatar-list avatar-list-stacked me-2">
                             </div> */}
@@ -148,12 +165,12 @@ useEffect(() => {
                       </div>
                         </div>
                       </div>
-                      <div className="col-xl-12 col-xxl-12 col-sm-3 col-md-3 col-lg-6">
+                      <div className="col-xl-12 col-xxl-12 col-sm-12 col-md-12 col-lg-12">
                         <div className="card bg-secondary text-white">
                           <div className="card-header border-0">
                             <div className="revenue-date">
                               <span className="text-black">Expenses</span>
-                              <h4 className="text-black">$920.035</h4>
+                              <h4 className="text-black">₹ {datacount2}</h4>
                             </div>
                           </div>
                           <div className="card-body pb-0 custome-tooltip d-flex align-items-center j_c_c">
@@ -161,34 +178,26 @@ useEffect(() => {
                           </div>
                         </div>
                       </div>
-                     
-                     
-                   
                     </div>
                
- 
+                    <div className='col-xl-4'>
                
-                 <div className="col-xl-3 col-xxl-12 col-sm-3 col-md-3 col-lg-6">
+                 <div className="col-xl-12 col-xxl-12 col-sm-12 col-md-12 col-lg-6">
                     <div className="card ">
                         <div className="card-header border-0 pb-0">
                             <h4 className="heading mb-0">Total Earning</h4>
                         </div>
-                        <EarningChart/>
+                        <EarningChart data={totalDataCount} totalEarnings={totalEarnings}/>
                     </div>
-               
                       </div>
-                     
-                 
-                 
-                     
-                  <div className="col-xl-3  col-lg-6">
+                      {/* <div className="col-xl-12  col-lg-6">
             <div className="card  pb-0">
               <div className="card-header border-0 pb-0">
                 <h4 className="card-title">To Do List</h4>
               </div>
               <div className="card-body">
                 <div
-                  style={{ height: "370px" }}
+                  style={{ height: "175px" }}
                   id="DZ_W_Todo4"
                   className="widget-media dz-scroll height370  ps--active-y"
                 >
@@ -335,25 +344,35 @@ useEffect(() => {
                 </div>
               </div>
             </div>
-          </div>
+              </div>
+                      */}
+                      </div>
+                 
+                    
+                
+          
                 <div className='col-xl-2 col-xxl-4 '>
                   <div>
                     <CalenderData/>
                   </div>
                 </div>
                 </div>
-                 
+                <div className='card p_10'>
+
+            
+<GraphDashboard  options={option}/>
+</div>
                   <div className = "container-fluid ">
                     <div className = "row">
                      
-                        <div className="col-xl-8 ">
+                        <div className="col-xl-7 ">
                           <ProjectOverviewTab height={220}/>
                         </div>
-                        <div className="col-xl-4  col-lg-6">
+                        <div className="col-xl-5  col-lg-6">
             <div className="card shadow">
               <div className="card-header border-0 pb-0">
                 <h4 className="card-title">Events</h4>
-               
+                              
               </div>
               <div className="card-body">
                 <div
@@ -455,10 +474,18 @@ useEffect(() => {
           <div className="col">
             <div className='row'>
               <div className="col-xl-6  ">
-              <EarningChart  DetailHead ={Head1} Primarycolor={PrimaryCol}  />
+              <div className="card ">
+              <div className="card-header border-0 pb-0">
+              <SubmissionChart DetailHead ={Head1} Primarycolor={PrimaryCol}  />
+              </div>
+              </div>
               </div>
               <div className="col-xl-6 ">
-              <EarningChart  DetailHead={Head2} Primarycolor={SecondaryCol} />
+              <div className="card ">
+              <div className="card-header border-0 pb-0">
+              <OnboardingChart  DetailHead={Head2} Primarycolor={SecondaryCol} />
+              </div>
+              </div>
               </div>
               </div>
           </div>
@@ -469,12 +496,27 @@ useEffect(() => {
       <>
       <div className="row">  
       <div className="col-xl-4">
-           <div className='row'>
-       <EmployeeTimeTracker/>
-           </div>
+         
+         <div className="card ">
+     
+     <div className="card-body">
+         <div className="text-center">
+             <img src={Items} alt="" />
+         </div>
+         <h4>Hii {data?.name} Welcome to Your Dashboard</h4>
+
      </div>
-     <div className="col-xl-8">
-  <div className={`col_${goal?.senddata?.length > 2 ? "3" : goal?.senddata?.length === 2 ? "2" : "1"} g_5`}>
+ </div>
+</div> 
+<div className="col-xl-4 "> 								
+        <EmployeeTimeTracker/> 
+        
+</div>
+     <div className='col-xl-4'>
+     <CalenderData/>
+     </div>
+   
+  {/* <div className={`col_${goal?.senddata?.length > 2 ? "3" : goal?.senddata?.length === 2 ? "2" : "1"} g_5`}>
     {
       goal?.senddata?.map((item, i) => {
         return (
@@ -493,13 +535,14 @@ useEffect(() => {
         );
       })
     }
-  </div>
-</div>
+  </div> */}
+
+
  
  <div className="col-xl-4">
  <div className="row">
      <div className="col-xl-12">
-     <Interview/>
+     {/* <Interview/> */}
      </div>
      <div className="col-xl-12">
          {/* <AllProjectBlog /> */}
@@ -556,6 +599,24 @@ useEffect(() => {
  
        <div class = "row">
         <div class = "col-xl-12">
+        <div className="col">
+            <div className='row'>
+              <div className="col-xl-6  ">
+              <div className="card ">
+              <div className="card-header border-0 pb-0">
+              <SubmissionChart  DetailHead ={Head1} Primarycolor={PrimaryCol}  />
+              </div>
+              </div>
+              </div>
+              <div className="col-xl-6 ">
+              <div className="card ">
+              <div className="card-header border-0 pb-0">
+              <OnboardingChart  DetailHead={Head2} Primarycolor={SecondaryCol} />
+              </div>
+              </div>
+              </div>
+              </div>
+          </div>
         </div>
        </div>
       </>

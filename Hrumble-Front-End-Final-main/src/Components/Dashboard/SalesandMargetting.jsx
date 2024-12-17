@@ -1,15 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
-
-
- import Items from "/images/items.png"
-
+import Items from "/images/items.png"
 import EmployeeTimeTracker from './Timer'
-
-
-
 import { Card, Col, Row, Tab } from 'react-bootstrap'
-
-
 
 import CompanyChart from './CompanyChart'
 import ContactsChart from './Contacts'
@@ -17,6 +9,7 @@ import DashboardContext from '../../Providers/DashboardProvider'
 import CookieUtil from '../../Utils/Cookies'
 import Interview from './Interview'
 import Loader from '../../Utils/Loader'
+import CalenderData from './Element/CalenderData'
 
 
 export const SalesandMarketting = () => {
@@ -31,7 +24,6 @@ export const SalesandMarketting = () => {
       Loading ?
       <Loader/>
       :
-   
       <div className='container-fluid'>
       {/* <h6 className='text-primary'> Sales Dashboard</h6> */}
    
@@ -49,16 +41,10 @@ export const SalesandMarketting = () => {
 
           </div>
       </div>
-             
-       
      </div> 
-     <div className="col-xl-4 ">
-   
-            								
-             <EmployeeTimeTracker/>
-            
-            
-        
+     <div className="col-xl-4 "> 								
+             <EmployeeTimeTracker/> 
+             
  </div>
  <div className="col-xl-4">
  <div className="row">

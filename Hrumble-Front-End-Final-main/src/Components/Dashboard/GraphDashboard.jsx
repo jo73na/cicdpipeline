@@ -1,113 +1,251 @@
-import React, { useState, useEffect } from "react";
-import Chart from "react-apexcharts";
-import { ButtonGroup, Button } from 'react-bootstrap';
+import React,{useRef, useState,useContext} from "react";
+import ReactApexChart from "react-apexcharts";
+import {Nav, Tab} from 'react-bootstrap';
 
-function GoalCard({ chartdata = [], goals = [] }) {
-  const [timeRange, setTimeRange] = useState('Week');
-  const [filteredData, setFilteredData] = useState([]);
+import { DatePicker,Select } from 'antd'
+import DashboardContext from "../../Providers/DashboardProvider";
 
-  const handleTimeRangeChange = (range) => {
-    setTimeRange(range);
-  };
 
-  useEffect(() => {
-    if (chartdata && chartdata.length > 0) {
-      // Filter chart data based on selected time range
-      const dataForTimeRange = chartdata.filter(item => item.duration === timeRange);
-      setFilteredData(dataForTimeRange);
-    }
-  }, [chartdata, timeRange]);
 
-  if (!goals.length || !filteredData.length) {
-    return <div>No data available for the selected range</div>;
-  }
 
-  // Chart options
-  const options = {
-    chart: {
-      type: 'bar',
-      toolbar: { show: false }
+
+const  GraphDashboard = (props) =>{   
+  const {handleHRChange,HrSelectData,handlechangeHRSelect,ClientSelectDatas,handlechangeClientSelect,fetchDashboard,clientSubmissionCount,Loading,handleClientChange,HRdata}=useContext(DashboardContext )
+    const chartRef = useRef();
+    const  series = [
+        {
+            name: 'Client Submissions',
+            type: 'column',
+            data: HRdata?.
+            ClientSubmission
+            
+        }, {
+            name: 'Client Screen Reject',  
+            type: 'area',
+            data: HRdata?.ClientScreenReject
+        }, 
+        {
+          name: 'Interviews',
+          type: 'column',
+          data: HRdata?.Interview
+      },
+      {
+        name: 'No Show',
+        type: 'column',
+        data:HRdata?.L1noshow 
     },
-    plotOptions: {
-      bar: {
-        horizontal: true,
-        barHeight: '50%',
-        borderRadius: 14,
-        borderRadiusApplication: 'end',
+        {
+            name: 'Joined',
+            type: 'line',
+            data: HRdata?.Joined 
+        }
+    ]
+      
+   const options = {
+      chart: {
+          height: props.height,
+          type: 'line',
+          stacked: false,
+          toolbar: {
+            show: false,
+          },
+      },
+      
+      stroke: {
+          width: [0, 1, 1],
+          curve: 'straight',
+          dashArray: [0, 0, 0,0,5]
+      },
+      legend: {
+        fontSize: '13px',
+        fontFamily: 'Mulish',
+        labels: {
+          colors:'#888888', 
+        }
+      },
+      plotOptions: {
+          bar: {
+              columnWidth: '3%',
+              borderRadius:6	,
+          }
+      },
+      fill: {            
+          type : 'gradient',
+          gradient: {
+            inverseColors: false,
+            shade: 'light',
+            type: "vertical",              
+            colorStops : [
+              [
+                  {
+                    offset: 0,
+                    color: 'var(--color-primary)',
+                    opacity: 1
+                  },
+                  {
+                    offset: 100,
+                    color: 'var(--color-primary)',
+                    opacity: 1
+                  }
+              ],
+              [
+                {
+                  offset: 0,
+                  color: '"#FF5E5E"',
+                  opacity: 1
+                },
+                {
+                  offset: 0.4,
+                  color: '"#FF5E5E"',
+                  opacity: .15
+                },
+                {
+                  offset: 100,
+                  color: '"#FF5E5E"',
+                  opacity: 0
+                }
+            ],
+              [
+                
+                {
+                  offset: 0,
+                  color: 'var(--color-yellow)',
+                  opacity: 1
+                },
+                {
+                  offset: 100,
+                  color: 'var(--color-yellow)',
+                  
+                  opacity: 1
+                }
+            ],
+            [
+              {
+                offset: 0,
+                color: '#808080',
+                opacity: 1
+              },
+              {
+                offset: 100,
+                color: '#808080',
+                opacity: 1
+              }
+          ],
+            
+              [
+                  {
+                    offset: 0,
+                    color: '#3AC977',
+                    opacity: 1
+                  },
+                  {
+                    offset: 100,
+                    color: '#3AC977',
+                    opacity: 1
+                  }
+              ],
+          ],
+            stops: [0, 100, 100, 100]
+          }
+      },
+      colors:["var(--color-primary)","#FF5E5E","var(--color-yellow)","#808080","#3AC977"],
+       
+      labels:HRdata?.label,
+      markers: {
+          size: 0
+      },
+      xaxis: {
+          type: 'month',
+          labels: {
+                style: {
+                  fontSize: '13px',
+                  colors:'#888888',
+                },
+          },
+      },
+      yaxis: {
+          min: 0,
+          tickAmount: 4,
+          labels: {
+                style: {
+                  fontSize: '13px',
+                  colors:'#888888',
+                },
+          },
+      },
+      tooltip: {
+          shared: true,
+          intersect: false,
+          y: {
+              formatter: function (y) {
+              if (typeof y !== "undefined") {
+                return y.toFixed(0) 
+              }
+              return y;          
+            }
+          }
       }
-    },
-    dataLabels: {
-      enabled: true,
-      formatter: (val, opt) => {
-        const goals = opt.w.config.series[opt.seriesIndex].data[opt.dataPointIndex].goals;
-        return goals && goals.length ? `${val} / ${goals[0].value}` : val;
-      }
-    },
-    xaxis: {
-      title: { text: 'Values', style: { fontSize: '16px', fontWeight: 'bold' } }
-    },
-    yaxis: {
-      categories: goals.map(goal => goal.goaltype_name),
-      title: { text: 'Goals', style: { fontSize: '16px', fontWeight: 'bold' }, offsetX: 8 },
-    },
-    tooltip: {
-      enabled: true,
-      y: {
-        formatter: (value) => `${value} points`
-      }
-    }
-  };
+   }   
 
-  // Series data based on the selected time range
-  const series = [{
-    name: `${timeRange} Data`,
-    data: filteredData.map(data => {
-      const { goaltype_name, assigned } = data;
-      const actualValue = assigned.target;
-      const targetValue = goals.find(goal => goal.goaltype_name === goaltype_name)?.assigned.target || 0;
 
-      // Set the fill color based on the actual value compared to the target
-      const fillColor = actualValue >= targetValue ? '#88a67e' : '#F8B940';
-
-      return {
-        x: goaltype_name,
-        y: actualValue,
-        goals: [{ name: 'Target', value: targetValue }],
-        fillColor
-      };
-    })
-  }];
-
-  // Update the options to include the fill colors
-  options.fill = {
-    colors: series[0].data.map(data => data.fillColor),
-  };
-
-  return (
-    <div>
-      <div className="d-flex justify-content-end">
-        <ButtonGroup>
-          {['Week', 'Month', 'Year'].map((range) => (
-            <Button
-              key={range}
-              variant={timeRange === range ? 'primary' : 'outline-primary'}
-              onClick={() => handleTimeRangeChange(range)}
-              aria-pressed={timeRange === range}
-            >
-              {range}
-            </Button>
-          ))}
-        </ButtonGroup>
-      </div>
-
-      <Chart
-        options={options}
-        series={series}
-        type="bar"
-        height={Math.max(300, Math.min(goals.length * 40, 500))} // Maximum height of 500px
-      />
-    </div>
-  );
+    
+    return (
+      <>
+          <Tab.Container defaultActiveKey={'Week'}>
+            <div className="card-header border-0 pb-0 flex-wrap d_f j_c_s_b">
+                <h4 className="text-primary">TAG Report</h4>                
+                 <div>
+                 <Nav as="ul" className="nav nav-pills mix-chart-tab ">
+                  <DatePicker.RangePicker className='m_r_20' style={{
+            zIndex: "999"
+           }} onChange={handleHRChange}/>
+           <Select 
+           allowClear
+           showSearch
+           placeholder="Select Recruiter"
+            style={{
+              width:"220px"
+            }}
+           onChange={handlechangeHRSelect}
+           options={HrSelectData}/>   
+           
+                  </Nav>
+                 </div>
+            </div>
+            <div className="card-body  p-0">                 
+                <div id="overiewChart">       
+                  <ReactApexChart
+                    options={options}
+                    series={series}
+                    ref={chartRef}
+                    type="line"
+                    height={300}
+                  />
+                </div>                
+                {/* <div className="ttl-project">
+                    <div className="pr-data">
+                        <h5>12,721</h5>
+                        <span>Number of Projects</span>
+                    </div>
+                    <div className="pr-data">
+                        <h5 className="text-primary">721</h5>
+                        <span>Active Projects</span>
+                    </div>
+                    <div className="pr-data">
+                        <h5>$2,50,523</h5>
+                        <span>Revenue</span>
+                    </div>
+                    <div className="pr-data">
+                        <h5 className="text-success">12,275h</h5>
+                        <span>Working Hours</span>
+                    </div>
+                </div> */}
+            </div>
+            
+          </Tab.Container>
+      </>
+    );
+  
 }
 
-export default GoalCard;
+export default GraphDashboard;

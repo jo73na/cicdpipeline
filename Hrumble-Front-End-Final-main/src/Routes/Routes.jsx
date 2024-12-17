@@ -65,6 +65,8 @@ import AddJobs from "../Components/JobDashboard/AddJobs";
 import LeaveHistory from "../Components/Leaves/AdminLeavePage/LeaveHistory";
 import LeaveApproval from "../Components/Leaves/AdminLeavePage/LeaveApproval";
 import TimelineLeave from "../Components/Leaves/AdminLeavePage/TimelineLeave";
+const  NonBillable =lazy(()=>import( "../Components/TimeSheetAdmin/NonBillableRequest"));
+
 
 
 const RoutesDynamic = [
@@ -411,6 +413,12 @@ const RoutesDynamic = [
     exact: true,
 
     component: <TimelineLeave/>,
+  },
+  {
+    path: "/nonbillable",
+    exact: true,
+
+    component: <NonBillable/>,
   },
 
  

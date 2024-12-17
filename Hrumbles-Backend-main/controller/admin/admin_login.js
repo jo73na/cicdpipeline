@@ -1627,6 +1627,249 @@ let AllsubmissionsYours= [
    }
  }))
 
+ router.get('/submissionCount', authAdmin, asyncHandler(async (req, res) => {
+  try {
+    const year = 2023; // Adjust year if necessary
+
+    // Aggregation for "team" data
+    const teamAggregation = [
+      { 
+        $match: { 
+          status: "Client submission",
+          createdAt: { 
+            $gte: new Date(year, 0, 1),
+            $lte: new Date(year, 11, 31, 23, 59, 59, 999)
+          }
+        }
+      },
+      { 
+        $facet: {
+          daily: [
+            {
+              $group: {
+                _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
+                count: { $sum: 1 }
+              }
+            },
+            { $sort: { _id: 1 } }
+          ],
+          weekly: [
+            {
+              $group: {
+                _id: { $isoWeek: "$createdAt" },
+                count: { $sum: 1 }
+              }
+            },
+            { $sort: { _id: 1 } }
+          ],
+          monthly: [
+            {
+              $group: {
+                _id: { $month: "$createdAt" },
+                count: { $sum: 1 }
+              }
+            },
+            { $sort: { _id: 1 } }
+          ],
+          yearly: [
+            {
+              $group: {
+                _id: { $year: "$createdAt" },
+                count: { $sum: 1 }
+              }
+            },
+            { $sort: { _id: 1 } }
+          ]
+        }
+      }
+    ];
+
+    // Aggregation for "yours" data
+    const yoursAggregation = [
+      {
+        $match: {
+          created_by: new mongoose.Types.ObjectId(req.user._id),
+          status: "Client submission",
+          createdAt: { 
+            $gte: new Date(year, 0, 1),
+            $lte: new Date(year, 11, 31, 23, 59, 59, 999)
+          }
+        }
+      },
+      { 
+        $facet: {
+          daily: [
+            {
+              $group: {
+                _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
+                count: { $sum: 1 }
+              }
+            },
+            { $sort: { _id: 1 } }
+          ],
+          weekly: [
+            {
+              $group: {
+                _id: { $isoWeek: "$createdAt" },
+                count: { $sum: 1 }
+              }
+            },
+            { $sort: { _id: 1 } }
+          ],
+          monthly: [
+            {
+              $group: {
+                _id: { $month: "$createdAt" },
+                count: { $sum: 1 }
+              }
+            },
+            { $sort: { _id: 1 } }
+          ],
+          yearly: [
+            {
+              $group: {
+                _id: { $year: "$createdAt" },
+                count: { $sum: 1 }
+              }
+            },
+            { $sort: { _id: 1 } }
+          ]
+        }
+      }
+    ];
+
+    const team = await totallogs.aggregate(teamAggregation).exec();
+    const yours = await totallogs.aggregate(yoursAggregation).exec();
+
+    success(res, 200, true, "Get Successfully", { team: team[0], yours: yours[0] });
+
+  } catch (error) {
+    console.error("Error in clientSubmissionCount:", error);
+    throw new Error(error);
+  }
+}));
+
+router.get('/joinedCount', authAdmin, asyncHandler(async (req, res) => {
+  try {
+    const year = 2023; // Adjust year if necessary
+
+    // Aggregation for "team" data
+    const teamAggregation = [
+      { 
+        $match: { 
+          status: "Joined",
+          createdAt: { 
+            $gte: new Date(year, 0, 1),
+            $lte: new Date(year, 11, 31, 23, 59, 59, 999)
+          }
+        }
+      },
+      { 
+        $facet: {
+          daily: [
+            {
+              $group: {
+                _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
+                count: { $sum: 1 }
+              }
+            },
+            { $sort: { _id: 1 } }
+          ],
+          weekly: [
+            {
+              $group: {
+                _id: { $isoWeek: "$createdAt" },
+                count: { $sum: 1 }
+              }
+            },
+            { $sort: { _id: 1 } }
+          ],
+          monthly: [
+            {
+              $group: {
+                _id: { $month: "$createdAt" },
+                count: { $sum: 1 }
+              }
+            },
+            { $sort: { _id: 1 } }
+          ],
+          yearly: [
+            {
+              $group: {
+                _id: { $year: "$createdAt" },
+                count: { $sum: 1 }
+              }
+            },
+            { $sort: { _id: 1 } }
+          ]
+        }
+      }
+    ];
+
+    // Aggregation for "yours" data
+    const yoursAggregation = [
+      {
+        $match: {
+          created_by: new mongoose.Types.ObjectId(req.user._id),
+          status: "Joined",
+          createdAt: { 
+            $gte: new Date(year, 0, 1),
+            $lte: new Date(year, 11, 31, 23, 59, 59, 999)
+          }
+        }
+      },
+      { 
+        $facet: {
+          daily: [
+            {
+              $group: {
+                _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
+                count: { $sum: 1 }
+              }
+            },
+            { $sort: { _id: 1 } }
+          ],
+          weekly: [
+            {
+              $group: {
+                _id: { $isoWeek: "$createdAt" },
+                count: { $sum: 1 }
+              }
+            },
+            { $sort: { _id: 1 } }
+          ],
+          monthly: [
+            {
+              $group: {
+                _id: { $month: "$createdAt" },
+                count: { $sum: 1 }
+              }
+            },
+            { $sort: { _id: 1 } }
+          ],
+          yearly: [
+            {
+              $group: {
+                _id: { $year: "$createdAt" },
+                count: { $sum: 1 }
+              }
+            },
+            { $sort: { _id: 1 } }
+          ]
+        }
+      }
+    ];
+
+    const team = await totallogs.aggregate(teamAggregation).exec();
+    const yours = await totallogs.aggregate(yoursAggregation).exec();
+
+    success(res, 200, true, "Get Successfully", { team: team[0], yours: yours[0] });
+
+  } catch (error) {
+    console.error("Error in clientSubmissionCount:", error);
+    throw new Error(error);
+  }
+}));
 
 router.get('/DatabaseAdded/:query', asyncHandler(async (req, res) => {
   let query=req.params.query;
@@ -3338,27 +3581,95 @@ router.get('/owner-select/',authAdmin, asyncHandler(async (req, res) => {
           throw new Error(error);
         }
         }))
-        router.get('/counts/',authAdmin, asyncHandler(async (req, res) => {
-       
-
-          
-  
- 
-         try {
-          const totalConatcs = await contacts.countDocuments();
-          const totalCompany = await accounts.countDocuments();
-          const totalCandidates = await candidatelog.countDocuments();
-
-       
-                
-           //  let data=crud.updateMany(admin,{},req?.body,{ new: true })
-       success(res, 200, true, "Get Successfully", {totalConatcs,totalCompany,totalCandidates})
-           
-           }
-          catch (error) {
-           throw new Error(error);
-         }
-         }))
+        ///
+        router.get('/counts/', authAdmin, asyncHandler(async (req, res) => {
+          try {
+              // Fetch counts for all years
+              const totalContacts = await contacts.countDocuments();
+              const totalCompany = await accounts.countDocuments();
+              const totalCandidates = await candidatelog.countDocuments();
+      
+              // Aggregate data month-wise for Contacts
+              const contactCountsByMonth = await contacts.aggregate([
+                  {
+                      $match: {
+                          createdAt: { $exists: true } // Ensure createdAt field exists
+                      }
+                  },
+                  {
+                      $group: {
+                          _id: { 
+                              yearMonth: { 
+                                  $dateToString: { format: "%Y-%m", date: "$createdAt" } 
+                              } // Group by year-month
+                          },
+                          count: { $sum: 1 }
+                      }
+                  },
+                  { $sort: { "_id.yearMonth": 1 } } // Sort by year and month in ascending order
+              ]);
+      
+              // Aggregate data month-wise for Companies
+              const companyCountsByMonth = await accounts.aggregate([
+                  {
+                      $match: {
+                          createdAt: { $exists: true } // Ensure createdAt field exists
+                      }
+                  },
+                  {
+                      $group: {
+                          _id: { 
+                              yearMonth: { 
+                                  $dateToString: { format: "%Y-%m", date: "$createdAt" } 
+                              } // Group by year-month
+                          },
+                          count: { $sum: 1 }
+                      }
+                  },
+                  { $sort: { "_id.yearMonth": 1 } } // Sort by year and month in ascending order
+              ]);
+      
+              // Aggregate data month-wise for Candidates
+              const candidateCountsByMonth = await candidatelog.aggregate([
+                  {
+                      $match: {
+                          createdAt: { $exists: true } // Ensure createdAt field exists
+                      }
+                  },
+                  {
+                      $group: {
+                          _id: { 
+                              yearMonth: { 
+                                  $dateToString: { format: "%Y-%m", date: "$createdAt" } 
+                              } // Group by year-month
+                          },
+                          count: { $sum: 1 }
+                      }
+                  },
+                  { $sort: { "_id.yearMonth": 1 } } // Sort by year and month in ascending order
+              ]);
+      
+              // Prepare response
+              const response = {
+                  totalContacts,
+                  totalCompany,
+                  totalCandidates,
+                  contactCountsByMonth,
+                  companyCountsByMonth,
+                  candidateCountsByMonth
+              };
+      
+              success(res, 200, true, "Data fetched successfully", response);
+      
+          } catch (error) {
+              throw new Error(error);
+          }
+      }));
+      
+      
+      
+      
+      
          router.get('/invoiceChart/',authAdmin, asyncHandler(async (req, res) => {
        
           aggregationPipelineInvoice= [

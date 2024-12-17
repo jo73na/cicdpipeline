@@ -18,6 +18,13 @@ import { Breadcrumb } from '../UtlilsComponent/Breadcrumb';
 import { CSVLink } from 'react-csv';
 import jsPDF from 'jspdf';
 import CandidateView from './Candidateview'
+import { FaMale, FaPaperclip } from 'react-icons/fa'; // Internal Submission
+import { FaUserCheck } from 'react-icons/fa'; // Client Submission
+import { FaVideo } from 'react-icons/fa'; // Interview Count
+import { FaUserPlus } from 'react-icons/fa'; // Joined Count
+import { FaClipboardList,FaAddressCard ,FaMapMarkerAlt} from 'react-icons/fa'; 
+import CookieUtil from '../../Utils/Cookies';
+import JobContext from '../../Providers/JobProvider';
  
  
 const stripHtml = (html) => {
@@ -41,22 +48,20 @@ const ViewJob = () => {
      const [analysisResults, setAnalysisResults] = useState({});
      const [modalVisible, setModalVisible] = useState(false);
      const [currentAnalysisResult, setCurrentAnalysisResult] = useState(null);
+     const admin_id = CookieUtil.get("admin_id");
  
   console.log("permission", permission);
   let filter = permission?.find((item) => item?.name == "Jobs");
  
      const {setViewCandidateDrawer,AddInterView,handleInterviewClose,viewInterviewDrawer,viewall,handleClickjobTable,Loading,jobSingle,viewjobCount,allCandidates,handleStatusEdit,addButtonCan,setAddButtonCan,showEmployeModal,setEditButtonJob,showEmployeModalEdit,editButtonJob,editButtonCanEmploy,viewCandidateDrawer,handleCloseviewDrawer,showCandidateModalEdit,setEditButtonCanEmploy,handleopenCandidateDrawer, handleClick}=useContext(ViewJobContext)
-     const cardCounter = [
-        {number:  viewjobCount[0]?.submissionCount , countText:'purple', title:'Internal Submission'},
-        {number: viewjobCount[0]?.clientSubmissionCount,countText:'warning',  title:'Client Submission'},
-        {number: viewjobCount[0]?.interviewCount,countText:'danger',  title:'Interviewed'},
-        {number:  viewjobCount[0]?.offerCount,countText:'success',  title:'Offered'},
-        {number:  viewjobCount[0]?.joinedCount,countText:'danger',  title:'Joined'},
-        {number: '0', countText:'primary', title:'Filled'},
-        // {number: '16',countText:'danger',  title:'Pending'},
-    ];
- 
-    // console.log(CandidateView.resume);
+    
+     const numberBoxStyle = {
+      backgroundColor: '#e6f2ff', // Light blue background
+      padding: '4px 8px',
+      borderRadius: '4px',
+      fontWeight: '500',
+      color: '#007bff' // Primary color text
+    };
  
   let tableData =[]
     const headers = [
@@ -428,25 +433,266 @@ const ViewJob = () => {
                     </div>
                 </Tab.Container>
             </div>  
-                <div className="">
-                    <div className="card">
-                        <div className="card-body px-3 py-4">
-                            <div className="row ">
-                                {cardCounter.map((item, index)=>(
-                                    <div className="col-xl-2 col-sm-4 col-7" key={index}>
-                                        <div className="task-summary">
-                                            <div className="d-flex align-items-baseline">
-                                                <CountUp className={`mb-0 fs-28 fw-bold me-2 text-${item.countText}`}  end={item.number} duration={'5'} />
-                                                <h6 className='mb-0'>{item.title}</h6>
-                                            </div>
-                                            {/* <p>Tasks assigne</p> */}
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>  
-                        </div>  
-                    </div>  
+            
+            <div className="container-fluid" style={{marginTop:"10px"}}>
+      <div className="row">
+        <div className="col-md-4 mb-3">
+          <div className='card' style={{height: "350px"}}>
+            
+          <div className='card-header bg-primary text-white'> 
+              Job Overview
+            </div>
+            <div className='card-body px-3 py-4' 
+            style={{
+              maxHeight:'300px',
+              overflowY: "auto",
+            }}>
+              <div className="card-body px-3 py-2">
+              <h4 className="d-flex justify-content-between align-items-center mb-2">
+                <div className="d-flex align-items-center">
+                  <FaPaperclip className="me-2" style={{ color: '#007bff' }} />
+                  Job Title:
                 </div>
+                <span className="font-w500 text-primary">
+                  {jobSingle?.job_title || ""}
+                </span>
+              </h4>
+              </div>
+              <div className="card-body px-3 py-2">
+              <h4 className="d-flex justify-content-between align-items-center mb-2">
+                <div className="d-flex align-items-center">
+                  <FaUserCheck className="me-2" style={{ color: '#28a745' }} />
+                  Job ID:
+                </div>
+                <span>
+                  {jobSingle?.job_id || ""}
+                </span>
+              </h4>
+              </div>
+              <div className="card-body px-3 py-2">
+              <h4 className="d-flex justify-content-between align-items-center mb-2">
+                <div className="d-flex align-items-center">
+                  <FaVideo className="me-2" style={{ color: '#dc3545' }} />
+                  Hiring Mode:
+                </div>
+                <span>
+                  {jobSingle?.job_type || ""}
+                </span>
+              </h4>
+              </div>
+              <div className="card-body px-3 py-2">
+              <h4 className="d-flex justify-content-between align-items-center mb-2">
+                <div className="d-flex align-items-center">
+                  <FaUserPlus className="me-2" style={{ color: '#ffc107' }} />
+                  Job Type:
+                </div>
+                <span>
+                  {jobSingle?.secondarySelected|| ""}
+                </span>
+              </h4>
+              </div>
+              {/* <h4 className="d-flex justify-content-between align-items-center">
+                <div className="d-flex align-items-center">
+                  <FaClipboardList className="me-2" style={{ color: '#17a2b8' }} />
+                    Created By:
+                </div>
+                <span>
+                  {""|| ""}
+                </span>
+              </h4> */}
+               <div className="card-body px-3 py-2">
+              <h4 className="d-flex justify-content-between align-items-center mb-2">
+                <div className="d-flex align-items-center">
+                  <FaUserPlus className="me-2" style={{ color: '#17a2b8' }} />
+                    Client Name:
+                </div>
+                <span>
+                  {jobSingle?.client_id?.[0]?.name|| ""}
+                </span>
+              </h4>
+              </div>
+              <div className="card-body px-3 py-2">
+              <h4 className="d-flex justify-content-between align-items-center mb-2">
+                <div className="d-flex align-items-center">
+                  <FaMapMarkerAlt className="me-2" style={{ color: '#17a2b8' }} />
+                    Job Location:
+                </div>
+                <span style={numberBoxStyle}>
+                 {jobSingle?.job_location|| ""}
+                </span>
+              </h4>
+              </div>
+              <div className="card-body px-3 py-2">
+              <div className="d-flex justify-content-between align-items-center mb-2">
+                <div className="d-flex align-items-center">
+                  <FaMale className="me-2" style={{ color: '#17a2b8' }} />
+                    Candidates Required:
+                </div>
+                <span style={numberBoxStyle}>
+                  {jobSingle?.required_no_of_candidates|| ""}
+                </span>
+              </div></div>
+            </div>
+          </div>
+        </div>
+        
+        <div className="col-md-4 mb-3">
+      <div className="card" style={{ height: "350px" }}>
+        <div className="card-header bg-secondary text-white">
+          Submission Overview
+        </div>
+        <div className="card-body px-3 py-4">
+          <div className="d-flex justify-content-between align-items-center mb-4">
+            <div className="d-flex align-items-center">
+              <FaPaperclip className="me-2" style={{ color: '#007bff' }} />
+              Internal Submission:
+            </div>
+            <span style={numberBoxStyle}>
+              {viewjobCount[0]?.submissionCount || 0}
+            </span>
+          </div>
+          
+          <div className="d-flex justify-content-between align-items-center mb-4">
+            <div className="d-flex align-items-center">
+              <FaUserCheck className="me-2" style={{ color: '#28a745' }} />
+              Client Submission:
+            </div>
+            <span style={numberBoxStyle}>
+              {viewjobCount[0]?.clientSubmissionCount || 0}
+            </span>
+          </div>
+          
+          <div className="d-flex justify-content-between align-items-center mb-4">
+            <div className="d-flex align-items-center">
+              <FaVideo className="me-2" style={{ color: '#dc3545' }} />
+              Interview Count:
+            </div>
+            <span style={numberBoxStyle}>
+              {viewjobCount[0]?.interviewCount || 0}
+            </span>
+          </div>
+          
+          <div className="d-flex justify-content-between align-items-center mb-4">
+            <div className="d-flex align-items-center">
+              <FaUserPlus className="me-2" style={{ color: '#ffc107' }} />
+              Joined Count:
+            </div>
+            <span style={numberBoxStyle}>
+              {viewjobCount[0]?.joinedCount || 0}
+            </span>
+          </div>
+          
+          <div className="d-flex justify-content-between align-items-center mb-0">
+            <div className="d-flex align-items-center">
+              <FaClipboardList className="me-2" style={{ color: '#17a2b8' }} />
+              Offer Count:
+            </div>
+            <span style={numberBoxStyle}>
+              {viewjobCount[0]?.offerCount || 0}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+        <div className="col-xl-4  col-lg-6">
+            <div className="card shadow">
+              <div className="card-header bg-black text-white">
+                Recent Activity
+                              
+              </div>
+              <div className="card-body">
+                <div
+                  style={{ height: "270px" }}
+                  id="DZ_W_TimeLine1"
+                  className="widget-timeline dz-scroll style-1 height370  ps--active-y"
+                >
+                  <ul className="timeline">
+                    <li>
+                      <div className="timeline-badge primary"></div>
+                      <Link
+                        className="timeline-panel text-muted"
+                        // to="/widget-basic"
+                      >
+                        <span>10 minutes ago</span>
+                        <h6 className="mb-0" style={{fontSize:"1px"}}>
+                          Youtube, a video-sharing website, goes live{" "}
+                          <strong className="text-primary">$500</strong>.
+                        </h6>
+                      </Link>
+                    </li>
+                    <li>
+                      <div className="timeline-badge info"></div>
+                      <Link
+                        className="timeline-panel text-muted"
+                        // to="/widget-basic"
+                      >
+                        <span>20 minutes ago</span>
+                        <h6 className="mb-0">
+                          New order placed{" "}
+                          <strong className="text-info">#XF-2356.</strong>
+                        </h6>
+                        <p className="mb-0">
+                          Quisque a consequat ante Sit amet magna at volutapt...
+                        </p>
+                      </Link>
+                    </li>
+                    <li>
+                      <div className="timeline-badge danger"></div>
+                      <Link
+                        className="timeline-panel text-muted"
+                        // to="/widget-basic"
+                      >
+                        <span>30 minutes ago</span>
+                        <h6 className="mb-0">
+                          john just buy your product{" "}
+                          <strong className="text-warning">Sell $250</strong>
+                        </h6>
+                      </Link>
+                    </li>
+                    <li>
+                      <div className="timeline-badge success"></div>
+                      <Link
+                        className="timeline-panel text-muted"
+                        // to="/widget-basic"
+                      >
+                        <span>15 minutes ago</span>
+                        <h6 className="mb-0">
+                          StumbleUpon is acquired by eBay.{" "}
+                        </h6>
+                      </Link>
+                    </li>
+                    <li>
+                      <div className="timeline-badge warning"></div>
+                      <Link
+                        className="timeline-panel text-muted"
+                        // to="/widget-basic"
+                      >
+                        <span>20 minutes ago</span>
+                        <h6 className="mb-0">
+                          Mashable, a news website and blog, goes live.
+                        </h6>
+                      </Link>
+                    </li>
+                    <li>
+                      <div className="timeline-badge dark"></div>
+                      <Link
+                        className="timeline-panel text-muted"
+                        // to="/widget-basic"
+                      >
+                        <span>20 minutes ago</span>
+                        <h6 className="mb-0">
+                          Mashable, a news website and blog, goes live.
+                        </h6>
+                      </Link>
+                    </li>
+                  </ul>
+                </div>
+           
+            </div>
+          </div>
+                      </div>
+      </div>
+    </div>
                 <div className="card">
         <div className="card-header border-0 pb-0 flex-wrap">
         </div>
