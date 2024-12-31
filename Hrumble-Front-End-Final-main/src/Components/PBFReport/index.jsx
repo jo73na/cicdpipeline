@@ -425,15 +425,6 @@ const PBFTable = () => {
                              </Link>
                          </div>
                      </div>
-                     <div className="col-xl-4 col-md-4 col-6">
-                         <div className="card  blog-card">
-                             <Link className="card-body text-center" to={"/recruiter-report"}>
-                                 {/* <img src={IMAGES.Books} alt="" />   */}
-                                 <h4>Attendance login </h4>
-                                 <p>Login data</p>
-                             </Link>
-                         </div>
-                     </div>
                        </>
                      }
                        

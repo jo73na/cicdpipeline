@@ -506,195 +506,195 @@ const totalDataCount = (Array.isArray(invoicechart?.data1) && Array.isArray(invo
          <>
          <div className="row">  
          <div className="col-xl-4">
-            <div className='row'>
-               <div className='col-xl-12'>
-               <div className="card upgrade">
-          
-           <div className="card-body">
-               <div className="text-center">
-                   <img src={Items} alt="" />
-               </div>
-               <h4>Hii {} Welcome to Your Dashboard</h4>
-    
-           </div>
-       </div>
-               </div>
-               <div className='row-xl-4'>
-               <div className=" col-xl-12">
-               <EmployeeTimeTracker/>
-         </div>
-         </div>
+         <div className='row'>
+            <div className='col-xl-12'>
+            <div className="card upgrade">
+       
+        <div className="card-body">
+            <div className="text-center">
+                <img src={Items} alt="" />
             </div>
-        
+            <h4>Hii {} Welcome to Your Dashboard</h4>
+ 
+        </div>
+    </div>
+            </div>
+            <div className='row-xl-4'>
+            <div className=" col-xl-12">
+            <EmployeeTimeTracker/>
       </div>
-      <div className="col-xl-4 ">
-        <div className="col-xl-12  col-lg-6">
-               <div className="card  pb-0">
-                 <div className="card-header border-0 pb-0">
-                   <h4 className="card-title">To Do List</h4>
-                 </div>
-                 <div className="card-body">
-                   <div
-                     style={{ height: "410px" }}
-                     id="DZ_W_Todo4"
-                     className="widget-media dz-scroll height370  ps--active-y"
-                   >
-                     <ul className="timeline">
-                       <li>
-                         <div className="timeline-panel">
-                           <div className="form-check custom-checkbox checkbox-success check-lg me-3">
-                             <input
-                               type="checkbox"
-                               className="form-check-input"
-                               id="customCheckBox1"
-                               required=""
-                             />
-                             <label
-                               className="form-check-label"
-                               htmlFor="customCheckBox1"
-                             ></label>
-                           </div>
-                           <div className="media-body">
-                             <h5 className="mb-0">Get up</h5>
-                             <small className="text-muted">
-                               29 July 2022 - 02:26 PM
-                             </small>
-                           </div>
-                        
-                         </div>
-                       </li>
-                       <li>
-                         <div className="timeline-panel">
-                           <div className="form-check custom-checkbox checkbox-warning check-lg me-3">
-                             <input
-                               type="checkbox"
-                               className="form-check-input"
-                               id="customCheckBox2"
-                               required=""
-                             />
-                             <label
-                               className="form-check-label"
-                               htmlFor="customCheckBox2"
-                             ></label>
-                           </div>
-                           <div className="media-body">
-                             <h5 className="mb-0">Stand up</h5>
-                             <small className="text-muted">
-                               29 July 2022 - 02:26 PM
-                             </small>
-                           </div>
-                          
-                         </div>
-                       </li>
-                       <li>
-                         <div className="timeline-panel">
-                           <div className="form-check custom-checkbox checkbox-primary check-lg me-3">
-                             <input
-                               type="checkbox"
-                               className="form-check-input"
-                               id="customCheckBox3"
-                               required=""
-                             />
-                             <label
-                               className="form-check-label"
-                               htmlFor="customCheckBox3"
-                             ></label>
-                           </div>
-                           <div className="media-body">
-                             <h5 className="mb-0">Don't give up the fight.</h5>
-                             <small className="text-muted">
-                               29 July 2022 - 02:26 PM
-                             </small>
-                           </div>
-                          
-                         </div>
-                       </li>
-                       <li>
-                         <div className="timeline-panel">
-                           <div className="form-check custom-checkbox checkbox-info check-lg me-3">
-                             <input
-                               type="checkbox"
-                               className="form-check-input"
-                               id="customCheckBox4"
-                               required=""
-                             />
-                             <label
-                               className="form-check-label"
-                               htmlFor="customCheckBox4"
-                             ></label>
-                           </div>
-                           <div className="media-body">
-                             <h5 className="mb-0">Do something else</h5>
-                             <small className="text-muted">
-                               29 July 2022 - 02:26 PM
-                             </small>
-                           </div>
-                          
-                         </div>
-                       </li>
-                       <li>
-                         <div className="timeline-panel">
-                           <div className="form-check custom-checkbox checkbox-success check-lg me-3">
-                             <input
-                               type="checkbox"
-                               className="form-check-input"
-                               id="customCheckBox5"
-                               required=""
-                             />
-                             <label
-                               className="form-check-label"
-                               htmlFor="customCheckBox5"
-                             ></label>
-                           </div>
-                           <div className="media-body">
-                             <h5 className="mb-0">Get up</h5>
-                             <small className="text-muted">
-                               29 July 2022 - 02:26 PM
-                             </small>
-                           </div>
-                          
-                         </div>
-                       </li>
-                       <li>
-                         <div className="timeline-panel">
-                           <div className="form-check custom-checkbox checkbox-warning check-lg me-3">
-                             <input
-                               type="checkbox"
-                               className="form-check-input"
-                               id="customCheckBox6"
-                               required=""
-                             />
-                             <label
-                               className="form-check-label"
-                               htmlFor="customCheckBox6"
-                             ></label>
-                           </div>
-                           <div className="media-body">
-                             <h5 className="mb-0">Stand up</h5>
-                             <small className="text-muted">
-                               29 July 2022 - 02:26 PM
-                             </small>
-                           </div>
-                          
-                         </div>
-                       </li>
-                     </ul>
-                   </div>
-                 </div>
-               </div>
-                 </div>
-                        
-   </div>
-   <div className="col-xl-3">
-   <div className="row">
-      <div className="col-xl-8">
-          <CalenderData/>
       </div>
-      <div className="col-xl-12">
-          {/* <AllProjectBlog /> */}
-      </div>
+         </div>
+     
    </div>
+   <div className="col-xl-4 ">
+     <div className="col-xl-12  col-lg-6">
+            <div className="card  pb-0">
+              <div className="card-header border-0 pb-0">
+                <h4 className="card-title">To Do List</h4>
+              </div>
+              <div className="card-body">
+                <div
+                  style={{ height: "410px" }}
+                  id="DZ_W_Todo4"
+                  className="widget-media dz-scroll height370  ps--active-y"
+                >
+                  <ul className="timeline">
+                    <li>
+                      <div className="timeline-panel">
+                        <div className="form-check custom-checkbox checkbox-success check-lg me-3">
+                          <input
+                            type="checkbox"
+                            className="form-check-input"
+                            id="customCheckBox1"
+                            required=""
+                          />
+                          <label
+                            className="form-check-label"
+                            htmlFor="customCheckBox1"
+                          ></label>
+                        </div>
+                        <div className="media-body">
+                          <h5 className="mb-0">Get up</h5>
+                          <small className="text-muted">
+                            29 July 2022 - 02:26 PM
+                          </small>
+                        </div>
+                     
+                      </div>
+                    </li>
+                    <li>
+                      <div className="timeline-panel">
+                        <div className="form-check custom-checkbox checkbox-warning check-lg me-3">
+                          <input
+                            type="checkbox"
+                            className="form-check-input"
+                            id="customCheckBox2"
+                            required=""
+                          />
+                          <label
+                            className="form-check-label"
+                            htmlFor="customCheckBox2"
+                          ></label>
+                        </div>
+                        <div className="media-body">
+                          <h5 className="mb-0">Stand up</h5>
+                          <small className="text-muted">
+                            29 July 2022 - 02:26 PM
+                          </small>
+                        </div>
+                       
+                      </div>
+                    </li>
+                    <li>
+                      <div className="timeline-panel">
+                        <div className="form-check custom-checkbox checkbox-primary check-lg me-3">
+                          <input
+                            type="checkbox"
+                            className="form-check-input"
+                            id="customCheckBox3"
+                            required=""
+                          />
+                          <label
+                            className="form-check-label"
+                            htmlFor="customCheckBox3"
+                          ></label>
+                        </div>
+                        <div className="media-body">
+                          <h5 className="mb-0">Don't give up the fight.</h5>
+                          <small className="text-muted">
+                            29 July 2022 - 02:26 PM
+                          </small>
+                        </div>
+                       
+                      </div>
+                    </li>
+                    <li>
+                      <div className="timeline-panel">
+                        <div className="form-check custom-checkbox checkbox-info check-lg me-3">
+                          <input
+                            type="checkbox"
+                            className="form-check-input"
+                            id="customCheckBox4"
+                            required=""
+                          />
+                          <label
+                            className="form-check-label"
+                            htmlFor="customCheckBox4"
+                          ></label>
+                        </div>
+                        <div className="media-body">
+                          <h5 className="mb-0">Do something else</h5>
+                          <small className="text-muted">
+                            29 July 2022 - 02:26 PM
+                          </small>
+                        </div>
+                       
+                      </div>
+                    </li>
+                    <li>
+                      <div className="timeline-panel">
+                        <div className="form-check custom-checkbox checkbox-success check-lg me-3">
+                          <input
+                            type="checkbox"
+                            className="form-check-input"
+                            id="customCheckBox5"
+                            required=""
+                          />
+                          <label
+                            className="form-check-label"
+                            htmlFor="customCheckBox5"
+                          ></label>
+                        </div>
+                        <div className="media-body">
+                          <h5 className="mb-0">Get up</h5>
+                          <small className="text-muted">
+                            29 July 2022 - 02:26 PM
+                          </small>
+                        </div>
+                       
+                      </div>
+                    </li>
+                    <li>
+                      <div className="timeline-panel">
+                        <div className="form-check custom-checkbox checkbox-warning check-lg me-3">
+                          <input
+                            type="checkbox"
+                            className="form-check-input"
+                            id="customCheckBox6"
+                            required=""
+                          />
+                          <label
+                            className="form-check-label"
+                            htmlFor="customCheckBox6"
+                          ></label>
+                        </div>
+                        <div className="media-body">
+                          <h5 className="mb-0">Stand up</h5>
+                          <small className="text-muted">
+                            29 July 2022 - 02:26 PM
+                          </small>
+                        </div>
+                       
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+              </div>
+                     
+</div>
+<div className="col-xl-3">
+<div className="row">
+   <div className="col-xl-8">
+       <CalenderData/>
    </div>
+   <div className="col-xl-12">
+       {/* <AllProjectBlog /> */}
+   </div>
+</div>
+</div>
       
      <div className={`col_${goal?.senddata?.length > 2 ? "3" : goal?.senddata?.length === 2 ? "2" : "1"} g_5`}>
        {
@@ -777,19 +777,23 @@ const totalDataCount = (Array.isArray(invoicechart?.data1) && Array.isArray(invo
       </div>
           {/* <TimeSheetHr/> */}
     
-          <div class = "row">
-           <div class = "col-xl-12">
-           <div className="col">
-               <div className='row'>
-                 <div className="col-xl-6  ">
-                 <EarningChart  DetailHead ={Head1} Primarycolor={PrimaryCol}  />
-                 </div>
-                 <div className="col-xl-6 ">
-                 <EarningChart  DetailHead={Head2} Primarycolor={SecondaryCol} />
-                 </div>
-                 </div>
-             </div>
-           </div>
+          <div className="col">
+            <div className='row'>
+              <div className="col-xl-6 col-xxl-6 col-lg-6 col-md-3 col-sm-3 ">
+              <div className="card ">
+              <div className="card-header border-0 p-0">
+              <SubmissionChart DetailHead ={Head1} Primarycolor={PrimaryCol}  />
+              </div>
+              </div>
+              </div>
+              <div className="col-xl-6 col-xxl-6 col-lg-6 col-md-3 col-sm-3 ">
+              <div className="card ">
+              <div className="card-header border-0 p-0">
+              <OnboardingChart  DetailHead={Head2} Primarycolor={SecondaryCol} />
+              </div>
+              </div>
+              </div>
+              </div>
           </div>
          </>
       }

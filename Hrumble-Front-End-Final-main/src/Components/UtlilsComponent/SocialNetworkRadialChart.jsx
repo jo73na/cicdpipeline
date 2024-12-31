@@ -1,19 +1,19 @@
 import React from "react";
 import ReactApexChart from "react-apexcharts";
  const  SocialNetworkRadialChart  =({percentage})=>{
-
+ 
     const series = [Math.round(percentage)]
     const    options = {
         chart: {
             type: 'radialBar',
             offsetY: 0,
             // width: 220,
-            height: 200,
+            height: 300,
             sparkline: {
                 enabled: true
             }
         },
-    
+   
         plotOptions: {          
             radialBar: {
                 startAngle: -180,
@@ -73,9 +73,9 @@ import ReactApexChart from "react-apexcharts";
         }],
    
     }
-  
-
-
+ 
+ 
+ 
     return (
       <div id="redial"
     >
@@ -83,12 +83,12 @@ import ReactApexChart from "react-apexcharts";
           options={options}
           series={series}
           type="radialBar"
-        //   width={220}
-        height={200}
+          width={75}
+        height={75}
         />
       </div>
     );
-  
+ 
 }
-
+ 
 export default SocialNetworkRadialChart;
