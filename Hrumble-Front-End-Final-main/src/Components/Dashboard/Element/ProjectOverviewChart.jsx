@@ -15,7 +15,7 @@ const ProjectOverviewChart = (props) => {
   const chartRef = useRef();
 
   const [selectedPeriod, setSelectedPeriod] = useState('week'); // State to track selected period
-  console.log("DateCount:::::", count);
+
 
   // Function to aggregate data based on the selected period (week, month, year)
   const aggregateDataByPeriod = (data, period) => {
@@ -61,9 +61,6 @@ const ProjectOverviewChart = (props) => {
     const areaData = aggregateDataByMonth(count?.companyCountsByMonth || []);
     const lineData = aggregateDataByMonth(count?.contactCountsByMonth || []);
 
-    console.log("Column Data (Candidates):", columnData);
-    console.log("Area Data (Company):", areaData);
-    console.log("Line Data (Contacts):", lineData);
 
     return [
         {

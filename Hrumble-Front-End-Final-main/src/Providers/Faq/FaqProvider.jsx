@@ -32,6 +32,7 @@ const FAQProvider = (props) => {
   const [employee, setEmployee] = useState([]);
   const [projectsByClient, setProjectsByClient] = useState([]);
   const [projectData, setProjectData] = useState([]);
+  const [attendance, setAttendance] = useState([]);
 
   const role = CookieUtil.get("role");
   const token = CookieUtil.get("admin_token");
@@ -47,16 +48,42 @@ const FAQProvider = (props) => {
     }
   };
   const fethRequestNonBillable = async () => {
-    let api = `${BASE_URL}/events/fetchrequestsnonbillable`;
+    const api = `${BASE_URL}/events/fetchrequestsnonbillable`;
     try {
-      await axios.get(api).then((resp) => {
-        setRequestNonBillable(resp.data.data);
-        // console.log(RequestNonBillable);
-      });
+      const response = await axios.get(api);
+      // Ensure the response has data and check its structure
+      const { data } = response || {};
+      if (data?.data) {
+        // Directly set the data without filtering out fields
+        setRequestNonBillable(data.data);
+      } else {
+        console.error("No data found in the response");
+      }
     } catch (error) {
-      console.log("error", error);
+      console.error("Error fetching non-billable requests:", error);
     }
   };
+
+  const fetchattendance = async () => {
+    const api = `${BASE_URL}/events/fetchattendance`;
+    try {
+      setLoading(true);
+      const response = await axios.get(api);
+      if (response.status === 200 && response.data?.data) {
+        setAttendance(response.data.data);
+      } else {
+        console.error("Unexpected response:", response);
+      }
+    } catch (error) {
+      console.error("Error fetching attendance:", error.response || error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  
+  
+  
 
   const DashboardEmployee = async () => {
     let token = CookieUtil.get("admin_id");
@@ -261,7 +288,9 @@ const FAQProvider = (props) => {
         report,
         setReport,
         nonbillable,
-        epmloeescdularNonbillable
+        epmloeescdularNonbillable,
+        attendance,
+        fetchattendance
       }}
     >
       {props.children}

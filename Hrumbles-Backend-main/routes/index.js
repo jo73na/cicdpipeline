@@ -39,6 +39,7 @@ module.exports = (app) => {
   app.use(admin_baseurl + 'addjob', require("../controller/admin/addjob"));
   app.use(admin_baseurl + 'otp', require("../controller/admin/loginOTP"));
   app.use(admin_baseurl + 'signup', require("../controller/admin/signup"));
+  app.use(admin_baseurl + 'task', require("../controller/admin/task"));
 
 
   // Employee Dashboard (additional routes can be added here if needed)

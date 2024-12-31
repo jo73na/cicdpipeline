@@ -247,6 +247,16 @@ const DefaultPermissions = ({input}) => {
       ]
     },
     {
+      module: "Task",
+      component: "TaskManager",
+      url: "/task",
+      icon: "TaskLogo",
+      permissions: [
+        "View Task",
+        "Add Task"
+      ]
+    },
+    {
       module:"Accounts",
       url:"/invoice-expence",
       icon:"Invoicelogo",

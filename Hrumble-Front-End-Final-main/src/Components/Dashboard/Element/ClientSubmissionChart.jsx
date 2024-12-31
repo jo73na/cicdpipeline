@@ -1,206 +1,210 @@
 import {
-    useState,
-    useRef,
-    useContext,
-    useLayoutEffect,
-    useEffect,
-  } from "react";
-  
-  import ReactApexChart from "react-apexcharts";
-  
-  import { Nav, Tab } from "react-bootstrap";
-  
-  import { Tag } from "antd";
-  
-  import DashboardContext from "../../../Providers/DashboardProvider";
-  
-  import axios from "axios";
-  
-  import { dataBinding } from "@syncfusion/ej2-react-schedule";
-  
-  const EarningTab = [
-    { title: "Day", type: "day" },
-  
-    { title: "Week", type: "week" },
-  
-    { title: "Month", type: "month" },
-  
-    { title: "Year", type: "year" },
-  ];
-  import CookieUtil from '../../../Utils/Cookies';
-  
-  const EarningChart = ({ Primarycolor, DetailHead }) => {
-    const { Hrresults } = useContext(DashboardContext);
-    const earningRef = useRef();
-    const chartWidth = useRef(null);
-  
-    const [width, setWidth] = useState(0);
-    const [chartData, setChartData] = useState([]);
-    const [selectedPeriod, setSelectedPeriod] = useState("day");
-    const [xAxisCategories, setXAxisCategories] = useState([]);
-    const [totalSubmissionCount, setTotalSubmissionCount] = useState(0);
-  
-    const role = CookieUtil.get("role");
-    const BASE_URL = import.meta.env.VITE_BASE_URL;
-  
-    useLayoutEffect(() => {
+  useState,
+  useRef,
+  useContext,
+  useLayoutEffect,
+  useEffect,
+} from "react";
+import ReactApexChart from "react-apexcharts";
+import { Nav, Tab } from "react-bootstrap";
+import { Tag } from "antd";
+import DashboardContext from "../../../Providers/DashboardProvider";
+import axios from "axios";
+import CookieUtil from "../../../Utils/Cookies";
+
+const EarningTab = [
+  { title: "Week", type: "week" },
+  { title: "Month", type: "month" },
+  { title: "Year", type: "year" },
+];
+
+const EarningChart = ({ Primarycolor, DetailHead }) => {
+  const { Hrresults } = useContext(DashboardContext);
+  const earningRef = useRef();
+  const chartWidth = useRef(null);
+
+  const [width, setWidth] = useState(0);
+  const [chartData, setChartData] = useState([]);
+  const [selectedPeriod, setSelectedPeriod] = useState("year");
+  const [xAxisCategories, setXAxisCategories] = useState([]);
+  const [totalSubmissionCount, setTotalSubmissionCount] = useState(0);
+  const [currentDate, setCurrentDate] = useState("");
+  const [maxCount, setMaxCount] = useState(0); // Added for dynamic Y-axis adjustment
+
+  const role = CookieUtil.get("role");
+  const BASE_URL = import.meta.env.VITE_BASE_URL;
+
+  useLayoutEffect(() => {
+    const updateWidth = () => {
       setWidth(chartWidth.current.offsetWidth);
-    }, []);
-  
-    useEffect(() => {
-      const fetchData = async () => {
-        try {
-          const response = await axios.get(`${BASE_URL}/submissionCount`);
-          const data = response.data.data;
-          console.log("MMMMMMMMMMM:", data)
-          const targetData = role === "SuperAdmin" ? data.team : data.yours;
-  
-          let categories = [];
-          let chartValues = [];
-  
-          switch (selectedPeriod) {
-            case "day":
-                categories = [
-                    "12 AM", "1 AM", "2 AM", "3 AM", "4 AM", "5 AM", "6 AM", "7 AM",
-                    "8 AM", "9 AM", "10 AM", "11 AM", "12 PM", "1 PM", "2 PM", "3 PM",
-                    "4 PM", "5 PM", "6 PM", "7 PM", "8 PM", "9 PM", "10 PM", "11 PM"
-                  ];
-              chartValues = targetData.daily.map((item) => item.count);
-              break;
-            case "week":
-              categories = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-              chartValues = targetData.weekly.map((item) => item.count);
-              break;
-            case "month":
-              categories = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-              chartValues = targetData.monthly.map((item) => item.count);
-              break;
-            case "year":
-                categories = targetData.yearly.map((item) => item._id);
-              chartValues = targetData.yearly.map((item) => item.count);
-              break;
-            default:
-              categories = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-              chartValues = targetData.weekly.map((item) => item.count);
-          }
-  
-          setXAxisCategories(categories);
-          setChartData(chartValues);
-        } catch (error) {
-          console.error("Error fetching data:", error);
-        }
-      };
-  
-      fetchData();
-    }, [selectedPeriod, role]);
-  
-    const options = {
-      chart: {
-        type: "area",
-        height: 300,
-        width: width + 55,
-        offsetX: -45,
-        toolbar: { show: false },
-        zoom: { enabled: false },
-      },
-      colors: [Primarycolor || "#88a67e"],
-      dataLabels: { enabled: false },
-      legend: { show: false },
-      stroke: {
-        show: true,
-        width: 2,
-        curve: "straight",
-        colors: [Primarycolor || "#88a67e"],
-      },
-      grid: {
-        show: true,
-        borderColor: "#eee",
-        xaxis: { lines: { show: true } },
-        yaxis: { lines: { show: false } },
-      },
-      yaxis: {
-        show: true,
-        tickAmount: 4,
-        min: 0,
-        max: 10,
-        labels: { offsetX: 50 },
-      },
-      xaxis: {
-        categories: xAxisCategories,
-        axisBorder: { show: false },
-        axisTicks: { show: false },
-        labels: {
-          show: true,
-          style: { fontSize: "16px" },
-        },
-      },
-      fill: {
-        opacity: 0.5,
-        colors: Primarycolor || "#88a67e",
-        type: "gradient",
-        gradient: {
-          colorStops: [
-            { offset: 0.6, color: Primarycolor || "#88a67e", opacity: 0.2 },
-            { offset: 0.6, color: Primarycolor || "#88a67e", opacity: 0.15 },
-            { offset: 100, color: "white", opacity: 0 },
-          ],
-        },
-      },
-      tooltip: {
-        enabled: true,
-        style: { fontSize: "12px" },
-        y: { formatter: (val) => val },
-      },
     };
-  
-    const series = [
-      {
-        name: "Submission",
-        data: chartData.length > 0 ? chartData : [700, 650, 680, 600, 700, 610, 710, 620],
+    updateWidth();
+    window.addEventListener("resize", updateWidth);
+    return () => window.removeEventListener("resize", updateWidth);
+  }, []);
+
+  useEffect(() => {
+    const date = new Date();
+    const options = { month: "short", year: "numeric" };
+    const formattedDate = date.toLocaleDateString("en-US", options);
+    setCurrentDate(formattedDate);
+  }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(`${BASE_URL}/submissionCount`);
+        const data = response.data.data;
+        const targetData = role === "SuperAdmin" ? data.team : data.yours;
+
+        let categories = [];
+        let chartValues = [];
+        let totalCount = 0;
+        let calculatedMaxCount = 0;
+
+        switch (selectedPeriod) {
+          case "week":
+            categories = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+            const weeklyData = Array(7).fill(0);
+            targetData.weekly.forEach((item) => {
+              weeklyData[item._id - 1] = item.count;
+            });
+            chartValues = weeklyData;
+            totalCount = weeklyData.reduce((acc, val) => acc + val, 0);
+            calculatedMaxCount = Math.max(...weeklyData);
+            break;
+
+          case "month":
+            categories = ["Week1", "Week2", "Week3", "Week4"];
+            const monthlyData = targetData.monthly;
+            const weeklyCounts = [0, 0, 0, 0];
+            monthlyData.forEach((item) => {
+              const day = item._id;
+              const count = item.count;
+              if (day >= 1 && day <= 7) weeklyCounts[0] += count;
+              else if (day >= 8 && day <= 14) weeklyCounts[1] += count;
+              else if (day >= 15 && day <= 21) weeklyCounts[2] += count;
+              else if (day >= 22 && day <= 31) weeklyCounts[3] += count;
+            });
+            chartValues = weeklyCounts;
+            totalCount = weeklyCounts.reduce((acc, val) => acc + val, 0);
+            calculatedMaxCount = Math.max(...weeklyCounts);
+            break;
+
+          case "year":
+            categories = [
+              "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+              "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+            ];
+            const yearlyData = Array(12).fill(0);
+            targetData.yearly.forEach((item) => {
+              yearlyData[item._id - 1] = item.count;
+            });
+            chartValues = yearlyData;
+            totalCount = yearlyData.reduce((acc, val) => acc + val, 0);
+            calculatedMaxCount = Math.max(...yearlyData);
+            break;
+
+          default:
+            break;
+        }
+
+        setXAxisCategories(categories);
+        setChartData(chartValues);
+        setTotalSubmissionCount(totalCount);
+        setMaxCount(calculatedMaxCount); // Update max count
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, [selectedPeriod, role]);
+
+  const options = {
+    chart: {
+      type: "area",
+      height: 300,
+      toolbar: { show: false },
+      zoom: { enabled: false },
+    },
+    colors: [Primarycolor || "#88a67e"],
+    dataLabels: { enabled: false },
+    stroke: {
+      width: 2,
+      curve: "straight",
+    },
+    grid: {
+      borderColor: "#eee",
+      xaxis: { lines: { show: false } },
+      yaxis: { lines: { show: true } },
+    },
+    yaxis: {
+      show: true,
+      labels: { style: { fontSize: "12px" } },
+      min: 0,
+      max: maxCount + Math.ceil(maxCount * 0.1), // Dynamic max value with padding
+    },
+    xaxis: {
+      categories: xAxisCategories,
+      labels: { style: { fontSize: "12px" } },
+    },
+    fill: {
+      type: "gradient",
+      gradient: {
+        shadeIntensity: 1,
+        opacityFrom: 0.4,
+        opacityTo: 0,
       },
-    ];
-  
-    return (
-      <div className="card-body px-0 overflow-hidden">
-        <h3>
-          <Tag
-            color={Primarycolor}
-            style={{ fontSize: "16px", borderRadius: "5px" }}
-          >
-            {DetailHead}
-          </Tag>
-        </h3>
-        <div className="total-earning">
-          <h2 style={{ fontSize: "18px" }}>Total Submission {totalSubmissionCount}</h2>
-          <Tab.Container defaultActiveKey={"Day"}>
-            <Nav as="ul" className="nav nav-pills mb-3 earning-tab earning-chart">
-              {EarningTab.map((item, ind) => (
-                <Nav.Item as="li" key={ind}>
-                  <Nav.Link
-                    as="button"
-                    eventKey={item.title}
-                    onClick={() => setSelectedPeriod(item.type)}
-                  >
-                    {item.title}
-                  </Nav.Link>
-                </Nav.Item>
-              ))}
-            </Nav>
-            <div id="earningChart" ref={chartWidth}>
-              <ReactApexChart
-                options={options}
-                series={series}
-                type="area"
-                height={250}
-                ref={earningRef}
-                width={width + 55}
-              />
-            </div>
-          </Tab.Container>
-        </div>
-      </div>
-    );
+    },
+    tooltip: {
+      y: { formatter: (val) => val },
+    },
   };
-  
-  export default EarningChart;
-  
+
+  const series = [
+    {
+      name: "Submissions",
+      data: chartData,
+    },
+  ];
+
+  return (
+    <div className="card-body px-0 overflow-hidden">
+      <div style={{ display: "flex", justifyContent: "space-between" }}>
+        <h3 style={{marginLeft:"15px"}}>
+          <Tag color={Primarycolor}>{DetailHead}</Tag>
+        </h3>
+        <h3>
+          <Tag color={Primarycolor}>{currentDate}</Tag>
+        </h3>
+      </div>
+      <div className="total-earning">
+        <h2 style={{ fontSize: "16px" }}>Total Submission: {totalSubmissionCount}</h2>
+        <Tab.Container defaultActiveKey={"year"}>
+          <Nav className="nav nav-pills mb-3 earning-tab earning-chart">
+            {EarningTab.map((item, ind) => (
+              <Nav.Item as="li" key={ind}>
+                <Nav.Link  as="button"
+                  eventKey={item.type} onClick={() => setSelectedPeriod(item.type)}>
+                  {item.title}
+                </Nav.Link>
+              </Nav.Item>
+            ))}
+          </Nav>
+          <div id="earningChart" ref={chartWidth}>
+            <ReactApexChart
+              options={options}
+              series={series}
+              type="area"
+              height={260}
+              width="100%" 
+            />
+          </div>
+        </Tab.Container>
+      </div>
+    </div>
+  );
+};
+
+export default EarningChart;

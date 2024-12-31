@@ -1,4 +1,4 @@
-import { lazy, useContext, useState } from "react";
+import { lazy, useContext, useState, useEffect } from "react";
 import {HeatMapOutlined, PoweroffOutlined, PlusOutlined, ReconciliationOutlined, UserOutlined, FolderOpenOutlined } from "@ant-design/icons";
 import { Layout, Menu, theme, Dropdown, Avatar } from "antd";
 import { Link, Outlet, useLocation } from "react-router-dom";
@@ -24,6 +24,7 @@ import InvoiceLogo from "/images/InvoiceIcon.svg";
 import ExpenseLogo from "/images/ExpenseIcon.svg";
 import TeamLogo from "/images/Teamicon.svg";
 import GoalLogo from "/images/target-account.svg";
+import TaskLogo from "/images/target-account.svg";
 import UsermanagementLogo from "/images/target-account.svg";
 import ContactsLogo from "/images/target-account.svg";
 
@@ -37,7 +38,7 @@ import NavHader from "./NavHader";
 import HeaderBar from "./HeaderBar";
 import { SVGICON } from "../Utils/SVGICON";
 import { DashboardOutlined, WorkOutlineOutlined, PersonSearchOutlined, UploadFileOutlined, DescriptionOutlined, EditCalendarOutlined, CalendarMonthOutlined, AccountBalanceOutlined, Diversity3Outlined, ContactsOutlined, TrackChangesOutlined,
-  FolderOutlined, ManageAccountsOutlined, SettingsOutlined, ApartmentOutlined, ReceiptLongOutlined, HailOutlined, AttachMoneyOutlined, PercentOutlined
+  FolderOutlined, ManageAccountsOutlined, SettingsOutlined, ApartmentOutlined, ReceiptLongOutlined, HailOutlined, AttachMoneyOutlined, PercentOutlined, TaskAltOutlined
  } from '@mui/icons-material';
 
 
@@ -78,6 +79,23 @@ const SideBar = ({collapsed}) => {
   
     
     const [openKeys, setOpenKeys] = useState([]);
+    const [isMobileView, setIsMobileView] = useState(false);
+
+    useEffect(() => {
+      const updateView = () => {
+        setIsMobileView(window.innerWidth <= 768); // Adjust breakpoint as needed
+      };
+  
+      updateView(); // Initial check
+      window.addEventListener("resize", updateView);
+      return () => window.removeEventListener("resize", updateView);
+    }, []);
+  
+    // Function to handle sidebar toggle in mobile view
+    const handleToggle = () => {
+      toggleSideBar(!isSidebarOpen);
+    };
+  
     
     function getItem(label, key, icon, children) {
       return {
@@ -125,6 +143,7 @@ const SideBar = ({collapsed}) => {
       SpaceLogo,
       TeamLogo,
       GoalLogo,
+      TaskLogo,
       UsermanagementLogo,
       Invoicelogo,
       ContactsLogo
@@ -172,7 +191,9 @@ const SideBar = ({collapsed}) => {
             <SettingsOutlined style={{fontSize: '18px'}}/>
           ) :  item.icon === "clientlogo" ? (
             <HailOutlined style={{fontSize: '18px'}}/>
-          ) : (
+          ):  item.icon === "TaskLogo" ? (
+            <TaskAltOutlined style={{fontSize: '18px'}}/>
+          )  : (
             <img
               style={{
                 width: "24px",
@@ -225,12 +246,32 @@ const SideBar = ({collapsed}) => {
     });
   
     return (
+      <>
+      {isMobileView && !collapsed && (
+        <div
+          className="mobile-overlay"
+          onClick={handleToggle}
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            zIndex: 999,
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+          }}
+        />
+      )}
       <Sider
         collapsed={!collapsed}
         // onCollapse={(value) => setCollapsed(value)}
         // width={200}
         className="desktop_menu"
-        style={{backgroundColor:sidebarColor}}
+        style={{backgroundColor: sidebarColor,
+          display: isMobileView && !isSidebarOpen ? "none" : "block",
+          position: isMobileView ? "fixed" : "relative",
+          zIndex: isMobileView ? 1000 : "auto",
+          height: "100vh",}}
       >
       
           <Menu    
@@ -250,6 +291,7 @@ const SideBar = ({collapsed}) => {
           />
        
       </Sider>
+      </>
     );
   };
 export default SideBar;

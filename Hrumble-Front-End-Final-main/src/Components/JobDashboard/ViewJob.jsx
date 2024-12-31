@@ -25,6 +25,8 @@ import { FaUserPlus } from 'react-icons/fa'; // Joined Count
 import { FaClipboardList,FaAddressCard ,FaMapMarkerAlt} from 'react-icons/fa'; 
 import CookieUtil from '../../Utils/Cookies';
 import JobContext from '../../Providers/JobProvider';
+import moment from 'moment';
+
  
  
 const stripHtml = (html) => {
@@ -63,6 +65,7 @@ const ViewJob = () => {
       color: '#007bff' // Primary color text
     };
  
+    console.log("AllCandidates:::", allCandidates)
   let tableData =[]
     const headers = [
         { label: "Candidate Name", key: "name" },
@@ -76,6 +79,7 @@ const ViewJob = () => {
         data : tableData,
         filename: "csvfile.csv"
     }
+    const colors = ['primary', 'info', 'danger', 'success', 'warning', 'dark'];
  
     useEffect(() => {
         handleClickjobTable(params?.id)
@@ -565,7 +569,7 @@ const ViewJob = () => {
           <div className="d-flex justify-content-between align-items-center mb-4">
             <div className="d-flex align-items-center">
               <FaVideo className="me-2" style={{ color: '#dc3545' }} />
-              Interview Count:
+              Interviewed:
             </div>
             <span style={numberBoxStyle}>
               {viewjobCount[0]?.interviewCount || 0}
@@ -575,7 +579,7 @@ const ViewJob = () => {
           <div className="d-flex justify-content-between align-items-center mb-4">
             <div className="d-flex align-items-center">
               <FaUserPlus className="me-2" style={{ color: '#ffc107' }} />
-              Joined Count:
+              Joined:
             </div>
             <span style={numberBoxStyle}>
               {viewjobCount[0]?.joinedCount || 0}
@@ -585,7 +589,7 @@ const ViewJob = () => {
           <div className="d-flex justify-content-between align-items-center mb-0">
             <div className="d-flex align-items-center">
               <FaClipboardList className="me-2" style={{ color: '#17a2b8' }} />
-              Offer Count:
+              Offer:
             </div>
             <span style={numberBoxStyle}>
               {viewjobCount[0]?.offerCount || 0}
@@ -595,7 +599,8 @@ const ViewJob = () => {
       </div>
     </div>
         <div className="col-xl-4  col-lg-6">
-            <div className="card shadow">
+        <div className="card" style={{ height: "350px" }}>
+            {/* <div className="card shadow"> */}
               <div className="card-header bg-black text-white">
                 Recent Activity
                               
@@ -607,90 +612,45 @@ const ViewJob = () => {
                   className="widget-timeline dz-scroll style-1 height370  ps--active-y"
                 >
                   <ul className="timeline">
-                    <li>
-                      <div className="timeline-badge primary"></div>
-                      <Link
-                        className="timeline-panel text-muted"
-                        // to="/widget-basic"
-                      >
-                        <span>10 minutes ago</span>
-                        <h6 className="mb-0" style={{fontSize:"1px"}}>
-                          Youtube, a video-sharing website, goes live{" "}
-                          <strong className="text-primary">$500</strong>.
-                        </h6>
-                      </Link>
-                    </li>
-                    <li>
-                      <div className="timeline-badge info"></div>
-                      <Link
-                        className="timeline-panel text-muted"
-                        // to="/widget-basic"
-                      >
-                        <span>20 minutes ago</span>
-                        <h6 className="mb-0">
-                          New order placed{" "}
-                          <strong className="text-info">#XF-2356.</strong>
-                        </h6>
-                        <p className="mb-0">
-                          Quisque a consequat ante Sit amet magna at volutapt...
-                        </p>
-                      </Link>
-                    </li>
-                    <li>
-                      <div className="timeline-badge danger"></div>
-                      <Link
-                        className="timeline-panel text-muted"
-                        // to="/widget-basic"
-                      >
-                        <span>30 minutes ago</span>
-                        <h6 className="mb-0">
-                          john just buy your product{" "}
-                          <strong className="text-warning">Sell $250</strong>
-                        </h6>
-                      </Link>
-                    </li>
-                    <li>
-                      <div className="timeline-badge success"></div>
-                      <Link
-                        className="timeline-panel text-muted"
-                        // to="/widget-basic"
-                      >
-                        <span>15 minutes ago</span>
-                        <h6 className="mb-0">
-                          StumbleUpon is acquired by eBay.{" "}
-                        </h6>
-                      </Link>
-                    </li>
-                    <li>
-                      <div className="timeline-badge warning"></div>
-                      <Link
-                        className="timeline-panel text-muted"
-                        // to="/widget-basic"
-                      >
-                        <span>20 minutes ago</span>
-                        <h6 className="mb-0">
-                          Mashable, a news website and blog, goes live.
-                        </h6>
-                      </Link>
-                    </li>
-                    <li>
-                      <div className="timeline-badge dark"></div>
-                      <Link
-                        className="timeline-panel text-muted"
-                        // to="/widget-basic"
-                      >
-                        <span>20 minutes ago</span>
-                        <h6 className="mb-0">
-                          Mashable, a news website and blog, goes live.
-                        </h6>
-                      </Link>
-                    </li>
+                  {allCandidates
+  .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)) // Sort by updatedAt in descending order
+  .map((item, index) => {
+    const color = colors[index % colors.length];
+    return (
+      <li key={item.id || index}>
+        <div className={`timeline-badge ${color}`}></div>
+        <Link className="timeline-panel text-muted">
+          {item.status === "Submitted" ? (
+            <span>{moment(item.createdAt).fromNow()}</span>
+          ) : (
+            <span>{moment(item.updatedAt).fromNow()}</span>
+          )}
+          <h6 className="mb-0">
+            {item.first_name} {item.last_name}
+          </h6>
+          <p className="mb-0">Submitted by {item?.candidate_owner?.name}</p>
+          <h8 className="mb-0">
+            <strong className={`text-${color}`}>
+              {moment(item?.createdAt).format("MMM DD, YYYY, h:mm A")}
+            </strong>
+          </h8>
+          <p className="mt-1">Current Status {item.status}</p>
+          <h8 className="mb-0">
+            <strong className={`text-${color}`}>
+              {moment(item?.updatedAt).format("MMM DD, YYYY, h:mm A")}
+            </strong>
+          </h8>
+        </Link>
+      </li>
+    );
+  })}
+
                   </ul>
                 </div>
            
-            </div>
+            {/* </div> */}
           </div>
-                      </div>
+                      </div></div>
       </div>
     </div>
                 <div className="card">

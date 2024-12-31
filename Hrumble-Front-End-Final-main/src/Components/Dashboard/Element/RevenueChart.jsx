@@ -102,7 +102,7 @@ const options = {
 
 const RevenueChart = () => {
     const { invoicechart } = useContext(DashboardContext);
-    console.log("Revenue Data:", invoicechart);
+
 
     const data1 = invoicechart?.data1 || [];  // Ensure safe access to data1
 

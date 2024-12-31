@@ -564,10 +564,24 @@ methods.getAllList = asyncHandler(async (req, res) => {
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 10; 
   let keywords = req.query.keywords
+  let name = req.query.name;
   console.log("query",keywords);
    let filter={
     
    }
+
+   if (req.query.email_id) {
+    filter.email_id = { $regex: new RegExp(req.query.email_id, 'i') };
+}
+if (req.query.phone_no) {
+  filter.phone_no = { $regex: new RegExp(req.query.phone_no, 'i') };
+}
+if (name) {
+  filter.$or = [
+      { first_name: { $regex: new RegExp(name, 'i') } },
+      { last_name: { $regex: new RegExp(name, 'i') } }
+  ];
+}
    if(keywords){
     filter.$or = [
 

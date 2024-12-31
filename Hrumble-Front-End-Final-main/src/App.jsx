@@ -43,8 +43,9 @@ import GoalProvider from "./Providers/Goal/GoalProvider";
 import SalesandMargettingProvider from './Providers/SalesandMargetting/SalesandMargettingProvider';
 import SpaceProvider from "./Providers/Space/SpaceProvider";
 import ProjectProvider from "./Providers/Construction/Projects/ProjectProvider";
-import  SignUpProvider from './Providers/SignUpProvider/SignUpProvider';
-import   ThemeContextProvider  from "./Providers/Theme";
+import SignUpProvider from './Providers/SignUpProvider/SignUpProvider';
+import ThemeContextProvider  from "./Providers/Theme";
+import TaskContestProvider from "./Providers/TaskProvider/TaskProvider"
 
 
 function App() {
@@ -72,7 +73,9 @@ function App() {
               
                                               <SignUpProvider>
                                               <ThemeContextProvider>
+                                                <TaskContestProvider>
                                               <MainRoutes />
+                                              </TaskContestProvider>
                                               </ThemeContextProvider>
                                               </SignUpProvider>
                                           

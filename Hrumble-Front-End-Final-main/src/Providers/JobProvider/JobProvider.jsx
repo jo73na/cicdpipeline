@@ -57,83 +57,45 @@ const JobProvider = (props) => {
         // Example: converting the searchjob to uppercase
         return searchjob.toUpperCase();
       }, [searchjob]); 
-      console.log("hhhhusememo",memoizedResult)
+
 
     const token =CookieUtil.get("admin_token")
+    
 
     const fetchJob = async (status) => {
-       
-    console.log("pagination",pagination)
-        let api=`${BASE_URL}/job`
-        
-      
-         let params={
-             ...(status?.checkedList ? {status:status?.checkedList}:{status:["opened","closed","Hold"]}),
-             ...(status?.client_id && {client_id:status?.client_id}),
-             ...(status?.created_by && {created_by:status?.created_by}),
-            page:status?.page? status.page:pagination.current,
-            limit:status?.limit? status.limit :pagination.pageSize
-         }
-        try {
-
-            // if(refresh){
-            //     return (
-            //         await axios.get(api,{params}).then((resp) => {
-                      
-            //         setJob([]);
-            //     }),
-            //     await axios.get(api,{params}).then((resp) => {
-            //         setOpenJobs(resp.data.data.data);
-            //         setPagination({...pagination,total:resp.data.data.total});
-            //     }),
-            //     await axios.get(api, {params:{status:"closed"}}).then((resp) => {
-                    
-            //         setClosedJobs(resp.data.data.data);
-            //         setLoading(false) 
-            //     }),
-            //     // await axios.get(skillapi).then((resp) => {
-            //     //     setSkill(resp.data.data);
-                
-            //     // }),
-            //     // await axios.get(locationapi).then((resp) => {
-            //     //     setLocation(resp.data.data);
-                   
-            //     // }),
-            //     // await axios.get(clientsapi).then((resp) => {
-            //     //     setClients(resp.data.data);
-                    
-                   
-            //     // })
-                
-            //     )
-            // }
-
-            setLoading(true)
-            // await axios.get(api).then((resp) => {
-            //     setJob(resp.data.data);
-            // }); 
-            await axios.get(api,{params:{...params}},
-                ).then((resp) => {
-                setOpenJobs(resp.data.data.data);
-                setPagination({...pagination,total:resp.data.data.total});
-                setLoading(false)
-
-            });
-            // await axios.get(api, {params:{status:"closed"}}).then((resp) => {
-                
-            //     setClosedJobs(resp.data.data.data);
-            //     setLoading(false) 
-            // });
-          
-            
-
-           
-           
-        } catch (error) {
-            setLoading(false)
-            console.log('error', error);
-        }
+      console.log("pagination", pagination);
+      let api = `${BASE_URL}/job`;
+  
+      let params = {
+        ...(status?.checkedList ? { status: status?.checkedList } : { status: ["opened", "closed", "Hold"] }),
+        ...(status?.client_id && { client_id: status?.client_id }),
+        ...(status?.created_by && { created_by: status?.created_by }),
+        limit: 1000, // Arbitrary high number to fetch all jobs
     };
+    
+  
+      try {
+          setLoading(true); // Set loading to true before the API call
+  
+          const resp = await axios.get(api, { params });
+          
+          // Assuming the response structure is as follows:
+          // resp.data.data.data contains the job data
+          // resp.data.data.total contains the total count for pagination
+          const jobs = resp.data.data.data; // Adjust this based on your actual response structure
+          const total = resp.data.data.total; // Adjust this based on your actual response structure
+  
+          setOpenJobs(jobs); // Set the jobs in context or state
+          // Update pagination state
+          setLoading(false); // Set loading to false after the API call
+  
+          return jobs; // Return the jobs for further use
+      } catch (error) {
+          setLoading(false); // Ensure loading is set to false on error
+          console.log('Error fetching jobs:', error);
+          return []; // Return an empty array on error
+      }
+  };
 
     const handleChangeSearch= async(e)=>{
         let api=`${BASE_URL}/job`
@@ -325,6 +287,7 @@ const JobProvider = (props) => {
 
     const handlePageChange = (page, pageSize) => {
         setPagination({ ...pagination, current: page, pageSize });
+        fetchJob();
       };
 
 

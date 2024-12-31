@@ -196,6 +196,16 @@ const accessList= [
   //   ]
   // },
   {
+    module: "Task",
+    component: "TaskManager",
+    url: "/task",
+    icon: "TaskLogo",
+    permissions: [
+      "View Task",
+      "Add Task"
+    ]
+  },
+  {
     module: "Goal",
     component: "Goal",
     url: "/goal",
@@ -438,6 +448,16 @@ const accessListBlatform= [
     ]
   },
   {
+    module: "Task",
+    component: "TaskManager",
+    url: "/task",
+    icon: "TaskLogo",
+    permissions: [
+      "View Task",
+      "Add Task"
+    ]
+  },
+  {
     module: "Goal",
     component: "Goal",
     url: "/goal",
@@ -581,20 +601,30 @@ const accessListPermission= [
   ]
 },
 {
-  module:"Reports",
-  url:"/Reports",
-   icon:"ReportsLogo",
-
-  permissions:[
-    "Invoice Summary",
-    "Expense Summary",
-    "Payment Summary",
-    "Profit vs Loss"
-   
-   
-
+  module: "Task",
+  component: "TaskManager",
+  url: "/task",
+  icon: "TaskLogo",
+  permissions: [
+    "View Task",
+    "Add Task"
   ]
 },
+// {
+//   module:"Reports",
+//   url:"/Reports",
+//    icon:"ReportsLogo",
+
+//   permissions:[
+//     "Invoice Summary",
+//     "Expense Summary",
+//     "Payment Summary",
+//     "Profit vs Loss"
+   
+   
+
+//   ]
+// },
 {
   module:"FileManager",
   url:"/filemanager",

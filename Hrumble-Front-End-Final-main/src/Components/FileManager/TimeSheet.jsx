@@ -5,17 +5,17 @@ import FileManagerContext from '../../Providers/FileManagerProvider';
 import { useNavigate } from 'react-router-dom';
 import TimesheetTotalMonth from '../FileManager/TimesheetTotalMonth'
 import moment from 'moment';
-
+ 
 const TimeSheet = () => {
-
+ 
     const { FetchEmployeeTable, employeeLogindata , employeeFull, fetchEmployFull} = useContext(FileManagerContext);
-
+ 
     console.log("employ----", employeeLogindata)
-
+ 
     const [EmployOpen,setEmployOpen]= useState(false);
-
+ 
     const navigate = useNavigate();
-
+ 
     const handleEmployeeDoc = (id) => {
         fetchEmployFull(id)
         setEmployOpen(true);
@@ -23,15 +23,17 @@ const TimeSheet = () => {
       useEffect(() => {
         FetchEmployeeTable()
       },[])
-
+ 
   return (
     <div>
-  
+      <label className='p_t_10 employeeDashBoard-personalLabel'>TimeSheet</label>
+      <div className='col_4 g_20 p_t_10'>
+ 
       {
         EmployOpen ? <p><TimesheetTotalMonth setEmployOpen={setEmployOpen} /></p> :
-
-        <div className='col_4'>
-          {
+ 
+       
+         
             employeeLogindata?.map((item,i) => {
               return<>
               <div className='file-employeename-box d_f g_10'>
@@ -40,11 +42,12 @@ const TimeSheet = () => {
               </div>
               </>
             })
-          }
-        </div>
+         
+       
       }
+      </div>
     </div>
   )
 }
-
+ 
 export default TimeSheet

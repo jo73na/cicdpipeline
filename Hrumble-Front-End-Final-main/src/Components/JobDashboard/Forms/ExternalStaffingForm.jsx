@@ -123,7 +123,7 @@ const stepValidationFields = {
     "Rourkela", "Salem", "Sangli", "Shimla", "Siliguri", "Solapur", "Srinagar",
     "Surat", "Thiruvananthapuram", "Thrissur", "Tiruchirappalli", "Tirunelveli",
     "Tiruppur", "Ujjain", "Vadodara", "Varanasi", "Vijayawada", "Visakhapatnam",
-    "Warangal"
+    "Warangal","Remote",
   ].sort();
 
   useEffect(() => {
@@ -330,8 +330,20 @@ else if (activeStep === 3) {
                     label="Job Title"
                     rules={[
                       { required: true, message: "Please input the Job Title!" },
-                      { min: 3, message: "Job title must be at least 3 characters!" },
-                      { max: 100, message: "Job title cannot exceed 100 characters!" }
+                      { 
+                        validator: (_, value) => {
+                          if (!value || value.length === 0) {
+                            return Promise.resolve(); // Skip validation if no input (handled by 'required' rule)
+                          }
+                          if (value.length < 3) {
+                            return Promise.reject(new Error("Job title must be at least 3 characters!"));
+                          }
+                          if (value.length > 28) {
+                            return Promise.reject(new Error("Job title must not exceed 28 characters!"));
+                          }
+                          return Promise.resolve();
+                        }
+                      }
                     ]}
                   >
                     <Input placeholder="Enter Job Title" />

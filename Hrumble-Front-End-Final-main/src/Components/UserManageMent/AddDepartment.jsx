@@ -228,12 +228,12 @@ const AddDepartment = ({input}) => {
                  className=""
                >
                <div className='col_4 g_20  m_t_20 m_l_20'>
-               <Form.Item label="Role" name="parent_id">
+               <Form.Item label="Department" name="parent_id">
                   <Select placeholder='Select parent'
                      options={options}
                   />
                </Form.Item>
-               <Form.Item label="Department Name" name="name">
+               <Form.Item label="Child" name="name">
                   <Input placeholder='Enter Name'/>
                </Form.Item> 
                </div>

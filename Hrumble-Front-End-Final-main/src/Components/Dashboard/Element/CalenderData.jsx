@@ -215,7 +215,7 @@ function CalenderData() {
             name: event.summary,
           }));
           setHolidays(formattedHolidays);
-          console.log("Fetched Holidays:", formattedHolidays);
+          
         }
       } catch (error) {
         console.error("Error fetching holidays:", error);
@@ -338,7 +338,7 @@ function CalenderData() {
         borderRadius: "12px",
         padding: "30px",
         boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-        height: "478px",
+        height: "400px",
         width: "420px",
         marginBottom:"14px"
         

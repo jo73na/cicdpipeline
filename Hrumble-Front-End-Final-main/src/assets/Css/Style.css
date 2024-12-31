@@ -7195,7 +7195,7 @@ textarea.form-control-lg {
     .form-select {
       transition: none; } }
   .form-select:focus {
-    border-color: #a295c8;
+    border-color: #DDE6D8;
     outline: 0;
     box-shadow: 0 0 0 0.25rem rgba(69, 43, 144, 0.25); }
   .form-select[multiple], .form-select[size]:not([size="1"]) {
@@ -32173,7 +32173,7 @@ button {
     border-color: #E6E6E6;
     position: relative;
     background: transparent;
-    padding: 1.5rem 1.25rem 1.25rem;
+    /* padding: 1.5rem 1.25rem 1.25rem; */
     display: flex;
     justify-content: space-between;
     align-items: center; }
@@ -32415,10 +32415,29 @@ button {
 
 .custom-dropdown {
   display: inline-block;
-  margin-bottom: 1rem; }
+  margin-bottom: 1rem;
+  appearance: none; /* Remove the default dropdown arrow */
+  -webkit-appearance: none; /* Safari support */
+  -moz-appearance: none; /* Firefox support */
+  border: 1px solid #ccc; /* Default border color */
+  padding: 8px 10px;
+  border-radius: 4px;
+  background-color: #fff; /* Dropdown background color */
+  background-image: none; /* Ensure no arrow appears */
+  cursor: pointer; }
+
+  .custom-dropdown:focus {
+    outline: none;
+    border-color: #007bff; /* Change border color on focus */
+}
+
+.custom-dropdown:active {
+    border-color: #77AB59; /* Change border color on selection */
+}
   .custom-dropdown .dropdown-menu {
     border: 0rem;
     min-width: 10rem; }
+    
 
 .card-action .custom-dropdown {
   margin: 0rem;
@@ -34500,7 +34519,8 @@ td.text-ov {
 .dataTables_wrapper .dataTables_paginate {
   align-items: center;
   display: flex;
-  flex-flow: wrap; }
+  flex-flow: wrap;
+ }
   .dataTables_wrapper .dataTables_paginate .paginate_button.previous, .dataTables_wrapper .dataTables_paginate .paginate_button.next {
     font-size: 13px;
     height: 24px;
@@ -34526,9 +34546,9 @@ td.text-ov {
         line-height: 2.125rem;
         padding: 0 0.45rem; } }
   .dataTables_wrapper .dataTables_paginate span .paginate_button {
-    font-size: 13px;
+    font-size: 12px;
     height: 24px !important; 
-    width: 24px !important;
+    min-width: 28px !important;
     background: transparent;
     border-radius: 0.375rem;
     padding: 0 0.45rem;
@@ -34549,6 +34569,7 @@ td.text-ov {
 
 .dataTables_wrapper input[type="search"], .dataTables_wrapper input[type="text"], .dataTables_wrapper select {
   border: 0.0625rem solid #e2e2e2;
+  width: 80px;
   padding: .3rem 0.5rem;
   color: #715d5d;
   border-radius: 0.3125rem; }
@@ -43842,3 +43863,228 @@ background: "#ebc1c1"
   box-shadow: 0rem 0.9375rem 1.875rem 0rem rgba(0, 0, 0, 0.02);
 }
 
+.ellipsis {
+  margin: 0 5px;
+  font-size: 14px;
+  color: #DDE6D8;
+}
+
+.dropdown-container {
+  /* margin-top: 10px; */
+  margin-right: 5px;
+  display: flex;
+  align-items: center;
+}
+
+.dropdown-container.no-arrow select {
+  appearance: none; /* Remove default arrow */
+  -webkit-appearance: none; /* Safari support */
+  -moz-appearance: none; /* Firefox support */
+  border: 1px solid #ccc; /* Default border */
+  padding: 5px 10px;
+  font-size: 12px;
+  background-color: #fff;
+  cursor: pointer;
+  border-radius: 4px; /* Rounded corners */
+  position: relative;
+  background-image: none; /* Ensure no arrow */
+}
+
+.custom-dropdown1:focus {
+  outline: none;
+  border-color: #DDE6D8; /* Change border color on focus */
+  box-shadow: 0 0 4px rgba(221, 230, 216, 0.8); /* Optional glow effect */
+}
+
+.custom-dropdown1:active {
+  border-color: #DDE6D8; /* Change border color on selection */
+}
+
+/* For browsers that still show the arrow, explicitly remove it */
+.no-arrow select::-ms-expand {
+  display: none; /* IE/Edge */
+}
+
+.no-arrow select:focus::-ms-expand {
+  display: none;
+}
+
+
+.avatar-container {
+  position: relative;
+  display: inline-block;
+}
+
+.hover-card {
+  display: none;
+  position: absolute;
+  top: 50px;
+  left: 0;
+  background-color: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  padding: 10px;
+  width: 200px;
+  z-index: 10;
+}
+
+.avatar-container:hover .hover-card {
+  display: block;
+}
+
+.remove-button {
+  transition: background 0.2s ease-in-out;
+}
+
+.remove-button:hover {
+  background: darkred;
+}
+
+.assigned-user-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+
+.assigned-user {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #007bff;
+  color: #fff;
+  font-size: 12px;
+  font-weight: bold;
+  width: 40px;
+  height: 40px;
+  margin-left: 10px; /* Space between the initials */
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.assigned-user:hover {
+  transform: scale(1.2);
+}
+
+.remove-button {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: none;
+  background: red;
+  color: white;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+
+/* Global employeeForm Styles */
+.employeeForm.ant-input,
+.employeeForm.ant-select-selector,
+.employeeForm.ant-input-number,
+.employeeForm.ant-picker-input {
+  border-radius: 8px !important;
+  width: 100%; /* Ensure proper width in the layout */
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  height: 36px;
+}
+ 
+/* Special cases like Select, DatePicker, etc. */
+.employeeForm.ant-select-selector {
+  display: flex;
+  align-items: center;
+  height: 36px;
+}
+ 
+.employeeForm.ant-picker {
+  height: 36px;
+}
+ 
+.employeeForm.ant-input-number {
+  height: 36px;
+  display: flex;
+  align-items: center;
+}
+ 
+/* Remove arrows from number input if needed */
+.employeeForm.no-arrow {
+  appearance: none;
+}
+
+/* Reduce the padding and line-height for the table rows */
+/* Scoped styles for the table with class "custom-task" */
+.custom-task td, 
+.custom-task th {
+    padding: 2px 4px !important;
+    height: 35px !important; /* Force consistent cell height */
+    
+    
+}
+
+.custom-task td input,
+.custom-task td select,
+.custom-task td textarea {
+    height: 16px; /* Adjust input fields height */
+    padding: 2px; /* Reduce padding inside input */
+    font-size: 10px; 
+
+    
+}
+
+.custom-task td h4 {
+    margin: 0;
+    padding: 0;
+    line-height: 1;
+    
+}
+
+.custom-task td span {
+    display: block;
+    line-height: 1.5;
+    font-size: 12px; 
+}
+
+.custom-task td .dropdown-toggle {
+    padding: 2px 4px;
+    height: 20px;
+    font-size: 10px; 
+
+}
+
+.custom-task td .truncate {
+    white-space: nowrap; /* Prevent text from wrapping */
+    overflow: hidden;
+    text-overflow: ellipsis; /* Truncate overflowing text */
+    max-width: 100px;
+}
+
+.custom-task td .assigned-user {
+    background-color: #007bff;
+    color: #fff;
+    font-size: 10px;
+    font-weight: bold;
+    width: 23px;
+    height: 23px;
+    margin-left: 0;
+    border-radius: 50%;
+    cursor: pointer;
+    position: relative;
+}
+
+.custom-task td .assigned-user button {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: grey;
+    border: none;
+    color: #fff;
+    font-size: 10px;
+    cursor: pointer;
+    border-radius: 50%;
+    width: 13px;
+    height: 13px;
+    display: flex;
+    justify-content: center;
+}

@@ -79,6 +79,7 @@ methods.mailsend =asyncHandler(async (req, res) => {
    const year = date.getFullYear();
    const month = String(date.getMonth() + 1).padStart(2, '0');
    const day = String(date.getDate()).padStart(2, '0');
+  
  
    return `${year}-${month}-${day}`;
  };
@@ -108,13 +109,13 @@ EndTime:providedEndTime,
     // EndTime:req.body.EndTime,
     // timesheet:req?.file?.path||"",
     // type:req.body.type||"Pending"
-  } 
+  };
 
 
   // Set the time to the beginning of the current day (midnight)
   // const currentDate = new Date();
 
-  currentDate.setHours(0, 0, 0, 0);
+  // currentDate.setHours(0, 0, 0, 0);
   // let todaycreated =  await candidatelog.find({
   //   createdAt: { $gte: currentDate },
   //   candidate_owner:new mongoose.Types.ObjectId(req.user?._id)
@@ -127,11 +128,11 @@ EndTime:providedEndTime,
   //   },
   // })
 
-  console.log("todaycreated",todaycreated)
+  // console.log("todaycreated",todaycreated)
 
 
 //  let resposne =  await sendEmail(req.body,todaycreated);
- console.log("resposne",resposne)
+//  console.log("resposne",resposne)
     
 try {
   success(res, 201, true, "Create Successfully", await crud.insertOne(hrlogged, data)
@@ -148,6 +149,7 @@ methods.sendloggedData =asyncHandler(async (req, res) => {
   req.body.employee_id = req.user?._id
 
   const currentDate = new Date();
+  
  
   // Function to format a date as "YYYY-MM-DD"
   const formatDate = (date) => {
@@ -580,145 +582,191 @@ let aggregate=[
 } 
 })
 router.get('/fetchrequestsnonbillable/',methods.fetchrequestsnonbillable );
-
- methods.admintimesheet=asyncHandler(async (req, res) => {
-
- 
-    
-  const startOfMonth = new Date();
-  startOfMonth.setHours(0, 0, 0, 0);
-  startOfMonth.setDate(1);
-  
-  const endOfMonth = new Date();
-  endOfMonth.setHours(23, 59, 59, 999);
-  endOfMonth.setMonth(startOfMonth.getMonth() + 1);
-  endOfMonth.setDate(0);
-
-    
-    try {
-
-
-    // Your original pipeline
-    const pipeline = [
+///////////////
+methods.fetchattendance = asyncHandler(async (req, res) => {
+  try {
+    let aggregate = [
       {
         $match: {
-          StartTime: {
-            $gte:  req?.query?.firstDayOfMonth? new Date(req?.query?.firstDayOfMonth):startOfMonth,
-            $lt:  req?.query?.lastDayOfMonth? new Date(req?.query?.lastDayOfMonth):endOfMonth
-          },
-
-          ...(req.query.employee_id  && { 'employee_id': new mongoose.Types.ObjectId(req.query.employee_id) }),
-          ...(req.query.type  && { 'type' :req.query.type }),
-        }
-
-      },
-      {
-        $group: {
-          _id: '$employee_id',
-          totalLoggedMinutes: {
-            $sum: {
-              $add: [
-                {
-                  $multiply: [
-                    { $toInt: { $arrayElemAt: [{ $split: ['$logged_houres', ':'] }, 0] } }, // extract hours
-                    60,
-                  ],
-                },
-                { $toInt: { $arrayElemAt: [{ $split: ['$logged_houres', ':'] }, 1] } }, // extract minutes
-              ],
-            },
-          },
-          project: { $first: '$project_id' }, // Assuming each employee has only one project during the time period
+          type: "Pending",
+          total_logged_hours: { $exists: true, $ne: null },
+          logouthour: { $exists: true, $ne: null },
         },
       },
       {
-        $project: {
-          _id: 0,
-          employee_id: '$_id',
-          totalLoggedHours: {
-            $concat: [
-              { $toString: { $trunc: { $divide: ['$totalLoggedMinutes', 60] } } },
-              ':',
-              { $toString: { $mod: ['$totalLoggedMinutes', 60] } },
-            ],
-          },
-          project: 1,
+        $sort: {
+          createdAt: -1,
         },
       },
       {
         $lookup: {
-          from: 'employees',
-          let: { employee_id: "$employee_id" },
-          pipeline: [
-            {
-              $match: {
-                $expr: { $eq: ["$_id", "$$employee_id"] },
-              },
-            },
-            {
-              $project: {
-                _id: 0,
-                firstname: 1,
-                lastname: 1,
-              },
-            },
-          ],
-          as: 'employeeDetails',
+          from: "admins",
+          localField: "employee_id",
+          foreignField: "_id",
+          as: "employeedetails",
         },
-      },
-      {
-        $unwind: '$employeeDetails',
       },
       {
         $project: {
+          action: "$_id",
+          name: { $arrayElemAt: ["$employeedetails.name", 0] },
+          total_logged_hours: "$total_logged_hours",
+          loginhour: "$loginhour",
+          logouthour: "$logouthour",
+          break_logged_hours: "$break_logged_hours",
+          employee_id: 1,
+          status: "$status",
+          EndTime: {
+            $dateToString: {
+              format: "%Y-%m-%d",
+              date: "$EndTime",
+            },
+          },
           _id: 0,
-          id: "$employee_id",
-          text: {
-            $concat: [
-              '$employeeDetails.firstname',
-              ' ',
-              '$employeeDetails.lastname',
-              "(",
-              '$totalLoggedHours',
-             ")"
+        },
+      },
+    ];
 
+    let data = await hrlogged.aggregate(aggregate);
+    success(res, 200, true, "Fetched Successfully", data);
+  } catch (err) {
+    console.error("Error:", err);
+    throw new Error(err);
+  }
+});
+
+router.get("/fetchattendance", methods.fetchattendance);
+
+
+
+
+methods.admintimesheet = asyncHandler(async (req, res) => {
+  const { employee_id, type, firstDayOfMonth, lastDayOfMonth, period } = req.query;
+
+  // Define date ranges based on the period
+  let startDate, endDate;
+  const currentDate = new Date();
+
+  if (period === "daily") {
+    startDate = new Date(currentDate);
+    startDate.setHours(0, 0, 0, 0);
+    endDate = new Date(currentDate);
+    endDate.setHours(23, 59, 59, 999);
+  } else if (period === "monthly") {
+    startDate = firstDayOfMonth ? new Date(firstDayOfMonth) : new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+    endDate = lastDayOfMonth
+      ? new Date(lastDayOfMonth)
+      : new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0, 23, 59, 59, 999);
+  } else if (period === "yearly") {
+    startDate = new Date(currentDate.getFullYear(), 0, 1, 0, 0, 0, 0);
+    endDate = new Date(currentDate.getFullYear(), 11, 31, 23, 59, 59, 999);
+  } else {
+    return res.status(400).json({ success: false, message: "Invalid period. Use 'daily', 'monthly', or 'yearly'." });
+  }
+
+  try {
+    const pipeline = [
+      {
+        $match: {
+          StartTime: { $gte: startDate, $lt: endDate },
+          ...(employee_id && { employee_id: new mongoose.Types.ObjectId(employee_id) }),
+          ...(type && { type }),
+        },
+      },
+      // Filter to include only documents with the required fields
+      {
+        $match: {
+          logouthour: { $exists: true, $ne: null },
+          total_logged_hours: { $exists: true, $ne: null },
+          break_logged_hours: { $exists: true, $ne: null },
+        },
+      },
+      {
+        $project: {
+          employee_id: 1,
+          total_logged_hours: 1,
+          loginhour: 1,
+          logouthour: 1,
+          break_logged_hours: 1,
+          status: 1,
+          StartTime: 1,
+          EndTime: 1,
+        },
+      },
+      {
+        $group: {
+          _id: "$employee_id",
+          totalLoggedMinutes: {
+            $sum: {
+              $add: [
+                { $multiply: [{ $toInt: { $arrayElemAt: [{ $split: ["$total_logged_hours", ":"] }, 0] } }, 60] },
+                { $toInt: { $arrayElemAt: [{ $split: ["$total_logged_hours", ":"] }, 1] } },
+              ],
+            },
+          },
+          logs: { $push: "$$ROOT" },
+        },
+      },
+      {
+        $project: {
+          employee_id: "$_id",
+          totalLoggedHours: {
+            $concat: [
+              { $toString: { $trunc: { $divide: ["$totalLoggedMinutes", 60] } } },
+              ":",
+              { $toString: { $mod: ["$totalLoggedMinutes", 60] } },
             ],
+          },
+          logs: 1,
+        },
+      },
+      {
+        $lookup: {
+          from: "employees",
+          localField: "employee_id",
+          foreignField: "_id",
+          as: "employeeDetails",
+        },
+      },
+      {
+        $unwind: "$employeeDetails",
+      },
+      {
+        $project: {
+          employee_id: 1,
+          totalLoggedHours: 1,
+          logs: 1,
+          employeeName: {
+            $concat: ["$employeeDetails.firstname", " ", "$employeeDetails.lastname"],
           },
         },
       },
-      
     ];
 
- 
-        let data= await event.aggregate(pipeline)
-     
-     console.log("data",data)
-      const employeedata = await employee.find({}, { id: 1, firstname: 1, lastname: 1 });
-     console.log("employeedata", employeedata);
-     let senddata= []
-     employeedata?.map((item)=>{
-       let exist =data.find((e)=>e.id ==String(item._id))
-       console.log("senddata",exist)
-       if(exist){
-          senddata.push(exist)
-       }
-       else{
-          senddata.push({
-          id:item?._id,
-          text:`${item.firstname} ${item.lastname} (00:00)`
-        })
-         
-       }
-     })
-     
+    const data = await event.aggregate(pipeline);
 
+    // Prepare the response for table rendering
+    const response = data.map((item) => ({
+      employee_id: item.employee_id,
+      employeeName: item.employeeName,
+      totalLoggedHours: item.totalLoggedHours,
+      dailyLogs: item.logs.map((log) => ({
+        loginhour: log.loginhour,
+        logouthour: log.logouthour,
+        date: log.StartTime,
+        breakHours: log.break_logged_hours,
+        status: log.status,
+      })),
+    }));
 
-    success(res, 200, true, "Get Successfully", req.query.employee_id ? data:senddata);
+    success(res, 200, true, "Timesheet data fetched successfully", response);
   } catch (err) {
-    console.log("err",err)
+    console.error("Error fetching timesheet data:", err);
     throw new Error(err);
-  } 
-})
+  }
+});
+
+
  router.get('/admintimesheet/',methods.admintimesheet );
 
  methods.attenecehours=asyncHandler(async (req, res) => {

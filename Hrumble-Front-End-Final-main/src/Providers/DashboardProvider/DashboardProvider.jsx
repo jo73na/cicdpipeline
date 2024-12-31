@@ -35,6 +35,7 @@ const DashboardProvider = (props) => {
   const [clientselect, setclientSelect] = useState("");
   const [clientpicker, setclientPicker] = useState([]);
   const [invoicechart, setInvoicechart] = useState([]);
+  const [earningchart, setEarningchart] = useState([]);
   const [databasePicker, setDataBasepicker] = useState("");
 
   const [HrSelectData, setHRSelectDatas] = useState([]);
@@ -80,6 +81,8 @@ const DashboardProvider = (props) => {
     let charttest = `${BASE_URL}/chart/test`;
     let Goal = `${BASE_URL}/team/Dashboard`;
     let InvoiceExpense = `${BASE_URL}/invoiceChart`;
+    let TotalEarnings = `${BASE_URL}/totalEarningsChart`;
+
     let params = {
        admin_id: token,
        date: new Date().toISOString(),
@@ -102,6 +105,8 @@ const DashboardProvider = (props) => {
         setClientSelectDatas(Clientdatas.data.data);
         const InvoicechartData = await axios.get(InvoiceExpense);
         setInvoicechart(InvoicechartData.data.data)
+        const EarningschartData = await axios.get(TotalEarnings);
+        setEarningchart(EarningschartData.data.data)
             
         const Countdata = await axios.get(Countapi);
         setCount(Countdata.data.data)
@@ -643,6 +648,7 @@ const DashboardProvider = (props) => {
         count,
         invoicechart,
         SendLogginDetails,
+        earningchart,
         
       
       }}

@@ -28,7 +28,7 @@ export default function UserManageMent() {
     },
     {
       key: '2',
-      label: 'Roles',
+      label: 'Department',
       children: <RolesInUsers />
     },
   ];

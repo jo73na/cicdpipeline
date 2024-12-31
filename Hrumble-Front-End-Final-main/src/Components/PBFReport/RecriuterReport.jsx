@@ -23,7 +23,7 @@ const RecriuterReport = () => {
    const [filter,setFilter]=useState("Week")
    const [text,setText]=useState()
 
-
+console.log("RecruiterReport::::",recriterReport)
    
     const role = CookieUtil.get("role")
  let logindata = JSON.parse(CookieUtil.get('admin'));

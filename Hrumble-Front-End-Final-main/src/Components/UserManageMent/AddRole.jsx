@@ -209,7 +209,7 @@ const AddRole = ({input}) => {
   
   return (
    <>
-     <p className='heading_text'><LeftOutlined className='back' onClick={()=>navigate(-1)}/>Add Role</p>
+     <p className='heading_text'><LeftOutlined className='back' onClick={()=>navigate(-1)}/>Add Department</p>
      
      <div className='zive-usermanagement-default'>
        <Form
@@ -220,8 +220,8 @@ const AddRole = ({input}) => {
                  className=""
                >
                <div className='col_3  m_t_20 m_l_20'>
-               <Form.Item label="Roll Name" name="name">
-                  <Input placeholder='Enter Title'/>
+               <Form.Item label="Department Name" name="name">
+                  <Input placeholder='Enter Department'/>
                </Form.Item>
                </div>
                {accessList?.map((item, index) => {

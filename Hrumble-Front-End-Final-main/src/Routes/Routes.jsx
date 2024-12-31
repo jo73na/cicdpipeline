@@ -65,9 +65,12 @@ import AddJobs from "../Components/JobDashboard/AddJobs";
 import LeaveHistory from "../Components/Leaves/AdminLeavePage/LeaveHistory";
 import LeaveApproval from "../Components/Leaves/AdminLeavePage/LeaveApproval";
 import TimelineLeave from "../Components/Leaves/AdminLeavePage/TimelineLeave";
-const  NonBillable =lazy(()=>import( "../Components/TimeSheetAdmin/NonBillableRequest"));
+import MonthlyLogin from "../Components/PBFReport/MonthlyLogin";
+import AttendanceDashboard from "../Components/PBFReport/Attendance Report/index";
+import TaskManager from "../Components/TaskManager/index";
+import MyProfile from "../Components/MyProfile";
 
-
+ 
 
 const RoutesDynamic = [
   {
@@ -415,12 +418,28 @@ const RoutesDynamic = [
     component: <TimelineLeave/>,
   },
   {
-    path: "/nonbillable",
+    path: "/montlylogin",
     exact: true,
 
-    component: <NonBillable/>,
+    component: <MonthlyLogin/>,
   },
+  {
+    path: "/attendancereport",
+    exact: true,
 
+    component: <AttendanceDashboard/>,
+  },
+  {
+    path:"/task",
+    exact:true,
+
+    component:<TaskManager/>
+  },
+  {
+    path: "/myprofiles",
+    exact: true,
+    component: <MyProfile/>
+  }
  
 ];
 export default RoutesDynamic;

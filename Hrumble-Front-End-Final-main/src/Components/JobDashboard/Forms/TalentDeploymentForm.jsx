@@ -204,6 +204,7 @@ const TalentDeploymentForm = ({
     "Vijayawada",
     "Visakhapatnam",
     "Warangal",
+    "Remote",
   ].sort();
 
   useEffect(() => {
@@ -430,18 +431,21 @@ const TalentDeploymentForm = ({
                     name="job_title"
                     label="Job Title"
                     rules={[
-                      {
-                        required: true,
-                        message: "Please input the Job Title!",
-                      },
-                      {
-                        min: 3,
-                        message: "Job title must be at least 3 characters!",
-                      },
-                      {
-                        max: 100,
-                        message: "Job title cannot exceed 100 characters!",
-                      },
+                      { required: true, message: "Please input the Job Title!" },
+                      { 
+                        validator: (_, value) => {
+                          if (!value || value.length === 0) {
+                            return Promise.resolve(); // Skip validation if no input (handled by 'required' rule)
+                          }
+                          if (value.length < 3) {
+                            return Promise.reject(new Error("Job title must be at least 3 characters!"));
+                          }
+                          if (value.length > 28) {
+                            return Promise.reject(new Error("Job title must not exceed 28 characters!"));
+                          }
+                          return Promise.resolve();
+                        }
+                      }
                     ]}
                   >
                     <Input placeholder="Enter Job Title" />

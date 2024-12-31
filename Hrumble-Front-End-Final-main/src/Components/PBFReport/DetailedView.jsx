@@ -8,7 +8,7 @@ import { Nav, Tab } from 'react-bootstrap';
 
 export const DetailedView = () => {
      const {fetchAttenenceSingle,fetchattenenceReport,attenenceBillable,attenenceReport,opencalander,handleopenCalandar}=useContext(PBFContext)
-      console.log("attenenceReport",attenenceReport)
+
     useEffect(() => {
         fetchattenenceReport()
     }, [])

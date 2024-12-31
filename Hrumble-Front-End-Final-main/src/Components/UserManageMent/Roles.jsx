@@ -24,6 +24,7 @@ const RolesInUsers = ({ setActiveKey }) => {
 
  console.log("rollSingle",rollSingle)
  console.log("rollUsers",rollUsers)
+ console.log("RollList::::", RollList)
 
  
  const items = [];
@@ -177,8 +178,8 @@ const RolesInUsers = ({ setActiveKey }) => {
         />
           </div>
           <div className ="d_f g_10">
-          <button  className='btn btn-primary btn-sm' onClick={()=>navigate("/addrole")}>+ New Role</button>
-         <button  className='btn btn-primary btn-sm' onClick={()=>navigate("/adddepartment")}>+ Add Department</button>
+          <button  className='btn btn-primary btn-sm' onClick={()=>navigate("/addrole")}>+ New Department</button>
+         <button  className='btn btn-primary btn-sm' onClick={()=>navigate("/adddepartment")}>+ Add Child</button>
           </div>
 
         </div>

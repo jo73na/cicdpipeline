@@ -10,7 +10,7 @@ import ViewJobContext from '../../../Providers/ViewJob';
  
 const { Option } = Select;
 const indianCities = [
-  "Agra", "Ahmedabad", "Ajmer", "Aligarh", "Allahabad", "Ambala", "Amritsar",
+  "Agra", "Ahmedabad", "Ajmer", "Aligarh", "Allahabad", "Ambala", "Amritsar","Remote",
 ].sort();
  
 const EditDirectHiring = ({ jobId, closeForm }) => {
@@ -203,11 +203,11 @@ const EditDirectHiring = ({ jobId, closeForm }) => {
           return false;
         }
  
-        const salaryAmount = values.salary;
-        if (salaryAmount <= 0) {
-          message.error("Salary amount must be greater than 0!");
-          return false;
-        }
+        // const salaryAmount = values.salary;
+        // if (salaryAmount <= 0) {
+        //   message.error("Salary amount must be greater than 0!");
+        //   return false;
+        // }
       }
  
       else if (activeStep === 2) {
@@ -282,17 +282,17 @@ const EditDirectHiring = ({ jobId, closeForm }) => {
   
   
         // Call editJob with the finalData
-        const updatedJob = await editJob(finalData, jobId); // Ensure you're passing the jobId here
+        const updatedJob = await editJob(finalData, jobSingle._id); // Ensure you're passing the jobId here
   
         // Update the local state with the updated job data
         setFormData(updatedJob); // Update the local state with the new job data
   
         // Optionally, refresh the job table if needed
-        await handleClickjobTable(jobId); // This might still be useful for other parts of the UI
+        await handleClickjobTable(jobSingle._id); // This might still be useful for other parts of the UI
         message.success("Job updated successfully!");
         closeForm();
       } catch (error) {
-        message.error("Failed to update job: " + error.message);
+        // message.error("Failed to update job: " + error.message);
       }
     }
   };
@@ -365,7 +365,20 @@ const EditDirectHiring = ({ jobId, closeForm }) => {
                   label="Job Title"
                   rules={[
                     { required: true, message: "Please input the Job Title!" },
-                    { min: 3, message: "Job title must be at least 3 characters!" }
+                    { 
+                      validator: (_, value) => {
+                        if (!value || value.length === 0) {
+                          return Promise.resolve(); // Skip validation if no input (handled by 'required' rule)
+                        }
+                        if (value.length < 3) {
+                          return Promise.reject(new Error("Job title must be at least 3 characters!"));
+                        }
+                        if (value.length > 28) {
+                          return Promise.reject(new Error("Job title must not exceed 28 characters!"));
+                        }
+                        return Promise.resolve();
+                      }
+                    }
                   ]}
                 >
                   <Input placeholder="Enter Job Title" />
@@ -487,7 +500,7 @@ const EditDirectHiring = ({ jobId, closeForm }) => {
           </Col>
    
           {/* Keep experience fields the same */}
-          <Col span={8}>
+          {/* <Col span={8}>
           <Form.Item
               label="Salary"
               name="salary"
@@ -519,7 +532,7 @@ const EditDirectHiring = ({ jobId, closeForm }) => {
               />
             </Form.Item>
   
-          </Col>
+          </Col> */}
           <Col span={6}>
                 <Form.Item
                   label="Skills"

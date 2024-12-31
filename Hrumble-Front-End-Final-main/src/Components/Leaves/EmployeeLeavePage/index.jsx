@@ -94,7 +94,7 @@ const EmployeeLevePage = () => {
     const timeDifference = values?.endDate?.$d?.getTime() - values?.startDate?.$d?.getTime();
 
 // Convert milliseconds to days
-const daysDifference = timeDifference / (1000 * 60 * 60 * 24);
+const daysDifference = timeDifference / (1000 * 60 * 60 * 24) + 1;
 console.log('daysDifference',daysDifference)
 
 let senddata={
@@ -150,7 +150,7 @@ let senddata={
   )}
 </td>
      <td><span>{dayjs(item?.startDate).format("DD-MM-YYYY")}</span></td>
-     <td><span>{dayjs(item?.startDate).format("DD-MM-YYYY")}</span></td>
+     <td><span>{dayjs(item?.endDate).format("DD-MM-YYYY")}</span></td>
      <td className='table-number'><span>{item.no_of_days}</span></td>
      <td className="pe-0">
                                             <Tooltip title={item?.reason || '-'}>
@@ -327,13 +327,14 @@ const statusCounts = requestleaves.reduce(
                                     <tr>
                                         
                                         <th>Applied Date</th>
-                                        <th>Employee Name</th>
+                                        {/* <th>Employee Name</th> */}
                                         <th>Leave Type</th>
                                         <th>From Date</th>
                                         <th>To Date</th>
                                         <th>No. of Days</th>
                                         <th>Reason</th>
                                         <th>Status</th>
+                                        <th>Approved By</th>
                                     </tr>
                                 </thead>
                                 <tbody>

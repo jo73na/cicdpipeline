@@ -1,1471 +1,398 @@
-// import {  Form, Row, Col, Input, Select, Button, message, Modal, Cascader } from "antd";
-// import { useState,useEffect, useContext } from "react";
-// import ReactQuill from "react-quill";
-// import "react-quill/dist/quill.snow.css";
-// import {
-//   Stepper,
-//   Step,
-//   StepLabel,
-//   StepContent,
-// } from "@mui/material";
-// import { makeStyles } from "@mui/styles";
-// import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
-// import {  DollarOutlined } from "@ant-design/icons";
-// import { BiRupee } from "react-icons/bi";
-// import JobContext from '../../../Providers/JobProvider';
-// import {FormItem} from '../../../Utils/Formelements';
- 
-// const { Option } = Select;
- 
-// const TalentDeploymentForm = ({onDiscard,primarySelected, secondarySelected}) => {
- 
-//   const [form] = Form.useForm();
-//   const [contractType, setContractType] = useState("");
-//   const [formData, setFormData] = useState({});
-//   const [activeStep, setActiveStep] = useState(0);
-//   const [salaryType, setSalaryType] = useState("LPA");
-//   const [job_description, setjob_description] = useState("");
-//   const [currency, setCurrency] = useState("INR");
- 
-//   // New state for modal
-//   const [isDescriptionModalVisible, setIsDescriptionModalVisible] = useState(false);
-//   const [currentResourceIndex, setCurrentResourceIndex] = useState(null);
-//   const [tempDescription, setTempDescription] = useState("");
-//   const [noticeType, setNoticeType] = useState("");
-//  const {addJob, clients,handleClientChange, EndClientdata,Pocdata} = useContext(JobContext);
+import { useState, useEffect } from 'react';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
+import {  Dropdown, Tab } from 'react-bootstrap';
+import { useContext } from 'react';
+import dayjs from 'dayjs';
+import JobContext from './../../Providers/JobProvider/index';
+import Loader from '../../Utils/Loader';
+import { Drawer, Pagination,  Flex, Tag, Modal } from 'antd';
+import { UserAddOutlined, EyeOutlined, EditOutlined } from '@ant-design/icons';
+import { CSVLink } from 'react-csv';
+import CookieUtil from './../../Utils/Cookies';
+import AssignVendor from './Assignvendor';
+import AddJobs from './AddJobs';
+import EditDirectHiring from './EditForms/EditDirectHiring';
+import ViewJobContext from '../../Providers/ViewJob';
 
- 
- 
-//   const jobInfoFields = [
-//     'contractType',
-//     'job_id',
-//     'job_title',
-//     'required_no_of_candidates',
-//     'notice_period',
-//     'job_location',
-   
-//   ];
-//    // Step 2: Experience & Salary Fields
-//    const experienceFields = [
-//     'exp_from',
-//     'exp_to',
-//     ['salary', 'amount'],
-//     ['salary', 'type']
-//   ];
-// // step 3: Client Details
-//   const clientFields =[
-//     'client_id',
-//     'clientBudget',
-//     'end_client',
-//     'poc',
-//   ];
- 
-//    // Step 4: Job Description Field
-//    const descriptionFields = ['job_description'];
- 
-// // Map steps to their required fields
-// const stepValidationFields = {
-//   0: jobInfoFields,
-//   1: experienceFields,
-//   2: clientFields,
-//   3: descriptionFields
-// };
- 
-//   // Comprehensive list of Indian cities
-//   const indianCities = [
-//     "Agra", "Ahmedabad", "Ajmer", "Aligarh", "Allahabad", "Ambala", "Amritsar",
-//     "Aurangabad", "Bangalore", "Bareilly", "Belgaum", "Bhilai", "Bhiwandi",
-//     "Bhopal", "Bhubaneswar", "Bikaner", "Bilaspur", "Chandigarh", "Chennai",
-//     "Coimbatore", "Cuttack", "Dehradun", "Delhi", "Dhanbad", "Durgapur",
-//     "Erode", "Faridabad", "Firozabad", "Ghaziabad", "Goa", "Gorakhpur",
-//     "Gulbarga", "Guntur", "Gurgaon", "Guwahati", "Gwalior", "Hubli", "Hyderabad",
-//     "Indore", "Jabalpur", "Jaipur", "Jalandhar", "Jammu", "Jamnagar", "Jamshedpur",
-//     "Jhansi", "Jodhpur", "Kakinada", "Kannur", "Kanpur", "Kochi", "Kolhapur",
-//     "Kolkata", "Kota", "Kozhikode", "Kurnool", "Lucknow", "Ludhiana", "Madurai",
-//     "Mangalore", "Meerut", "Mumbai", "Mysore", "Nagpur", "Nashik", "Nellore",
-//     "Noida", "Patna", "Pondicherry", "Pune", "Raipur", "Rajkot", "Ranchi",
-//     "Rourkela", "Salem", "Sangli", "Shimla", "Siliguri", "Solapur", "Srinagar",
-//     "Surat", "Thiruvananthapuram", "Thrissur", "Tiruchirappalli", "Tirunelveli",
-//     "Tiruppur", "Ujjain", "Vadodara", "Varanasi", "Vijayawada", "Visakhapatnam",
-//     "Warangal"
-//   ].sort();
- 
- 
-//   const handleChangedescription = (value) => {
-//     setjob_descriptionResource(value);
-//   };
- 
-// // Function to format the input with commas
-// const formatSalary = (value) => {
-//   if (!value) return '';
-//   return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-// };
-
-// // Function to remove commas from the formatted string
-// const removeCommas = (value) => {
-//   return value.replace(/,/g, '');
-// };
-
- 
-//   useEffect(() => {
-//     if (contractType === "Full Time") {
-//       setSalaryType("LPA"); // For Full Time, default salary type is LPA
-//     } else if (contractType === "Contract") {
-//       setSalaryType("Monthly"); // For Contract, default salary type is Monthly
-//     } else if (contractType === "Both") {
-//       setSalaryType("LPA"); // For Both, default salary type is LPA
-//     }
-//   }, [contractType]);
- 
-//   const validateCurrentStep = async () => {
-//     try {
-//       const currentFields = stepValidationFields[activeStep];
-//       if (!currentFields) return true;
- 
-//       // Step 1 Validation
-//      // Step 1 Validation
-// if (activeStep === 0) {
-//   // Commented out the required validation for contractType
-//   // if (!contractType) {
-//   //   message.error("Please select a contract type!");
-//   //   return false;
-//   // }
-//   // await form.validateFields(jobInfoFields);
-// }
-
-// // Step 2 Validation
-// else if (activeStep === 1) {
-//   const values = await form.validateFields(experienceFields);
-//   // Commented out the experience range validation
-//   // const expFrom = values.exp_from;
-//   // const expTo = values.exp_to;
-//   // if (expTo < expFrom) {
-//   //   message.error("Maximum experience should be greater than minimum experience!");
-//   //   return false;
-//   // }
-//   // Commented out the salary validation
-//   // const salaryAmount = values.salary?.amount;
-//   // if (salaryAmount <= 0) {
-//   //   message.error("Salary amount must be greater than 0!");
-//   //   return false;
-//   // }
-// }
-
-// // Step 3 Validation
-// else if (activeStep === 2) {
-//   const values = await form.validateFields(clientFields);
-//   // Commented out the client budget validation
-//   // const Cbudget = values.clientBudget;
-//   // if (Cbudget <= 0) {
-//   //   message.error("Budget should be greater than 0!");
-//   //   return false;
-//   // }
-//   // Commented out the check for at least one client detail filled
-//   // else if (!values.client_id && !values.clientBudget && !values.end_client && !values.poc) {
-//   //   message.error("Please fill at least one of the client details!");
-//   //   return false;
-//   // }
-//   await form.validateFields(clientFields);
-// }
-
-// // Step 4 Validation
-// else if (activeStep === 3) {
-//   // Commented out the job description validation
-//   // if (!job_description || job_description.replace(/<[^>]*>/g, '').trim().length < 100) {
-//   //   message.error("Job description must be at least 100 characters long!");
-//   //   return false;
-//   // }
-//   // form.setFieldsValue({ job_description });
-// }
- 
-//       return true;
-//     } catch (error) {
-//       if (error.errorFields) {
-//         const errorMessages = error.errorFields.map(field => field.errors[0]).join(', ');
-//         message.error(`Please fix the following errors: ${errorMessages}`);
-//       } else {
-//         message.error("Please fill all required fields correctly!");
-//       }
-//       return false;
-//     }
-//   };
- 
-//   const showDescriptionModal = (index) => {
-//     setCurrentResourceIndex(index);
-//     const currentDesc = form.getFieldValue(['jobs', index, 'description']) || '';
-//     setTempDescription(currentDesc);
-//     setIsDescriptionModalVisible(true);
-//   };
- 
-//   const handleModalOk = () => {
-//     if (currentResourceIndex !== null) {
-//       form.setFieldsValue({
-//         jobs: form.getFieldValue('jobs').map((job, index) => {
-//           if (index === currentResourceIndex) {
-//             return { ...job, description: tempDescription };
-//           }
-//           return job;
-//         })
-//       });
-//     }
-//     setIsDescriptionModalVisible(false);
-//   };
- 
-//   const handleModalCancel = () => {
-//     setIsDescriptionModalVisible(false);
-//     setTempDescription("");
-//     setCurrentResourceIndex(null);
-//   };
- 
-//   const handleNext = async () => {
-//     const isValid = await validateCurrentStep();
-//     if (isValid) {
-//       const currentValues = form.getFieldsValue();
-//       setFormData({ ...formData, ...currentValues });
-//       setActiveStep(prev => prev + 1);
-//     }
-//   };
- 
-//   const handleBack = () => {
-//     setActiveStep(prev => prev - 1);
-//   };
- 
-//   const handleSubmit = async (formValues) => {
-//     const isValid = await validateCurrentStep();
-  
-//     if (isValid) {
-//       try {
-//         // Validate the form fields and get the latest values
-//         const validatedValues = await form.validateFields();
-  
-//         // Ensure the salary fields are correctly structured
-//         const cleanedAmount = removeCommas(validatedValues.salary?.amount);
-//         const salaryType = validatedValues.salary?.type || formData.salary?.type;
-  
-//         // Construct the final data object
-//         const finalData = {
-//           ...formData,
-//           ...validatedValues,
-//           salary: {
-//             amount: cleanedAmount ? parseFloat(cleanedAmount) : 0, // Convert to number
-//             type: salaryType,
-//           },
-//           primarySelected,
-//           secondarySelected,
-//           job_description,
-//         };
-  
-//         // Ensure both `type` and `amount` are included before sending
-//         if (!finalData.salary.amount || !finalData.salary.type) {
-//           throw new Error("Salary type and amount are required");
-//         }
-  
-//         console.log("Final Form Data:", finalData);
-  
-//         // Submit the data to the backend
-//         await addJob(finalData, form);
-//         message.success("Form submitted successfully!");
-//       } catch (error) {
-//         console.error("Form submission error:", error);
-//         message.error("Please check all fields!");
-//       }
-//     }
-//   };
-  
- 
-//   useEffect(() => {
-//     if (contractType === "Full Time") { // Full Time
-//       setSalaryType("LPA");
-//       // Set the salary type in the form
-//       form.setFieldsValue({
-//         salary: {
-//           ...form.getFieldValue('salary'),
-//           type: "LPA"
-//         }
-//       });
-//     } else if (contractType === "Contract") { // Contract
-//       setSalaryType("Monthly");
-//       form.setFieldsValue({
-//         salary: {
-//           ...form.getFieldValue('salary'),
-//           type: "Monthly"
-//         }
-//       });
-//     } else if (contractType === "Both") { // Both
-//       setSalaryType("LPA");
-//       form.setFieldsValue({
-//         salary: {
-//           ...form.getFieldValue('salary'),
-//           type: "LPA"
-//         }
-//       });
-//     }
-//   }, [contractType, form]);
- 
- 
-//   const steps = [
-//     {
-//       label: "Job Details",
-     
-//       content: (
-//         <div className="step-content">
-         
-//           <Row gutter={[16, 16]}>
-//             <Col span={8}>
-//               <Form.Item
-//                 name="contractType"
-//                 label="Hiring Mode"
-//                 rules={[{ required: true, message: "Please select Hiring Mode type!" }]}
-//               >
-//                 <Select
-//                   placeholder="Select Hiring Mode Type"
-//                    onChange={ value => setContractType(value)}
-//                 >
-//                   <Option value="Full Time">Full Time</Option>
-//                   <Option value="Contract">Contract</Option>
-//                   <Option value="Both">Both</Option>
- 
-//                 </Select>
-//               </Form.Item>
-//             </Col>
-//             {contractType && (
-//               <>
-//                 <Col span={8}>
-//                   <Form.Item
-//                     name="job_id"
-//                     label="Job ID"
-//                     rules={[
-//                       { required: true, message: "Please input the Job ID!" },
-//                       {
-//                         pattern: /^[a-zA-Z0-9]+$/,
-//                         message: "Job ID must be alphanumeric!"
-//                       },
-//                       {
-//                         min: 4,
-//                         message: "Job ID must be at least 4 characters!"
-//                       }
-//                     ]}
-//                   >
-//                     <Input placeholder="Enter Job ID" />
-//                   </Form.Item>
-//                 </Col>
-//                 <Col span={8}>
-//                   <Form.Item
-//                     name="job_title"
-//                     label="Job Title"
-//                     rules={[
-//                       { required: true, message: "Please input the Job Title!" },
-//                       { min: 3, message: "Job title must be at least 3 characters!" },
-//                       { max: 100, message: "Job title cannot exceed 100 characters!" }
-//                     ]}
-//                   >
-//                     <Input placeholder="Enter Job Title" />
-//                   </Form.Item>
-//                 </Col>
-//               </>
-//             )}
-//           </Row>
- 
-//           <Row gutter={[16, 16]}>
-//           {contractType && (
-//             <>
-//             <Col span={8}>
-//               <Form.Item
-//                 name="required_no_of_candidates"
-//                 label="No. of Candidates"
-//                 rules={[
-//                   { required: true, message: "Enter number of candidates!" },
-//                   {
-//                     type: "number",
-//                     min: 1,
-//                     max: 100,
-//                     transform: (value) => Number(value),
-//                     message: "Please enter a valid number between 1 and 100!"
-//                   }
-//                 ]}
-//               >
-//                 <Input type="number" placeholder="Enter number of candidates" />
-//               </Form.Item>
-//             </Col>
-//             <Col span={8}>
-//               <Form.Item
-//                 name="job_location"
-//                 label="Job Location"
-//                 rules={[
-//                   { required: true, message: "Please select at least one city!" },
-//                   { type: 'array', min: 1, message: 'Please select at least one location!' }
-//                 ]}
-//               >
-//                 <Select
-//                   mode="multiple"
-//                   allowClear
-//                   showSearch
-//                   placeholder="Select cities in India"
-//                   filterOption={(input, option) =>
-//                     option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-//                   }
-//                 >
-//                   {indianCities.map((city) => (
-//                     <Option key={city} value={city}>
-//                       {city}
-//                     </Option>
-//                   ))}
-//                 </Select>
-//               </Form.Item>
-//             </Col>
-//             <Col span={8}>
-//               <Form.Item
-//                 name="notice_period"
-//                 label="Notice Period"
-//                 rules={[{ required: true, message: "Notice Period" }]}
-//               >
-//                 <Select
-//                   placeholder="Select the notice period "
-//                   onChange={value =>setNoticeType(value)}
-//                 >
-//                   <Option value="1">Less than 15 days</Option>
-//                   <Option value="2">Less than 30 days</Option>
-//                   <Option value="3">Less than 60 Days</Option>
-//                 </Select>
-//               </Form.Item>
-//             </Col>
-//             </>
-//             )}
-//           </Row>
- 
-//         </div>
-//       )
-//     },
-//     {
-//       label: "Experience & Skills",
-//       formFields: ["expFrom", "expTo", "skills", "requiredSkills", "optionalSkills"],
-//       content: (
-//         <div className="step-content">
-         
-//           <Row gutter={[16, 16]} align={"bottom"}>
-//           <Col span={4}>
-//             <Form.Item
-//               name="exp_from"
-//               label="Experience"
-//               rules={[{ required: true, message: "Please select minimum experience!" }]}
-//             >
-//               <Select placeholder="Select Min Experience">
-//                 {[...Array(21)].map((_, i) => (
-//                   <Option key={i} value={i}>
-//                     {i} Year{i !== 1 ? "s" : ""}
-//                   </Option>
-//                 ))}
-//               </Select>
-//             </Form.Item>
-//           </Col>
-//           <div style={{marginBottom: '30px', textAlign: 'center'}}>To</div>
-//           <Col span={4}>
-//             <Form.Item
-//               name="exp_to"
-//               label=""
-//               rules={[
-//                 { required: true, message: "Please select maximum experience!" },
-//                 ({ getFieldValue }) => ({
-//                   validator(_, value) {
-//                     const minExp = getFieldValue("exp_from");
-//                     if (!value || value >= minExp) {
-//                       return Promise.resolve();
-//                     }
-//                     return Promise.reject(
-//                       new Error("Maximum experience should be greater than minimum experience!")
-//                     );
-//                   },
-//                 }),
-//               ]}
-//             >
-//               <Select placeholder="Select Max Experience">
-//                 {[...Array(21)].map((_, i) => (
-//                   <Option key={i} value={i}>
-//                     {i} Year{i !== 1 ? "s" : ""}
-//                   </Option>
-//                 ))}
-//               </Select>
-//             </Form.Item>
-//           </Col>
-//           <Col span={14}>
-//             <Form.Item label="Salary" required>
-//               <Input.Group compact>
-//                 <Form.Item
-//                   name={["salary", "amount"]}
-//                   noStyle
-//                   rules={[
-//                     { required: true, message: "Please input the Salary!" },
-//                     {
-//                       validator: (_, value) => {
-//                         const numValue = Number(value.replace(/,/g, ''));
-//                         if (isNaN(numValue) || numValue <= 0) {
-//                           return Promise.reject("Please enter a valid salary amount!");
-//                         }
-//                         return Promise.resolve();
-//                       }
-//                     }
-//                   ]}
-//                 >
-//                   <Input
-//                     style={{ width: "30%" }}
-//                     placeholder="Enter Salary (CTC)"
-//                     onChange={(e) => {
-//                       const formattedValue = formatSalary(e.target.value);
-//                       form.setFieldsValue({
-//                         salary: {
-//                           ...form.getFieldValue('salary'),
-//                           amount: formattedValue
-//                         }
-//                       });
-//                     }}
-//                   />
-//                 </Form.Item>
-//                 <Form.Item
-//                   name={["salary", "type"]}
-//                   noStyle
-//                   rules={[{ required: true, message: "Please select the Salary Type!" }]}
-//                 >
-//                   {contractType === "Full Time" ? (
-//                     // For Full Time: Show LPA as text
-//                     <Input
-//                       style={{ width: "25%" }}
-//                       value="LPA"
-//                       disabled
-//                     />
-//                   ) : (
-//                     // For Contract or Both: Show appropriate dropdown
-//                     <Select
-//                       placeholder="Select Type"
-//                       style={{ width: "25%" }}
-//                       defaultValue={contractType === "Both" ? "LPA" : undefined}
-//                     >
-//                       {(contractType === "Both" || contractType === "Full Time") &&
-//                         <Option value="LPA">LPA</Option>
-//                       }
-//                       {(contractType === "Contract" || contractType === "Both") && (
-//                         <>
-//                           <Option value="Monthly">Monthly</Option>
-//                           <Option value="Hourly">Hourly</Option>
-//                         </>
-//                       )}
-//                     </Select>
-//                   )}
-//                 </Form.Item>
-//               </Input.Group>
-//             </Form.Item>
-//           </Col>
- 
-//           </Row>
-//         </div>
-//       )
-//     },
-//     {
-//       label: "Client Details",
-//       formFields: ["client_id", "clientBudget", "end_client", "poc", "assignTeam"],
-//       content: (
-//         <div className="step-content">
-//           <Row gutter={[16, 16]}>
-//             <Col span={8}>
-//             <FormItem
-//                 label="Client Name"
-//                 name="client_id"
-              
-                
-//                 rules={[
-//                   {
-//                     required: false,
-//                     message: "Please Select Client Name!",
-//                   },
-//                 ]}
-//               >
-//                 <Cascader
-                  
-//                  placeholder="Select Client" options={clients}
-//                            showSearch
-//                            optionFilterProp="children"
-//           filterOption={(input, option) =>
-//           (option?.label.toLowerCase()?? "").includes(input.toLowerCase())
-//           }
-//           filterSort={(optionA, optionB) =>
-//           (optionA?.label ?? "")
-//           .toLowerCase()
-//           .localeCompare((optionB?.label ?? "").toLowerCase())
-//           }
-//                   dropdownRender={(menu) => (
-//                     <div style={{ width: '300px' }}>{menu}</div>
-//                   )}
-//                  onChange={handleClientChange} 
-//                  />
-//               </FormItem>
-//             </Col>
-//             <Col span={8}>
-//               <Form.Item
-//                 name="clientBudget"
-//                 label="Client Budget"
-//                 rules={[
-//                   { required: true, message: "Please enter client budget!" },
-//                   {
-//                     type: "number",
-//                     min: 1,
-//                     transform: (value) => Number(value),
-//                     message: "Please enter a valid budget amount!"
-//                   }
-//                 ]}
-//               >
-//                 <Input type="number" placeholder="Enter client budget" />
-//               </Form.Item>
-//             </Col>
-//             <Col span={8}>
-//               <FormItem label="End Client" name="end_client">
-//                   <Select
-                 
-//                   placeholder="Select EndClient"
-//                   width={180}
-//                   showSearch
-//                   mode="tags"
-//                   dropdownRender={(menu) => <>{menu}</>
-//                 }
-//                  options={EndClientdata}
-//                 />
-//               </FormItem>
-//             </Col>
-//           </Row>
- 
-//           <Row gutter={[16, 16]}>
-//             <Col span={8}>
-//              <FormItem label="Point of Contact" name="poc">
-//                   <Select
-//                   style={{
-//                     width: 180,
-//                   }}
-//                   placeholder="Select POC"
-//                   showSearch
-//                   mode="tags"
-//                   dropdownRender={(menu) => <>{menu}</>}
-//                   options={Pocdata}
-//                 />
-//                 </FormItem>
-//             </Col>
-//           </Row>
- 
-//         </div>
-//       )
-//     },
-//     {
-//       label: "Job Description",
-//       description: "Provide a detailed job description",
-//       content: (
-//         <>
-//           <ReactQuill
-//             theme="snow"
-//             value={job_description}
-//             onChange={setjob_description}
-//             style={{ height: "150px", width: "auto", marginBottom: "60px" }}
-//           />
-//           <Form.Item
-//             name="job_description"
-//             rules={[
-//               {
-//                 validator: async () => {
-//                   if (!job_description || job_description.length < 100) {
-//                     throw new Error("Job description must be at least 100 characters long!");
-//                   }
-//                 },
-//               },
-//             ]}
-//             style={{ display: "none" }}
-//           >
-//             <Input />
-//           </Form.Item>
-//         </>
-//       ),
-//     },
-//   ];
- 
-//   const useStyles = makeStyles(() => ({
-//     root: {
-//        "& .MuiStepIcon-active": { color: "black" },
-//       // "& .MuiStepIcon-completed": { color: "black" },
-//       "& .MuiStepIcon-root": { color: "black" }
-//     }
-//   }));
- 
-//   const c = useStyles();
- 
-//   return (
-//     <div className="hiring-form-container">
-//       <Form
-//         form={form}
-//         layout="vertical"
-//          onFinish={handleSubmit}
-//         className="hiring-form"
-//       >
-//        <Stepper activeStep={activeStep} orientation="vertical" className={c.root}>
-//       {steps.map((step, index) => (
-//         <Step key={step.label}>
-//           <StepLabel >{step.label}</StepLabel>
-//           <StepContent>
-//             <div style={{ marginBottom: "-20px" }}>{step.content}</div>
-//           </StepContent>
-//         </Step>
-//       ))}
-//     </Stepper>
- 
-//     <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 20 }}>
-//   {/* Discard Button */}
-//   <Button
-//     onClick={onDiscard}
-//     style={{
-//       background: "#FF5E5E",
-//       borderColor: "white",
-//       color: "#ffdede",
-//       borderRadius: "10px",
-//       marginRight: 8,
-//       transition: "background 0.3s ease, color 0.3s ease",
-//     }}
-//     className="discard-button"
-//   >
-//     Discard
-//   </Button>
- 
-//   {/* Back Button */}
-//   {activeStep > 0 && (
-//     <Button
-//       onClick={handleBack}
-//       style={{
-//         marginRight: 8,
-//         borderRadius: "10px",
-//         backgroundColor: "black",
-//         color: "white",
-//         transition: "background 0.3s ease, color 0.3s ease",
-//       }}
-//       className="back-button"
-//     >
-//       Back
-//     </Button>
-//   )}
- 
-//   {/* Next Button */}
-//   {activeStep < steps.length - 1 && (
-//     <Button type="primary" onClick={handleNext} style={{ borderRadius: "10px" }}>
-//       Next
-//     </Button>
-//   )}
- 
-//   {/* Submit Button */}
-//   {activeStep === steps.length - 1 && (
-//     <Button type="primary" onClick={handleSubmit} style={{ borderRadius: "10px" }}>
-//       Submit
-//     </Button>
-//   )}
- 
-//         </div>
-//       </Form>
- 
-//       <style jsx>{`
-//         .hiring-form-container {
-//           padding: 24px;
-//           background: #fff;
-//         }
-//         .hiring-form {
-//           max-width: 1200px;
-//           margin: 0 auto;
-//         }
-//         .steps-container {
-//           margin-bottom: 24px;
-//         }
-//         .steps-content {
-//           margin-top: 24px;
-//           padding: 24px;
-//           background: #fff;
-//           border: 1px solid #f0f0f0;
-//           border-radius: 4px;
-//         }
-//         .step-title {
-//           margin-bottom: 24px;
-//           font-size: 18px;
-//           font-weight: 600;
-//         }
-//         .steps-action {
-//           margin-top: 24px;
-//           text-align: right;
-//         }
-//         .editor-container {
-//           margin-bottom: 50px;
-//         }
-//         .ql-editor {
-//           min-height: 200px;
-//         }
-//       `}</style>
-//     </div>
-//   );
-// };
- 
-// export default TalentDeploymentForm;
-
-
-
-
-
-
-// /////////////////////////////////////////////////////////////////////////////
-
-// import React, { useState, useEffect } from "react";
-// import { Form, Row, Col, Input, Select, Button, message } from "antd";
-// import ReactQuill from "react-quill";
-// import "react-quill/dist/quill.snow.css";
-// import { Stepper, Step, StepLabel, StepContent} from "@mui/material";
-// import {makeStyles } from "@mui/styles";
- 
- 
- 
-// const { Option } = Select;
-// const indianCities = [
-//   "Agra", "Ahmedabad", "Ajmer", "Aligarh", "Allahabad", "Ambala", "Amritsar",
-//     "Aurangabad", "Bangalore", "Bareilly", "Belgaum", "Bhilai", "Bhiwandi",
-//     "Bhopal", "Bhubaneswar", "Bikaner", "Bilaspur", "Chandigarh", "Chennai",
-//     "Coimbatore", "Cuttack", "Dehradun", "Delhi", "Dhanbad", "Durgapur",
-//     "Erode", "Faridabad", "Firozabad", "Ghaziabad", "Goa", "Gorakhpur",
-//     "Gulbarga", "Guntur", "Gurgaon", "Guwahati", "Gwalior", "Hubli", "Hyderabad",
-//     "Indore", "Jabalpur", "Jaipur", "Jalandhar", "Jammu", "Jamnagar", "Jamshedpur",
-//     "Jhansi", "Jodhpur", "Kakinada", "Kannur", "Kanpur", "Kochi", "Kolhapur",
-//     "Kolkata", "Kota", "Kozhikode", "Kurnool", "Lucknow", "Ludhiana", "Madurai",
-//     "Mangalore", "Meerut", "Mumbai", "Mysore", "Nagpur", "Nashik", "Nellore",
-//     "Noida", "Patna", "Pondicherry", "Pune", "Raipur", "Rajkot", "Ranchi",
-//     "Rourkela", "Salem", "Sangli", "Shimla", "Siliguri", "Solapur", "Srinagar",
-//     "Surat", "Thiruvananthapuram", "Thrissur", "Tiruchirappalli", "Tirunelveli",
-//     "Tiruppur", "Ujjain", "Vadodara", "Varanasi", "Vijayawada", "Visakhapatnam",
-//     "Warangal"
-// ].sort();
- 
-// const DirectHiringForm = ({ onDiscard }) => {
-//   const [form] = Form.useForm();
-//   const [activeStep, setActiveStep] = useState(0);
-//   const [formData, setFormData] = useState({});
-//   const [contractType, setContractType] = useState("");
-//   const [salaryType, setSalaryType] = useState("LPA");
-//   const [jobDescription, setJobDescription] = useState("");
-//   const [isFullTime, setIsFullTime] = useState(true);
- 
-//   // Step 1: Job Info Fields
-//   const jobInfoFields = [
-//     'contractType',
-//     'job_id',
-//     'job_title',
-//     'required_no_of_candidates',
-//     'job_location',
-//     'tenure'
-//   ];
-//   const formatSalary = (value) => {
-//     if (!value) return '';
-//     value = value.replace(/[^\d]/g, '');
-//     const formattedValue = value.replace(/(\d)(?=(\d\d)+\d$)/g, "$1,");
-//     return formattedValue;
-//   };
- 
-//   const handleFullTimeChange = (e) => {
-//     if(e== "Full Time") {
-//       setIsFullTime(true);
-//     }
-//     else setIsFullTime(false);
-//   }
-//   // Step 2: Experience & Salary Fields
-//   const experienceFields = [
-//     'exp_from',
-//     'exp_to',
-//     ['salary', 'amount'],
-//     ['salary', 'type']
-//   ];
- 
-//   // Step 3: Job Description Field
-//   const descriptionFields = ['jobDescription'];
- 
-//   // Map steps to their required fields
-//   const stepValidationFields = {
-//     0: jobInfoFields,
-//     1: experienceFields,
-//     2: descriptionFields
-//   };
- 
-//   useEffect(() => {
-//     if (contractType === "1") {
-//       setSalaryType("LPA");
-//     } else if (contractType === "2") {
-//       setSalaryType("Monthly");
-//     } else if (contractType === "3") {
-//       setSalaryType("LPA");
-//     }
-//   }, [contractType]);
- 
-//   // Validation function for each step
-//   const validateCurrentStep = async () => {
-//     try {
-//       const currentFields = stepValidationFields[activeStep];
-//       if (!currentFields) return true;
- 
-//       // Step 1 Validation
-//       if (activeStep === 0) {
-//         if (!contractType) {
-//           message.error("Please select a contract type!");
-//           return false;
-//         }
-//         await form.validateFields(jobInfoFields);
-//       }
- 
-//       // Step 2 Validation
-//       else if (activeStep === 1) {
-//         const values = await form.validateFields(experienceFields);
-       
-//         // Validate experience range
-//         const expFrom = values.exp_from;
-//         const expTo = values.exp_to;
-//         if (expTo < expFrom) {
-//           message.error("Maximum experience should be greater than minimum experience!");
-//           return false;
-//         }
- 
-//         // Validate salary
-//         const salaryAmount = values.salary?.amount;
-//         if (salaryAmount <= 0) {
-//           message.error("Salary amount must be greater than 0!");
-//           return false;
-//         }
-//       }
- 
-//       // Step 3 Validation
-//       else if (activeStep === 2) {
-//         if (!jobDescription || jobDescription.replace(/<[^>]*>/g, '').trim().length < 100) {
-//           message.error("Job description must be at least 100 characters long!");
-//           return false;
-//         }
-//         form.setFieldsValue({ jobDescription });
-//       }
- 
-//       return true;
-//     } catch (error) {
-//       if (error.errorFields) {
-//         const errorMessages = error.errorFields.map(field => field.errors[0]).join(', ');
-//         message.error(`Please fix the following errors: ${errorMessages}`);
-//       } else {
-//         message.error("Please fill all required fields correctly!");
-//       }
-//       return false;
-//     }
-//   };
- 
-//   const handleNext = async () => {
-//     const isValid = await validateCurrentStep();
-//     if (isValid) {
-//       const currentValues = form.getFieldsValue();
-//       setFormData({ ...formData, ...currentValues });
-//       setActiveStep(prev => prev + 1);
-//     }
-//   };
- 
-//   const handleBack = () => {
-//     setActiveStep(prev => prev - 1);
-//   };
- 
-//   const handleSubmit = async () => {
-//     const isValid = await validateCurrentStep();
-//     if (isValid) {
-//       try {
-//         const values = await form.validateFields();
-//         const finalData = {
-//           ...formData,
-//           ...values,
-//           jobDescription
-//         };
-//         console.log("Final Form Data:", finalData);
-//         message.success("Form submitted successfully!");
-//       } catch (error) {
-//         message.error("Please check all fields!");
-//       }
-//     }
-//   };
- 
-//   useEffect(() => {
-//     if (contractType === "1") { // Full Time
-//       setSalaryType("LPA");
-//       // Set the salary type in the form
-//       form.setFieldsValue({
-//         salary: {
-//           ...form.getFieldValue('salary'),
-//           type: "LPA"
-//         }
-//       });
-//     } else if (contractType === "2") { // Contract
-//       setSalaryType("Monthly");
-//       form.setFieldsValue({
-//         salary: {
-//           ...form.getFieldValue('salary'),
-//           type: "Monthly"
-//         }
-//       });
-//     } else if (contractType === "3") { // Both
-//       setSalaryType("LPA");
-//       form.setFieldsValue({
-//         salary: {
-//           ...form.getFieldValue('salary'),
-//           type: "LPA"
-//         }
-//       });
-//     }
-//   }, [contractType, form]);
- 
- 
-//   const useStyles = makeStyles(() => ({
-//     root: {
-//        "& .MuiStepIcon-active": { color: "black" },
-//       // "& .MuiStepIcon-completed": { color: "black" },
-//       "& .MuiStepIcon-root": { color: "black" }
-//     }
-//   }));
- 
-//   const c = useStyles();
- 
-//   const steps = [
-//     {
-//       label: "Job Info",
-//       description: "Enter basic job information",
-//       content: (
-//         <Row gutter={[16, 16]}>
-//           <Col span={6}>
-//             <Form.Item
-//               name="contractType"
-//               label="Hiring Mode"
-//               rules={[{ required: true, message: "Please select Hiring Mode" }]}
-//             >
-//               <Select
-//                 placeholder="Select Hiring Mode"
-//                 onChange={(value) => setContractType(value)}
-//               >
-//                 <Option value="1">Full Time</Option>
-//                 <Option value="2">Contract</Option>
-//                 <Option value="3">Both</Option>
-//               </Select>
-//             </Form.Item>
-//           </Col>
- 
-//           {contractType && (
-//             <>
-//               <Col span={6}>
-//                 <Form.Item
-//                   name="jobId"
-//                   label="Job ID"
-//                   rules={[
-//                     { required: true, message: "Please input the Job ID!" },
-//                     { pattern: /^[a-zA-Z0-9]+$/, message: "Job ID must be alphanumeric!" }
-//                   ]}
-//                 >
-//                   <Input placeholder="Enter Job ID" />
-//                 </Form.Item>
-//               </Col>
- 
-//               <Col span={6}>
-//                 <Form.Item
-//                   name="jobTitle"
-//                   label="Job Title"
-//                   rules={[
-//                     { required: true, message: "Please input the Job Title!" },
-//                     { min: 3, message: "Job title must be at least 3 characters!" }
-//                   ]}
-//                 >
-//                   <Input placeholder="Enter Job Title" />
-//                 </Form.Item>
-//               </Col>
- 
-//               <Col span={6}>
-//                 <Form.Item
-//                   name="number_of_candidates"
-//                   label="Number of Candidates"
-//                   rules={[
-//                     { required: true, message: "Please enter number of candidates!" },
-//                     {
-//                       validator: (_, value) => {
-//                         const numValue = Number(value);
-//                         if (isNaN(numValue) || numValue <= 0) {
-//                           return Promise.reject("Number must be greater than 0!");
-//                         }
-//                         return Promise.resolve();
-//                       }
-//                     }
-//                   ]}
-//                 >
-//                   <Input type="number" min="1" placeholder="Enter number of candidates" />
-//                 </Form.Item>
-//               </Col>
- 
-//               <Col span={6}>
-//                 <Form.Item
-//                   name="location"
-//                   label="Location"
-//                   rules={[
-//                     { required: true, message: "Please select at least one location!" },
-//                     { type: 'array', min: 1, message: "Please select at least one location!" }
-//                   ]}
-//                 >
-//                   <Select mode="multiple" placeholder="Select location">
-//                     {indianCities.map((city) => (
-//                       <Option key={city} value={city}>
-//                         {city}
-//                       </Option>
-//                     ))}
-//                   </Select>
-//                 </Form.Item>
-//               </Col>
-//               {/* <Col span={6}>
-//                 <Form.Item
-//                   name="tenure"
-//                   label="Tenure (months)"
-//                   rules={[
-//                     { required: true, message: "Please enter tenure!" },
-//                     {
-//                       validator: (_, value) => {
-//                         const numValue = Number(value);
-//                         if (isNaN(numValue) || numValue <= 0) {
-//                           return Promise.reject("Tenure must be at least 1 month!");
-//                         }
-//                         return Promise.resolve();
-//                       }
-//                     }
-//                   ]}
-//                 >
-//                   <Input type="number" min="1" placeholder="Enter tenure" />
-//                 </Form.Item>
-//               </Col> */}
-//             </>
-//           )}
-//         </Row>
-//       )
-//     },
-//     {
-//       label: "Experience & Salary",
-//       description: "Specify experience and salary requirements",
-//       content: (
-//         <Row gutter={[16, 16]} align="bottom">
-//           <Col span={4}>
-//             <Form.Item
-//               name="exp_from"
-//               label="Experience"
-//               rules={[{ required: true, message: "Please select minimum experience!" }]}
-//             >
-//               <Select placeholder="Select Min Experience">
-//                 {[...Array(21)].map((_, i) => (
-//                   <Option key={i} value={i}>
-//                     {i} Year{i !== 1 ? "s" : ""}
-//                   </Option>
-//                 ))}
-//               </Select>
-//             </Form.Item>
-//           </Col>
-//           <div style={{marginBottom: '30px', textAlign: 'center'}}>To</div>
-//           <Col span={4}>
-//             <Form.Item
-//               name="exp_to"
-//               label=""
-//               rules={[
-//                 { required: true, message: "Please select maximum experience!" },
-//                 ({ getFieldValue }) => ({
-//                   validator(_, value) {
-//                     const minExp = getFieldValue("exp_from");
-//                     if (!value || value >= minExp) {
-//                       return Promise.resolve();
-//                     }
-//                     return Promise.reject(
-//                       new Error("Maximum experience should be greater than minimum experience!")
-//                     );
-//                   },
-//                 }),
-//               ]}
-//             >
-//               <Select placeholder="Select Max Experience">
-//                 {[...Array(21)].map((_, i) => (
-//                   <Option key={i} value={i}>
-//                     {i} Year{i !== 1 ? "s" : ""}
-//                   </Option>
-//                 ))}
-//               </Select>
-//             </Form.Item>
-//           </Col>
- 
-//           {/* Keep experience fields the same */}
-//           <Col span={14}>
-//             <Form.Item label="Salary" required>
-//               <Input.Group compact>
-//                 <Form.Item
-//                   name={["salary", "amount"]}
-//                   noStyle
-//                   rules={[
-//                     { required: true, message: "Please input the Salary!" },
-//                     {
-//                       validator: (_, value) => {
-//                         const numValue = Number(value.replace(/,/g, ''));
-//                         if (isNaN(numValue) || numValue <= 0) {
-//                           return Promise.reject("Please enter a valid salary amount!");
-//                         }
-//                         return Promise.resolve();
-//                       }
-//                     }
-//                   ]}
-//                 >
-//                   <Input
-//                     style={{ width: "30%" }}
-//                     placeholder="Enter Salary (CTC)"
-//                     onChange={(e) => {
-//                       const formattedValue = formatSalary(e.target.value);
-//                       form.setFieldsValue({
-//                         salary: {
-//                           ...form.getFieldValue('salary'),
-//                           amount: formattedValue
-//                         }
-//                       });
-//                     }}
-//                   />
-//                 </Form.Item>
-//                 <Form.Item
-//                   name={["salary", "type"]}
-//                   noStyle
-//                   rules={[{ required: true, message: "Please select the Salary Type!" }]}
-//                 >
-//                   {contractType === "1" ? (
-//                     // For Full Time: Show LPA as text
-//                     <Input
-//                       style={{ width: "25%" }}
-//                       value="LPA"
-//                       disabled
-//                     />
-//                   ) : (
-//                     // For Contract or Both: Show appropriate dropdown
-//                     <Select
-//                       placeholder="Select Type"
-//                       style={{ width: "25%" }}
-//                       defaultValue={contractType === "3" ? "LPA" : undefined}
-//                     >
-//                       {(contractType === "3" || contractType === "1") &&
-//                         <Option value="LPA">LPA</Option>
-//                       }
-//                       {(contractType === "2" || contractType === "3") && (
-//                         <>
-//                           <Option value="Monthly">Monthly</Option>
-//                           <Option value="Hourly">Hourly</Option>
-//                         </>
-//                       )}
-//                     </Select>
-//                   )}
-//                 </Form.Item>
-//               </Input.Group>
-//             </Form.Item>
-//           </Col>
-//         </Row>
-//       )
-//     },
- 
-//     {
-//       label: "Job Description",
-//       description: "Provide a detailed job description",
-//       content: (
-//         <>
-//           <ReactQuill
-//             theme="snow"
-//             value={jobDescription}
-//             onChange={(value) => {
-//               setJobDescription(value);
-//               form.setFieldsValue({ jobDescription: value });
-//             }}
-//             style={{ height: "150px", marginBottom: "60px" }}
-//           />
-//           <Form.Item
-//             name="jobDescription"
-//             rules={[
-//               {
-//                 validator: async (_, value) => {
-//                   const strippedValue = value?.replace(/<[^>]*>/g, '').trim() || '';
-//                   if (strippedValue.length < 100) {
-//                     throw new Error("Job description must be at least 100 characters long!");
-//                   }
-//                 },
-//               },
-//             ]}
-//             style={{ display: "none" }}
-//           >
-//             <Input />
-//           </Form.Item>
-//         </>
-//       )
-//     },
-//   ];
- 
-//   return (
-//     <Form form={form} layout="vertical">
-//       <Stepper activeStep={activeStep} orientation="vertical"  className={c.root} >
-//         {steps.map((step, index) => (
-//           <Step key={step.label}  >
-//             <StepLabel >{step.label}</StepLabel>
-//             <StepContent>
-//               <div style={{ marginBottom: "-20px" }}>{step.content}</div>
-//             </StepContent>
-//           </Step>
-//         ))}
-//       </Stepper>
- 
-//       <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 20 }}>
-//         <Button
-//           onClick={onDiscard}
-//           style={{
-//             background: "#FF5E5E",
-//             borderColor: "white",
-//             color: "#ffdede",
-//             borderRadius: "10px",
-//             marginRight: 8
-//           }}
-//           className="discard-button"
-//         >
-//           Discard
-//         </Button>
- 
-//         {activeStep > 0 && (
-//           <Button
-//             onClick={handleBack}
-//             style={{
-//               marginRight: 8,
-//               borderRadius: "10px",
-//               backgroundColor: "black",
-//               color: "white"
-//             }}
-//             className="back-button"
-//           >
-//             Back
-//           </Button>
-//         )}
- 
-//         {activeStep < steps.length - 1 && (
-//           <Button
-//             type="primary"
-//             onClick={handleNext}
-//             style={{ borderRadius: "10px" }}
-//           >
-//             Next
-//           </Button>
-//         )}
- 
-//         {activeStep === steps.length - 1 && (
-//           <Button
-//             type="primary"
-//             onClick={handleSubmit}
-//             style={{ borderRadius: "10px" }}
-//           >
-//             Submit
-//           </Button>
-//         )}
-//       </div>
-//     </Form>
-//   );
-// };
- 
-// export default DirectHiringForm;
-
-
-//////////
-   
-
-
-
-import React, { useState, useEffect } from 'react';
-import { Form, Input, Button, Steps, Row, Col } from 'antd';
-
-const { Step } = Steps;
-
-const ExternalStaffingForm = ({ primarySelected, secondarySelected, onDiscard }) => {
-  const [currentStep, setCurrentStep] = useState(0);
-  const [form] = Form.useForm();
-
-  // State for step-specific fields
-  const [experienceFields, setExperienceFields] = useState({});
-  const [clientFields, setClientFields] = useState({});
-
-  // Handler for next step
-  const handleNext = async () => {
-    try {
-      // Validate the current form fields before proceeding
-      await form.validateFields();
-      setCurrentStep((prev) => prev + 1);
-    } catch (error) {
-      console.error('Validation Failed:', error);
-    }
-  };
-
-  // Handler for previous step
-  const handlePrev = () => {
-    setCurrentStep((prev) => prev - 1);
-  };
-
-  // Stepper content
-  const renderStepContent = () => {
-    switch (currentStep) {
-      case 0:
-        return (
-          <>
-            <Form.Item
-              name="experience"
-              label="Experience"
-              rules={[{ required: true, message: 'Please enter experience!' }]}
-            >
-              <Input />
-            </Form.Item>
-          </>
-        );
-      case 1:
-        return (
-          <>
-            <Form.Item
-              name="clientName"
-              label="Client Name"
-              rules={[{ required: true, message: 'Please enter client name!' }]}
-            >
-              <Input />
-            </Form.Item>
-            <Form.Item
-              name="clientBudget"
-              label="Client Budget"
-              rules={[{ required: true, message: 'Please enter client budget!' }]}
-            >
-              <Input />
-            </Form.Item>
-          </>
-        );
-      default:
-        return null;
-    }
-  };
-
-  return (
-    <div>
-      <Steps current={currentStep}>
-        <Step title="Experience Fields" />
-        <Step title="Client Fields" />
-      </Steps>
-
-      <Form form={form} layout="vertical">
-        {renderStepContent()}
-        <Row justify="space-between" className="mt-4">
-          {currentStep > 0 && (
-            <Button onClick={handlePrev}>Previous</Button>
-          )}
-          {currentStep < 1 && (
-            <Button type="primary" onClick={handleNext}>
-              Next
-            </Button>
-          )}
-          {currentStep === 1 && (
-            <Button type="primary" htmlType="submit">
-              Submit
-            </Button>
-          )}
-        </Row>
-      </Form>
-    </div>
-  );
+const stripHtml = (html) => {
+    const doc = new DOMParser().parseFromString(html, 'text/html');
+    return doc.body.textContent || "";
 };
+ 
+const JobDashboard = () => {
+    const [selectedJobId, setSelectedJobId] = useState(null);
+    const tableData = [];
+    const headers = [
+        { label: "Job Title", key: "job_title" },
+        { label: "Client", key: "client" },
+        { label: "Created By", key: "done_by" },
+        { label: "Hiring Type", key: "contractType" },
+        {label: "Job Type", key: "secondarySelected"},
+        { label: "Job Description", key: "job_context" },
+        { label: "Minimum Experience", key: "min_experience" },
+        { label: "Maximum Experience", key: "max_experience" },
+        { label: "Salary", key: "salary" },
+        { label: "Location", key: "location" },
+        { label: "Created On", key: "created_at" },
+        { label: "Status", key: "status" },
+        { label: "Client Submissions", key: "ClientSubmission" },
+    ];
+ 
+    const csvlink = {
+        headers: headers,
+        data: tableData,
+        filename: "csvfile.csv"
+    };
+ 
+    const {
+        setvendorjob,
+        openAssign,
+        setOpenAssign,
+        setPagination,
+        setOpenaddjob,
+        searchjob,
+        handleChangeSearch,
+        fetchJob,
+        Loading,
+        openJobs,
+        handleChangestatus,
+        pagination,
+        handlePageChange,
+        openaddjob,
+        handleClickjobTable,editDrawer,handleEditJob,handleAssign
+    } = useContext(JobContext);
+    const {} = useContext(ViewJobContext);
+ 
+    console.log("searchjob:", searchjob)
+    const filteredJobs = openJobs?.filter((job) =>
+        job.job_title.toLowerCase().includes(searchjob.toLowerCase()) ||
+        job.job_id.toString().includes(searchjob.toUpperCase())
+    );
+    const navigate = useNavigate();
+    const role = CookieUtil.get("role");
+    const admin_id = CookieUtil.get("admin_id");
+    const calculateCounts = (candidates, _id) => {
+        let submission = 0;
+        let ClientSubmission = 0;
+        let interview = 0;
+        let offered = 0;
+        let joined = 0;
+ 
+        candidates.forEach((e) => {
+            if (e.status === "Submitted") {
+                if (role == "Vendor") {
+                    if (e?.created_by == admin_id && e.job_id == _id) {
+                        submission += 1;
+                    }
+                } else {
+                    submission += 1;
+                }
+            }
+            if (e.status === "Client submission") {
+                if (role == "Vendor") {
+                    if (e?.created_by == admin_id && e.job_id == _id) {
+                        ClientSubmission += 1;
+                    }
+                } else {
+                    ClientSubmission += 1;
+                }
+            }
+            if (e.status === "L1 schedule") {
+                interview += 1;
+            }
+            if (e.status === "offered") {
+                offered += 1;
+            }
+            if (e.status === "jioned") {
+                joined += 1;
+            }
+        });
+ 
+        return { submission, interview, offered, joined, ClientSubmission };
+    };
+ 
+    const handleClickAssign=(id)=>{
+        setvendorjob(id)
+            setOpenAssign(true)
+       }
 
-export default ExternalStaffingForm;
+    useEffect(() => {
+        fetchJob();
+    }, [pagination.current, pagination.pageSize]);
+ 
+    const handleopenDrawerJob = () => {
+        setOpenaddjob(!openaddjob);
+    };
+
+    useEffect(() => {
+        console.log("Edit Drawer State:", editDrawer);
+      }, [editDrawer]);
+      useEffect(() => {
+        console.log("Edit Drawer State:", openAssign);
+      }, [openAssign]);
+ 
+    return (
+        <>
+            {Loading ? (
+                <Loader />
+            ) : (
+                <div className="container-fluid">
+                    <div className="row">
+                        <div className="row">
+                            <Tab.Container defaultActiveKey={'Grid'}>
+                                <div className="d-flex justify-content-between align-items-center mb-4">
+                                    <h4 className="heading mb-0">Jobs</h4>
+                                </div>
+                            </Tab.Container>
+                        </div>
+                        <div className='col-xl-12'>
+                            <div className='d_f j_c_s_b a_i_c'>
+                                <div className="d-flex justify-content-between align-items-center mb-2">
+                                    <h4 className="heading mb-0">
+                                        <div className="input-group search-area">
+                                            <input
+                                                type="text"
+                                                className="form-control"
+                                                placeholder="Search Job Title/ Job ID..."
+                                                onChange={handleChangeSearch}
+                                                value={searchjob}
+                                            />
+                                            <span className="input-group-text">
+                                                <Link to={"#"}>
+                                                    <i className="fa-solid fa-magnifying-glass text-primary"
+                                                        style={{
+                                                            fontSize: "16px"
+                                                        }}></i>
+                                                </Link>
+                                            </span>
+                                        </div>
+                                    </h4>
+                                    <div></div>
+                                    <div></div>
+                            </div>
+                            <div className='flex align-items-center justify-content-around'>
+                                                     
+                                        <Link to className="btn btn-primary btn-sm ms-2"
+                                            onClick={handleopenDrawerJob}
+                                            style={{marginRight:"10px"}}
+                                        >+ Add New Jobs
+                                        </Link>
+                                       
+                                <CSVLink {...csvlink} className="btn btn-primary light btn-sm">
+                                    <i className="fa-solid fa-file-excel" /> Export Report
+                                </CSVLink>
+                               
+                            </div>
+                        </div>
+                            <div className="card">
+                                <div className="card-body p-0">
+                                    <div className="table-responsive active-projects task-table">
+                                        <div id="task-tbl_wrapper" className="dataTables_wrapper no-footer">
+                                            <table id="empoloyeestbl2" className="table ItemsCheckboxSec dataTable no-footer mb-2 mb-sm-0">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Job Title</th>
+                                                        {role !== "Client" || role !== "Vendor" && <th>Client</th>}
+                                                        <th>Created By</th>
+                                                        <th>Created on</th>
+                                                        {role !== "Vendor" ? (
+                                                            <th colSpan="2" className="text-center border-bottom-0">
+                                                                Submission
+                                                                <div className="d-flex" style={{marginLeft: "20px"}}>
+                                                                    <div className="flex-1 text-center border-end  px-2">Internal</div>
+                                                                    <div className="flex-1 text-center px-2">Client</div>
+                                                                </div>
+                                                            </th>
+                                                        ) : (
+                                                            <th>Total Submissions</th>
+                                                        )}
+                                                        <th style={{ textAlign: "left" }}>Status</th>
+                                                        {role === "SuperAdmin" && (
+                                                            <th className="text-center">Actions</th>
+                                                        )}
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                {filteredJobs?.map((item, index) => {
+                                                        const { submission, interview, joined, offered, ClientSubmission } = calculateCounts(item.screening, item._id);
+                                                        tableData.push({
+                                                            submission,
+                                                            interview,
+                                                            joined,
+                                                            offered,
+                                                            ClientSubmission,
+                                                            job_id: item._id,
+                                                            job_title: item.job_title,
+                                                            client: item?.Clients[0]?.name,
+                                                            contractType: item.contractType,
+                                                            secondarySelected: item.secondarySelected,
+                                                            job_context: stripHtml(item?.job_description),
+                                                            salary: item?.salary,
+                                                            location: item?.location,
+                                                            min_experience: item?.exp_from,
+                                                            max_experience: item?.exp_to,
+                                                            created_at: dayjs(item?.createdAt).format('DD-MM-YYYY'),
+                                                            status: item?.status,
+                                                            done_by: item?.done_by[0]?.name,
+                                                        });
+ 
+                                                        return (
+                                                            <tr key={index}>
+                                                                <td>
+                                                                    <div className="products">
+                                                                        <div>
+                                                                            <h6 style={{ cursor: "pointer" }}
+                                                                                onClick={() => navigate(`/jobs/${item?._id}`)}>
+                                                                                {item.job_title}
+                                                                            </h6>
+                                                                            <div style={{ alignItems: "center", display: "inline-flex" }}>
+                                                                                <span style={{ marginTop: "3px", cursor: "pointer", fontSize: "9px" }}>
+                                                                                    <Flex gap="4px">
+                                                                                        <Tag style={{ borderRadius: "4px" }} color='#77ab59'>{item?.job_id}</Tag>
+                                                                                        <Tag style={{ borderRadius: "4px" }} color='#36802d'>{item?.contractType}</Tag>
+                                                                                        <Tag style={{ borderRadius: "4px" }} color='#526E48'>{item?.secondarySelected}</Tag>
+                                                                                    </Flex>
+                                                                                </span>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </td>
+                                                                {role !== "Client" || role !== "Vendor" && (
+                                                                    <td><span>{`${item?.Clients[0]?.name} ${item.poc?.length > 0 ? (`(${item.poc[0]})`) : ""}`}</span></td>
+                                                                )}
+                                                                <td><span>{item?.done_by[0]?.name}</span></td>
+                                                                <td><span>{dayjs(item?.createdAt).format('DD-MM-YYYY')}</span></td>
+                                                                {role !== "Vendor" ? (
+                                                                    <>
+                                                                        <td className="text-center border-end">{submission}</td>
+                                                                        <td className="text-center ">{ClientSubmission}</td>
+                                                                    </>
+                                                                ) : (
+                                                                    <td>{ClientSubmission}</td>
+                                                                )}
+                                                                <td style={{ textAlign: "left" }}>
+                                                                    {role === "SuperAdmin" ? (
+                                                                        <Dropdown className="task-dropdown-2">
+                                                                            <Dropdown.Toggle as="div" className={
+                                                                                item.status === "opened" ? "Complete" :
+                                                                                    item.status === "closed" ? "Pending" : "Testing"
+                                                                            }>
+                                                                                {item.status === "opened" ? "Opened" :
+                                                                                    item.status === "closed" ? "Closed" : "Hold"}
+                                                                            </Dropdown.Toggle>
+                                                                            <Dropdown.Menu className='task-drop-menu'>
+                                                                                <Dropdown.Item onClick={() => handleChangestatus(item._id, 'opened')}>Opened</Dropdown.Item>
+                                                                                <Dropdown.Item onClick={() => handleChangestatus(item._id, 'closed')}>Closed</Dropdown.Item>
+                                                                                <Dropdown.Item onClick={() => handleChangestatus(item._id, 'Hold')}>Hold</Dropdown.Item>
+                                                                            </Dropdown.Menu>
+                                                                        </Dropdown>
+                                                                    ) : (
+                                                                        <span className={`badge badge-${item.status === "opened" ? "success" :
+                                                                            item.status === "closed" ? "danger" : "warning"
+                                                                            } light border-0 me-1`}>
+                                                                            {item.status === "opened" ? "Opened" :
+                                                                                item.status === "closed" ? "Closed" : "Hold"}
+                                                                        </span>
+                                                                    )}
+                                                                </td>
+                                                                {role === "SuperAdmin" && (
+                                                                    <td className="text-center" >
+                                                                        <div className="d-flex justify-content-center  gap-2">
+                                                                            <EyeOutlined
+                                                                                className="text-primary"
+                                                                                style={{ fontSize: "18px", cursor: "pointer" }}
+                                                                                onClick={() => navigate(`/jobs/${item?._id}`)}
+                                                                            />
+                                                                            <EditOutlined
+                                                                                className="text-primary"
+                                                                                style={{ fontSize: "18px", cursor: "pointer" }}
+                                                                                onClick={(e) => handleEditJob(item?._id)}
+                                                                            />
+                                                                            <UserAddOutlined
+                                                                                style={{
+                                                                                    fontSize: "18px",
+                                                                                    cursor: "pointer",
+                                                                                    color: "var(--color-primary)"
+                                                                                }}
+                                                                                onClick={(e)=>handleClickAssign(item?._id)}
+                                                                            />
+                                                                        </div>
+                                                                    </td>
+                                                                )}
+                                                            </tr>
+                                                        );
+                                                    })}
+                                                </tbody>
+                                            </table>
+                                            <div className='d_f justify-content-end mt-3 mb-3'>
+                                                <Pagination
+                                                    size="small"
+                                                    showSizeChanger
+                                                    onChange={(e, pageSize) => {
+                                                        setPagination({
+                                                            ...pagination,
+                                                            pageSize: pageSize,
+                                                            current: e
+                                                        });
+                                                    }}
+                                                    defaultCurrent={pagination?.current}
+                                                    total={pagination?.total}
+                                                    pageSize={pagination?.pageSize}
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+ 
+            <Modal
+                title="Create New Job"
+                open={openaddjob}
+                onOk={() => setOpen(false)}
+                onCancel={handleopenDrawerJob}
+                okButtonProps={{ style: { display: 'none' } }}
+                cancelButtonProps={{ style: { display: 'none' } }}
+                width={750}
+                height={"auto"}
+                className="custom-modal"
+            >
+                <AddJobs handleopenDrawerJob={handleopenDrawerJob} />
+            </Modal>
+            <Modal
+    title="Edit Job"
+    onCancel={()=>handleEditJob(false)}
+    open={editDrawer}
+    
+    footer={null}
+    width={750}
+>
+    <EditDirectHiring
+        // jobId={editDrawer}
+        // closeForm={() => handleEditJob()}
+    />
+</Modal>
+ 
+            <Modal
+                title="Assign"
+                placement="right"
+                onCancel={()=>setOpenAssign(false)}
+                closable={openAssign}
+                footer={null}
+                size="large"
+                open={openAssign}
+                height={50}
+                width={400}
+                className="rotate-modal"
+       >
+         <AssignVendor  onCancel={()=>setOpenAssign(false)}/>
+       </Modal>   
+        </>
+    );
+ };
+ 
+ 
+ export default JobDashboard;

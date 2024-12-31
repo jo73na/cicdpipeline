@@ -8,7 +8,7 @@ const EmployeeTable = ({table}) => {
 
     const {fetchEmployFull,employeeLogindata,FetchEmployeeTable,fetchExperienceAll,fetchsingle,employeesingle,handleChangestatus,employeeCompleteFetch,employeeComplete,Onboarding,allEmployee,billableEmployee,nonBillableEmployee,handleClickjobTable} = useContext(EmployeeContext);
 
-    console.log("yyyyyyyyyyyy--",Onboarding)
+    console.log("yyyyyyyyyyyy--",allEmployee)
     
     // console.log("qqqqqqqqqqqqqqqqqq",employeeComplete)
 

@@ -14,6 +14,8 @@ const { authAdmin } = require('../../middlewares/authMiddlewares');
 const crud = new crud_service();
 const upload = require("../../utils/upload");
 const admin_schema = require('../../models/admin_login');
+const moment = require('moment'); 
+
 
 const INACTIVITY_TIMEOUT= 10 * 60 * 1000;
 
@@ -1629,247 +1631,244 @@ let AllsubmissionsYours= [
 
  router.get('/submissionCount', authAdmin, asyncHandler(async (req, res) => {
   try {
-    const year = 2023; // Adjust year if necessary
+    const now = new Date();
+    const currentYear = now.getFullYear();
+    const currentMonth = now.getMonth();
+    const startOfWeek = new Date(now.setDate(now.getDate() - now.getDay()));
+    const startOfDay = new Date(now.setHours(0, 0, 0, 0));
 
-    // Aggregation for "team" data
-    const teamAggregation = [
-      { 
-        $match: { 
-          status: "Client submission",
-          createdAt: { 
-            $gte: new Date(year, 0, 1),
-            $lte: new Date(year, 11, 31, 23, 59, 59, 999)
-          }
-        }
-      },
-      { 
-        $facet: {
-          daily: [
-            {
-              $group: {
-                _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
-                count: { $sum: 1 }
-              }
-            },
-            { $sort: { _id: 1 } }
-          ],
-          weekly: [
-            {
-              $group: {
-                _id: { $isoWeek: "$createdAt" },
-                count: { $sum: 1 }
-              }
-            },
-            { $sort: { _id: 1 } }
-          ],
-          monthly: [
-            {
-              $group: {
-                _id: { $month: "$createdAt" },
-                count: { $sum: 1 }
-              }
-            },
-            { $sort: { _id: 1 } }
-          ],
-          yearly: [
-            {
-              $group: {
-                _id: { $year: "$createdAt" },
-                count: { $sum: 1 }
-              }
-            },
-            { $sort: { _id: 1 } }
-          ]
-        }
-      }
-    ];
+    const dailyRange = { $gte: startOfDay };
+    const weeklyRange = { $gte: startOfWeek };
+    const monthlyRange = { $gte: new Date(currentYear, currentMonth, 1) };
+    const yearlyRange = { $gte: new Date(currentYear, 0, 1) };
 
-    // Aggregation for "yours" data
-    const yoursAggregation = [
+    const buildAggregation = (matchCondition) => [
+      { $match: matchCondition },
       {
-        $match: {
-          created_by: new mongoose.Types.ObjectId(req.user._id),
-          status: "Client submission",
-          createdAt: { 
-            $gte: new Date(year, 0, 1),
-            $lte: new Date(year, 11, 31, 23, 59, 59, 999)
-          }
-        }
-      },
-      { 
         $facet: {
           daily: [
+            { $match: { createdAt: dailyRange } },
             {
               $group: {
-                _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
-                count: { $sum: 1 }
-              }
+                _id: { $hour: "$createdAt" },
+                count: { $sum: 1 },
+              },
             },
-            { $sort: { _id: 1 } }
+            {
+              $project: {
+                _id: 1,
+                count: 1,
+                time: {
+                  $concat: [
+                    { $toString: { $mod: [{ $add: ["$_id", 11] }, 12] } }, // Hour (convert to 12-hour format)
+                    { $cond: [{ $gte: ["$_id", 12] }, "PM", "AM"] },      // AM/PM suffix
+                  ],
+                },
+              },
+            },
           ],
           weekly: [
+            { $match: { createdAt: weeklyRange } },
             {
               $group: {
-                _id: { $isoWeek: "$createdAt" },
-                count: { $sum: 1 }
-              }
+                _id: { $dayOfWeek: "$createdAt" },
+                count: { $sum: 1 },
+              },
             },
-            { $sort: { _id: 1 } }
+            {
+              $project: {
+                _id: 1,
+                count: 1,
+                day: {
+                  $arrayElemAt: [
+                    ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+                    { $subtract: ["$_id", 1] },
+                  ],
+                },
+              },
+            },
           ],
           monthly: [
+            { $match: { createdAt: monthlyRange } },
+            {
+              $group: {
+                _id: { $dayOfMonth: "$createdAt" },
+                count: { $sum: 1 },
+              },
+            },
+            { $sort: { _id: 1 } },
+          ],
+          yearly: [
+            { $match: { createdAt: yearlyRange } },
             {
               $group: {
                 _id: { $month: "$createdAt" },
-                count: { $sum: 1 }
-              }
+                count: { $sum: 1 },
+              },
             },
-            { $sort: { _id: 1 } }
-          ],
-          yearly: [
             {
-              $group: {
-                _id: { $year: "$createdAt" },
-                count: { $sum: 1 }
-              }
+              $project: {
+                _id: 1,
+                count: 1,
+                month: {
+                  $arrayElemAt: [
+                    ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+                    { $subtract: ["$_id", 1] },
+                  ],
+                },
+              },
             },
-            { $sort: { _id: 1 } }
-          ]
-        }
-      }
+          ],
+        },
+      },
     ];
+
+    // Aggregation for "team"
+    const teamAggregation = buildAggregation({
+      status: "Client submission",
+    });
+
+    // Aggregation for "yours"
+    const yoursAggregation = buildAggregation({
+      created_by: new mongoose.Types.ObjectId(req.user._id),
+      status: "Client submission",
+    });
 
     const team = await totallogs.aggregate(teamAggregation).exec();
     const yours = await totallogs.aggregate(yoursAggregation).exec();
 
-    success(res, 200, true, "Get Successfully", { team: team[0], yours: yours[0] });
+    success(res, 200, true, "Submission Count Retrieved Successfully", {
+      team: team[0],
+      yours: yours[0],
+    });
 
   } catch (error) {
-    console.error("Error in clientSubmissionCount:", error);
-    throw new Error(error);
+    console.error("Error in /submissionCount:", error);
+    res.status(500).json({ success: false, message: "Server Error", error: error.message });
   }
 }));
+
+
 
 router.get('/joinedCount', authAdmin, asyncHandler(async (req, res) => {
   try {
-    const year = 2023; // Adjust year if necessary
+    const now = new Date();
+    const currentYear = now.getFullYear();
+    const currentMonth = now.getMonth();
+    const startOfWeek = new Date(now.setDate(now.getDate() - now.getDay()));
+    const startOfDay = new Date(now.setHours(0, 0, 0, 0));
 
-    // Aggregation for "team" data
-    const teamAggregation = [
-      { 
-        $match: { 
-          status: "Joined",
-          createdAt: { 
-            $gte: new Date(year, 0, 1),
-            $lte: new Date(year, 11, 31, 23, 59, 59, 999)
-          }
-        }
-      },
-      { 
-        $facet: {
-          daily: [
-            {
-              $group: {
-                _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
-                count: { $sum: 1 }
-              }
-            },
-            { $sort: { _id: 1 } }
-          ],
-          weekly: [
-            {
-              $group: {
-                _id: { $isoWeek: "$createdAt" },
-                count: { $sum: 1 }
-              }
-            },
-            { $sort: { _id: 1 } }
-          ],
-          monthly: [
-            {
-              $group: {
-                _id: { $month: "$createdAt" },
-                count: { $sum: 1 }
-              }
-            },
-            { $sort: { _id: 1 } }
-          ],
-          yearly: [
-            {
-              $group: {
-                _id: { $year: "$createdAt" },
-                count: { $sum: 1 }
-              }
-            },
-            { $sort: { _id: 1 } }
-          ]
-        }
-      }
-    ];
+    const dailyRange = { $gte: startOfDay };
+    const weeklyRange = { $gte: startOfWeek };
+    const monthlyRange = { $gte: new Date(currentYear, currentMonth, 1) };
+    const yearlyRange = { $gte: new Date(currentYear, 0, 1) };
 
-    // Aggregation for "yours" data
-    const yoursAggregation = [
+    const buildAggregation = (matchCondition) => [
+      { $match: matchCondition },
       {
-        $match: {
-          created_by: new mongoose.Types.ObjectId(req.user._id),
-          status: "Joined",
-          createdAt: { 
-            $gte: new Date(year, 0, 1),
-            $lte: new Date(year, 11, 31, 23, 59, 59, 999)
-          }
-        }
-      },
-      { 
         $facet: {
           daily: [
+            { $match: { createdAt: dailyRange } },
             {
               $group: {
-                _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
-                count: { $sum: 1 }
-              }
+                _id: { $hour: "$createdAt" },
+                count: { $sum: 1 },
+              },
             },
-            { $sort: { _id: 1 } }
+            {
+              $project: {
+                _id: 1,
+                count: 1,
+                time: {
+                  $concat: [
+                    { $toString: { $mod: [{ $add: ["$_id", 11] }, 12] } }, // Hour (convert to 12-hour format)
+                    { $cond: [{ $gte: ["$_id", 12] }, "PM", "AM"] },      // AM/PM suffix
+                  ],
+                },
+              },
+            },
           ],
           weekly: [
+            { $match: { createdAt: weeklyRange } },
             {
               $group: {
-                _id: { $isoWeek: "$createdAt" },
-                count: { $sum: 1 }
-              }
+                _id: { $dayOfWeek: "$createdAt" },
+                count: { $sum: 1 },
+              },
             },
-            { $sort: { _id: 1 } }
+            {
+              $project: {
+                _id: 1,
+                count: 1,
+                day: {
+                  $arrayElemAt: [
+                    ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+                    { $subtract: ["$_id", 1] },
+                  ],
+                },
+              },
+            },
           ],
           monthly: [
+            { $match: { createdAt: monthlyRange } },
+            {
+              $group: {
+                _id: { $dayOfMonth: "$createdAt" },
+                count: { $sum: 1 },
+              },
+            },
+            { $sort: { _id: 1 } },
+          ],
+          yearly: [
+            { $match: { createdAt: yearlyRange } },
             {
               $group: {
                 _id: { $month: "$createdAt" },
-                count: { $sum: 1 }
-              }
+                count: { $sum: 1 },
+              },
             },
-            { $sort: { _id: 1 } }
-          ],
-          yearly: [
             {
-              $group: {
-                _id: { $year: "$createdAt" },
-                count: { $sum: 1 }
-              }
+              $project: {
+                _id: 1,
+                count: 1,
+                month: {
+                  $arrayElemAt: [
+                    ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+                    { $subtract: ["$_id", 1] },
+                  ],
+                },
+              },
             },
-            { $sort: { _id: 1 } }
-          ]
-        }
-      }
+          ],
+        },
+      },
     ];
+
+    // Aggregation for "team"
+    const teamAggregation = buildAggregation({
+      status: "Joined",
+    });
+
+    // Aggregation for "yours"
+    const yoursAggregation = buildAggregation({
+      created_by: new mongoose.Types.ObjectId(req.user._id),
+      status: "Joined",
+    });
 
     const team = await totallogs.aggregate(teamAggregation).exec();
     const yours = await totallogs.aggregate(yoursAggregation).exec();
 
-    success(res, 200, true, "Get Successfully", { team: team[0], yours: yours[0] });
+    success(res, 200, true, "Joined Count Retrieved Successfully", {
+      team: team[0],
+      yours: yours[0],
+    });
 
   } catch (error) {
-    console.error("Error in clientSubmissionCount:", error);
-    throw new Error(error);
+    console.error("Error in /joinedCount:", error);
+    res.status(500).json({ success: false, message: "Server Error", error: error.message });
   }
 }));
+
 
 router.get('/DatabaseAdded/:query', asyncHandler(async (req, res) => {
   let query=req.params.query;
@@ -3921,6 +3920,79 @@ router.get('/owner-select/',authAdmin, asyncHandler(async (req, res) => {
             throw new Error(error);
           }
           }))
+
+          router.get('/totalEarningsChart/', authAdmin, asyncHandler(async (req, res) => {
+            try {
+                const currentDate = new Date();
+                const currentYear = currentDate.getFullYear();
+                const startOfYear = new Date(currentYear, 0, 1);
+                const endOfYear = new Date(currentYear, 11, 31);
+        
+                // Aggregate invoices by month
+                const invoiceData = await invoice.aggregate([
+                    {
+                        $match: {
+                            invoice_date: { $gte: startOfYear, $lte: endOfYear }
+                        }
+                    },
+                    {
+                        $group: {
+                            _id: { month: { $month: "$invoice_date" } },
+                            totalInvoices: { $sum: { $toDouble: "$total_amount" } }
+                        }
+                    }
+                ]);
+        
+                // Aggregate expenses by month
+                const expenseData = await expense.aggregate([
+                    {
+                        $match: {
+                            expense_date: { $gte: startOfYear, $lte: endOfYear }
+                        }
+                    },
+                    {
+                        $group: {
+                            _id: { month: { $month: "$expense_date" } },
+                            totalExpenses: { $sum: { $toDouble: "$expense_cost" } }
+                        }
+                    }
+                ]);
+        
+                // Map data into monthly totals
+                const earningsByMonth = Array.from({ length: 12 }, (_, i) => ({
+                    month: new Date(0, i).toLocaleString('default', { month: 'short' }), // Converts 0-11 to Jan-Dec
+                    totalEarnings: 0,
+                    totalInvoices: 0,
+                    totalExpenses: 0
+                }));
+        
+                invoiceData.forEach(({ _id, totalInvoices }) => {
+                    const monthIndex = _id.month - 1; // MongoDB months are 1-based
+                    earningsByMonth[monthIndex].totalInvoices = totalInvoices;
+                });
+        
+                expenseData.forEach(({ _id, totalExpenses }) => {
+                    const monthIndex = _id.month - 1; // MongoDB months are 1-based
+                    earningsByMonth[monthIndex].totalExpenses = totalExpenses;
+                });
+        
+                // Calculate total earnings for each month
+                earningsByMonth.forEach(monthData => {
+                    monthData.totalEarnings = monthData.totalInvoices - monthData.totalExpenses;
+                });
+        
+                success(res, 200, true, "Data fetched successfully", {
+                    earningsByMonth
+                });
+            } catch (error) {
+                throw new Error(error.message);
+            }
+        }));
+        
+        
+        
+        
+        
       
       router.post('/company',upload.single("logo"),asyncHandler(async (req, res) => {
     if(req.file){

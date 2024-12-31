@@ -261,14 +261,31 @@ const Clients = () => {
                                                 {/* <td>{item.view}%</td> */}
                                                 {/* <td><span className={`badge light border-0 badge-primary`}>Submitted</span></td> */}
 												<td>
-                                            <div className='d_f g_10 a_i_c'>
-                
-                                             <i class="fa-solid fa-pen-to-square text-primary"
-                                              style ={{
-                                                cursor:"pointer"
-                                              }}
-                                              onClick={(e) => handleOpenEditDrawer(client?._id)}></i>
-                                             </div>
+												<div
+    className="icon-box hover-effect"
+    style={{
+        fontSize:"6px",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      height: "30px", // Adjust the height as needed
+      width: "30px", // Adjust the width as needed
+      borderRadius: "10%", // Makes the background circular
+      backgroundColor: "#321F69", // Initial background color
+      cursor: "pointer", // Pointer cursor for interactivity
+      transition: "background-color 0.3s, color 0.3s", // Smooth hover transition
+    }}
+    onClick={(e) => handleOpenEditDrawer(client?._id)} // Trigger edit drawer on click
+  >
+    <i
+      className="fa-solid fa-pen-to-square"
+      style={{
+       fontSize:'6px',
+        color: "white", // Initial icon color
+      }}
+    ></i>
+  </div>
+
                                             </td>
                                                 {/* <td>
                                                     <Dropdown>

@@ -12,6 +12,8 @@ const UserManagementProvider = (props) => {
   const [userList, setuserList] = useState([]);
   const [permission, setPermission] = useState([]);
   const [RollList, setRollList] = useState([]);
+  const [parentRoles, setParentRoles] = useState([]);
+  const [childRoles, setChildRoles] = useState([]);
   const [loading, setLoading] = useState(false);
   const [rollUsers, SetRollUsers] = useState([]);
   const [rollSingle, setRollsingle] = useState({});
@@ -96,6 +98,32 @@ const UserManagementProvider = (props) => {
       console.log("error", error);
     }
   };
+
+  const fetchParentRoles = async () => {
+    let api = `${BASE_URL}/roles/parent`;
+    try {
+      setLoading(true);
+      await axios.get(api).then((resp) => {
+        setParentRoles(resp.data.data);
+        setLoading(false);
+      });
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
+  const fetchchildRoles = async (parentId) => {  
+    let api = `${BASE_URL}/roles/children/${parentId}`;
+    try {
+        setLoading(true);
+        await axios.get(api).then((resp) => {
+            setChildRoles(resp.data.data);
+            setLoading(false);
+        });
+    } catch (error) {
+        console.log("error", error);
+        setLoading(false);
+    }
+};
 
   const fetchMenuClick = async (id) => {
     let apiFectRollsingle = `${BASE_URL}/roles/${id}`;
@@ -295,6 +323,8 @@ setOpenDrawer(!openDrawer)
 
   useEffect(() => {
     fethPermission();
+    fetchParentRoles();
+    fetchchildRoles();
   }, []);
 
    
@@ -362,6 +392,10 @@ setOpenDrawer(!openDrawer)
         departmentDrawerOpen,
         setDepartmentDrawer,
         handleSend,
+        fetchParentRoles,
+        fetchchildRoles,
+        parentRoles,
+        childRoles,
       }}
     >
       {props.children}

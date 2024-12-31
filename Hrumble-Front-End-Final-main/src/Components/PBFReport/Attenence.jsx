@@ -8,6 +8,8 @@ import 'react-datepicker/dist/react-datepicker.css';
 
 import { DetailedView } from './DetailedView';
 import AttenceDatewise from './AttenenceDateWise';
+import MonthlyLogin from './MonthlyLogin';
+import AttendanceDashboard from './Attendance Report/index'
 
 const Attenence = ({}) => {
 
@@ -108,6 +110,7 @@ const Attenence = ({}) => {
      <Tab.Pane eventKey="Summary">
 
     {/* <InvoiceDashboard /> */}
+   <AttendanceDashboard/>
 
  
 
@@ -117,7 +120,8 @@ const Attenence = ({}) => {
             
      </Tab.Pane>
      <Tab.Pane eventKey="Detailed">
-      <DetailedView/>
+      {/* <DetailedView/> */}
+      <MonthlyLogin/>
 
      {/* <CrmMarketArea / > */}
             

@@ -1,76 +1,108 @@
 const express = require("express");
 const router = express.Router();
 const asyncHandler = require("express-async-handler");
-const { employee,workexperience,roles, admin } = require("../../utils/schemaMaster");
+const { employee, workexperience, roles, admin } = require("../../utils/schemaMaster");
 const crud_service = require("../../utils/crud_service");
 const validateId = require('../../utils/validateId');
 const { authAdmin } = require('../../middlewares/authMiddlewares');
-const multer = require('multer')
+const multer = require('multer');
 const upload = require('../../utils/upload');
 const crud = new crud_service();
-
-
 const bcrypt = require("bcrypt");
-
 const { generateToken } = require("../../config/jwtToken");
 const { success, successToken } = require("../../utils/response");
 const sendMail = require('../../utils/sendMail');
-const { register} = require('../../utils/email_template');
+const { register } = require('../../utils/email_template');
 const mongoose = require('mongoose');
 
-const methods ={authAdmin}
+const methods = { authAdmin };
 
-const generateCreateBody = async (dataBody) => {
-  console.log("data",dataBody)
+// Function to generate the employee data
+const generateCreateBody = async (dataBody, id) => {
+  console.log("data", dataBody);
 
-  //https://www.guru99.com/mongodb-objectid.html
+  // Generate salt for password hashing
   const salt = bcrypt.genSaltSync(10);
-let createBody = {
+
+  // Prepare employee data with the provided _id
+  let createBody = {
+    _id: id, // Assign the generated _id
     ...dataBody,
-    passwordHash:await bcrypt.hash(dataBody?.passwordHash, salt),
-    user_role:"Employee",
-    user_status:"onBoarding"
-  }
- return createBody
+    passwordHash: await bcrypt.hash(dataBody?.passwordHash, salt),
+    user_role: "Employee",
+    user_status: "onBoarding",
+  };
 
-}
+  return createBody;
+};
 
-//Create Employee
-methods.add =asyncHandler(async (req, res) => {
- let generatedData = await generateCreateBody(req.body)
-let admin_data = {
-  "_id":generatedData["_id"],  
-    "name":`${generatedData["firstname"]} ${generatedData["lastname"]}`,
-    "email_id" : generatedData["email"],
-    "role": generatedData["user_role"],
-    "password": generatedData["passwordHash"]
-  }
+// Create Employee Route
+methods.add = asyncHandler(async (req, res) => {
+  // Generate a unique _id for both employee and admin collections
+  const id = new mongoose.Types.ObjectId();
 
-  console.log("Data Generate:",generatedData)
+  // Generate employee data
+  let generatedData = await generateCreateBody(req.body, id);
 
-  
-  
+  // Prepare admin data with the same _id
+  let admin_data = {
+    _id: id, // Reuse the same _id
+    name: `${generatedData["firstname"]} ${generatedData["lastname"]}`,
+    email_id: generatedData["email"],
+    role: generatedData["user_role"],
+    password: generatedData["passwordHash"],
+  };
+
+  console.log("Generated Data:", generatedData);
+
   try {
+    // Insert employee data
     const create = await crud.insertOne(employee, generatedData);
-    const create_admin_login = await crud.insertOne(admin, admin_data);
-    if(create_admin_login){
-         let role = await crud.getDocument(roles, {name:create_admin_login?.role},{_id:1},{})
-       
-         let updatepermission= await crud.updateById(admin, create_admin_login?._id, {permission:role[0]?._id}, { new: true })
-        }
-    
-    if(create){
 
-      successToken(res, 201, true, "Register Successfully",create,generateToken(create?._id));
-    }else{
+    // Insert admin data
+    const create_admin_login = await crud.insertOne(admin, admin_data);
+
+    // If admin creation succeeds, assign role-based permissions
+    if (create_admin_login) {
+      let role = await crud.getDocument(
+        roles,
+        { name: create_admin_login?.role },
+        { _id: 1 },
+        {}
+      );
+
+      await crud.updateById(
+        admin,
+        create_admin_login?._id,
+        { permission: role[0]?._id },
+        { new: true }
+      );
+    }
+
+    // Send success response if employee creation succeeds
+    if (create) {
+      successToken(
+        res,
+        201,
+        true,
+        "Register Successfully",
+        create,
+        generateToken(create?._id)
+      );
+    } else {
       throw new Error("Register Failed!");
     }
   } catch (err) {
-    console.log("error:",err)
+    console.log("Error:", err);
     throw new Error(err);
   }
-})
-router.post('/', methods.add )
+});
+
+// Define the route
+router.post("/", methods.add);
+
+
+
 
 //Get All Employees
 methods.getAll=asyncHandler(async (req, res) => {

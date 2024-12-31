@@ -7,6 +7,14 @@ const TimelineLeave = () => {
   const { requestleaves } = useContext(LeaveContext);
   const colors = ['primary', 'info', 'danger', 'success', 'warning', 'dark'];
 
+  // Sort the requestleaves by createdAt or updatedAt in descending order
+  const sortedLeaves = requestleaves.sort((a, b) => {
+    // Use createdAt for Pending status, otherwise use updatedAt
+    const timeA = a.status === "Pending" ? a.createdAt : a.updatedAt;
+    const timeB = b.status === "Pending" ? b.createdAt : b.updatedAt;
+    return new Date(timeB) - new Date(timeA); // Sort in descending order
+  });
+
   return (
     <div className="col-lg-4 col-md-12" style={{ marginLeft: "8px", height: "auto", maxHeight: "700px" }}> 
       <div className="card h-100" style={{ maxHeight: "100%", overflow: "hidden" }}>
@@ -17,13 +25,17 @@ const TimelineLeave = () => {
           <div style={{ maxHeight: '630px', overflowY: 'auto', padding: '10px' }}>
             <div id="DZ_W_TimeLine1" className="widget-timeline dz-scroll style-1 ps--active-y">
               <ul className="timeline">
-                {requestleaves.map((item, index) => {
+                {sortedLeaves.map((item, index) => {
                   const color = colors[index % colors.length]; 
                   return (
                     <li key={item.id || index}>
                       <div className={`timeline-badge ${color}`}></div>
-                      <Link className="timeline-panel text-muted" to="/widget-basic">
-                        <span>{moment(item.createdAt).fromNow()}</span>
+                      <Link className="timeline-panel text-muted">
+                        <span>
+                          {item.status === "Pending" 
+                            ? moment(item.createdAt).fromNow() 
+                            : moment(item.updatedAt).fromNow()}
+                        </span>
                         <h6 className="mb-0">{item.employee_id?.name}</h6>
                         <span>
                           <h9>
@@ -34,7 +46,7 @@ const TimelineLeave = () => {
                         </span> 
                         <h8 className="mb-0">
                           <strong className={`text-${color}`}>
-                            From {moment(item?.startDate).format('DD-MM-YYYY')} to {moment(item?.endDate).format('DD-MM-YYYY')}
+                            From {moment(item?.startDate).format('MMM DD, YYYY')} to {moment(item?.endDate).format('MMM DD, YYYY')}
                           </strong>
                         </h8>
                         {item.status === "Approved" || item.status === "Rejected" ? (

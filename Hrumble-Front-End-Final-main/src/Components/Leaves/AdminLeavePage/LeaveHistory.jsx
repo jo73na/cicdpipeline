@@ -232,10 +232,23 @@ const LeaveHistory = () => {
                                             </td> 
                                             <td className="pe-0 table-number" style={{ textAlign: "center", verticalAlign: "middle" }}>
                                             <EditOutlined
-                    className="text-primary"
-                    style={{ fontSize: "18px", cursor: "pointer" }}
-                    onClick={() => setEditingId(item._id)} // Set the editing ID when clicked
-                  />
+    className="icon-box icon-box-xs hover-effect"
+    style={{
+     
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      height: "30px", // Adjust the height as needed
+      width: "30px", // Adjust the width as needed
+      borderRadius: "10%", // Makes the icon circular
+      backgroundColor: "#321F69", // Set your desired background color
+      color: "white", // Icon color
+      cursor: "pointer", // Pointer cursor for interactivity
+      transition: "background-color 0.3s, color 0.3s",
+      // Optional: Add a border
+    }}
+    onClick={() => setEditingId(item._id)} // Set the editing ID when clicked
+  />
                                             </td>
                                         </tr>
                                     ))}
