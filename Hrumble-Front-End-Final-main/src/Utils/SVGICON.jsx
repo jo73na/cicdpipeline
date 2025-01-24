@@ -420,7 +420,7 @@ TaskLogo: <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d=
 }
 
 export const IMAGES = {
-    Avatar : import('../../public/images/avatar-02.jpg'), 
+    // Avatar : import('../../public/images/avatar-02.jpg'), 
     
    
 };

@@ -20,7 +20,6 @@ import dayjs from "dayjs";
 import EmployeeContext from "../../Providers/EmployeeProvider";
 import AddExperience from "../MyProfile/AddExperience";
 import EditExperience from "./EditExperience";
-// import PDFlogo from "../../../public/images/pdflogo1.svg";
 import Loader from "../../Utils/Loader";
 import CookieUtil from "../../Utils/Cookies";
 import moment from "moment";

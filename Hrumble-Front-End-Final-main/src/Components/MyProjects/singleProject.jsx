@@ -197,7 +197,6 @@ useEffect(() => {
                 fontSize: '12px', 
                 display: 'inline-block',
                 textAlign: 'center',
-                borderRadius: '50px',
 
               },
               Terminated: {

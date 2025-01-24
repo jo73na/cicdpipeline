@@ -214,7 +214,6 @@ useEffect(() => {
                 fontSize: '10px', 
                 display: 'inline-block',
                 textAlign: 'center',
-                borderRadius: '50px',
               },
               Default: {
                 backgroundColor: '#e2e3e5', // Light gray background
