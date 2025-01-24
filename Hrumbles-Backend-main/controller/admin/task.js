@@ -203,9 +203,11 @@ methods.getAll = asyncHandler(async (req, res) => {
     aggregate.unshift({ $match: { company_id } });
   }
 
-  const page = parseInt(req.query.page) || 1;
-  const limit = parseInt(req.query.limit) || 10;
-  aggregate.push({ $skip: (page - 1) * limit }, { $limit: limit });
+  if (req.query.page && req.query.limit) {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    aggregate.push({ $skip: (page - 1) * limit }, { $limit: limit });
+}
 
   try {
     const data = await task.aggregate(aggregate);

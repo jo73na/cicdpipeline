@@ -2,10 +2,14 @@ import { Button, Form, Input, Radio, Select } from 'antd'
 import { Option } from 'antd/lib/mentions';
 import React, { useContext, useEffect } from 'react'
 import EmployeeContext from '../../Providers/EmployeeProvider';
+import UserManagementContext from '../../Providers/UserMangement';
+
 
 const EditEmployee = ({onClose}) => {
 
   const {fetchEmploy,editEmployee,fetchsingle,employeesingle} = useContext(EmployeeContext)
+  const { parentRoles, childRoles, fetchchildRoles } = useContext(UserManagementContext);
+
 
 
   console.log("fetchEmployuuuuuu",employeesingle)
@@ -19,15 +23,25 @@ const EditEmployee = ({onClose}) => {
 
       const [form] = Form.useForm();
 
-      const onFinish = (Values) => {
-        console.log("editEmployee",Values)
-        editEmployee(Values,onClose)
-      }
+      const onFinish = (values) => {
+        console.log("editEmployee values:", values);
+        const employeeId = employeesingle._id; // Assuming employeesingle contains the correct _id
+        editEmployee(values, employeeId); 
+        onClose();
+      };
+      
 
       useEffect(() => {
         console.log("employeesingle-----------------",employeesingle)
         form.setFieldsValue(employeesingle)
       },[employeesingle])
+
+      const handleDepartmentChange = (value) => {
+        const parentId = roleNameToIdMap[value]; // Get the ID from the selected department name
+        if (parentId) {
+          fetchchildRoles(parentId); // Fetch child roles using the ID
+        }
+      };
 
   return (
     <div className='p_t_15'>
@@ -54,24 +68,47 @@ const EditEmployee = ({onClose}) => {
             </Form.Item>
         </div>
         <div className='col_2 g_30'>
-            <Form.Item label="Department" name="department">
-                <Select placeholder='Enter Department' />
-            </Form.Item>
-            <Form.Item label="Designation" name="designation">
-                <Input placeholder='Enter Designation' />
-            </Form.Item>
+             <Form.Item
+                        label="Department"
+                        name="department"
+                        rules={[{ required: true, message: 'Please Select Department!' }]}
+                      >
+                       <Select
+                          placeholder="Select Department"
+                          onChange={handleDepartmentChange}
+                          options={parentRoles.map((role) => ({
+                            label: role.name, // Display name
+                            value: role.name, // Use name as value
+                          }))}
+                        />
+                      </Form.Item>
+           <Form.Item
+                       label="Designation"
+                       name="designation"
+                       rules={[{ required: false, message: 'Please Select Designation!' }]}
+                     >
+                      <Select
+               placeholder="Select Designation"
+               disabled={childRoles.length === 0} 
+               options={childRoles.map((role) => ({
+                 label: role.name, // Display name
+                 value: role.name, // Use name as value
+               }))}
+             />
+                     
+                     </Form.Item>
         </div>
         <div className='col_2 g_30'>
             <Form.Item label="Reporting Person" name="reportingperson">
                 <Select placeholder='Enter Reporting Person' />
             </Form.Item>
-            <Form.Item label="Job Type" name="job_type">
+            {/* <Form.Item label="Job Type" name="job_type">
                 <Radio.Group>
                     <Radio value="Part Time">Part Time</Radio>
                     <Radio value="Full Time">Full Time</Radio>
                     <Radio value="Contract">Contract</Radio>
                 </Radio.Group>
-            </Form.Item>
+            </Form.Item> */}
         </div>
         <div className='col_2 g_30'>
             <Form.Item label="Salary Type" name="salary_type">

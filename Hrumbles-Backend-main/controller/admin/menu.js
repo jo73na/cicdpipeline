@@ -206,6 +206,17 @@ const accessList= [
     ]
   },
   {
+    module:"MyProfile",
+     url:"/ViewProfile/:id",
+     component:"ViewProfile",
+     icon:"candidatesLogo",
+    
+    permissions:[
+      "View Profile"
+  
+    ]
+  },
+  {
     module: "Goal",
     component: "Goal",
     url: "/goal",
@@ -666,9 +677,9 @@ const accessListPermission= [
   ]
 },
 {
-  module:"Profile",
-   url:"/myprofiles",
-   component:"ProfilesEmployee",
+  module:"MyProfile",
+   url:"/ViewProfile/:id",
+   component:"ViewProfile",
    icon:"candidatesLogo",
   
   permissions:[

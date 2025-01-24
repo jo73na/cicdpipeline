@@ -69,6 +69,9 @@ import MonthlyLogin from "../Components/PBFReport/MonthlyLogin";
 import AttendanceDashboard from "../Components/PBFReport/Attendance Report/index";
 import TaskManager from "../Components/TaskManager/index";
 import MyProfile from "../Components/MyProfile";
+import MyProjects from "../Components/MyProjects";
+import SingleProjects from "../Components/MyProjects/singleProject";
+import ViewProfile from "../Components/ViewProfile/index"
 
  
 
@@ -436,9 +439,33 @@ const RoutesDynamic = [
     component:<TaskManager/>
   },
   {
-    path: "/myprofiles",
+    path: "/Detailprofiles/:id",
     exact: true,
     component: <MyProfile/>
+  },
+ 
+  {
+    path: "/ViewProfile",
+    exact: true,
+    component: <ViewProfile/>
+  },
+  {
+    path: "/ViewProfile/:id",
+    exact: true,
+    component: <ViewProfile/>
+  },
+
+
+  {
+    path: "/myprojects/:id",
+    exact: true,
+    component: <MyProjects/>
+  },
+
+  {
+    path: "/singleproject/:id",
+    exact: true,
+    component: <SingleProjects/>
   }
  
 ];

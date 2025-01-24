@@ -104,22 +104,33 @@ class crud_service {
    };
 
    this.getDocument = async (model, query, projection, extension) => {
-     try {
-      
-       let queryObj = model.find(query, projection, extension.options);
-       if (extension.populate) queryObj.populate(extension.populate);
-       if (extension.sort) queryObj.sort(extension.sort);
-       if (extension.limit) queryObj.limit(extension.limit);
-       const res = await queryObj.exec();
-       if (extension.count) {
-         const count = await res.count();
-         return count;
-       }
-       return res;
-     } catch (err) {
-       throw err;
-     }
-   };
+    try {
+      // Ensure 'extension' is defined and has the necessary properties before using them
+      const options = extension && extension.options ? extension.options : {};
+      const populate = extension && extension.populate ? extension.populate : null;
+      const sort = extension && extension.sort ? extension.sort : null;
+      const limit = extension && extension.limit ? extension.limit : null;
+      const count = extension && extension.count ? extension.count : false;
+  
+      let queryObj = model.find(query, projection, options);
+  
+      if (populate) queryObj.populate(populate);
+      if (sort) queryObj.sort(sort);
+      if (limit) queryObj.limit(limit);
+  
+      const res = await queryObj.exec();
+  
+      if (count) {
+        const totalCount = await res.count();
+        return totalCount;
+      }
+  
+      return res;
+    } catch (err) {
+      throw err;
+    }
+  };
+  
 
    this.getCount = async (model, conditions) => {
      try {

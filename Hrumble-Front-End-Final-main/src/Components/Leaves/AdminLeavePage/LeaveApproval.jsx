@@ -32,7 +32,7 @@ const LeaveApproval = () => {
     useEffect(() => {
       fetchrequestleaves();
     }, []);
-    const nonApprovedLeaves = requestleaves?.filter((item) => item.status !== 'Approved' && item.status !== 'Rejected');
+    const nonApprovedLeaves = requestleaves?.filter((item) => item.status !== 'Approved' && item.status !== 'Rejected' && item.status !== 'Cancelled');
 
     const [currentPage , setCurrentPage] = useState(1);
     const recordsPage = 5;
@@ -141,8 +141,10 @@ const LeaveApproval = () => {
           </Dropdown.Toggle>
           <Dropdown.Menu className="task-drop-menu">
             <Dropdown.Item onClick={() => handleChangeStatus(item?._id, 'Pending')}>Pending</Dropdown.Item>
-            <Dropdown.Item onClick={() => handleChangeStatus(item?._id, 'Approved')}>Approved</Dropdown.Item>
-            <Dropdown.Item onClick={() => handleChangeStatus(item?._id, 'Rejected')}>Rejected</Dropdown.Item>
+            <Dropdown.Item onClick={() => handleChangeStatus(item?._id, 'Approved')}>Approve</Dropdown.Item>
+            <Dropdown.Item onClick={() => handleChangeStatus(item?._id, 'Rejected')}>Reject</Dropdown.Item>
+            <Dropdown.Item onClick={() => handleChangeStatus(item?._id, 'Cancelled')}>Cancel</Dropdown.Item>
+
           </Dropdown.Menu>
         </Dropdown>
                                             </td>

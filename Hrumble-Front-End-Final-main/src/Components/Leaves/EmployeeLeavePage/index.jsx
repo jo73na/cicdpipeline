@@ -48,6 +48,11 @@ const EmployeeLevePage = () => {
     const number = [...Array(npage).keys()].map((_, idx) => idx + 1);
     const records = requestleaves.slice(firstIndex, lastIndex);
 
+    const sortedLeaves = requestleaves.sort((a, b) => {
+      const timeA = a.status === "Pending" ? a.createdAt : a.updatedAt;
+      const timeB = b.status === "Pending" ? b.createdAt : b.updatedAt;
+      return new Date(timeB) - new Date(timeA);
+    });
     
     function prePage (){
         if(currentPage !== 1){
@@ -158,15 +163,15 @@ let senddata={
                   </Tooltip>
                                             </td> 
      <td><span>
-      {
-        item?.status == "Pending" ?
-        <span className="badge badge-warning light border-0 me-1">{item?.status}</span>
-        :
+  {
+    item?.status === "Pending" ?
+      <span className="badge badge-warning light border-0 me-1">{item?.status}</span>
+      : item?.status === "Rejected" || item?.status === "Cancelled" ?
+        <span className="badge badge-danger light border-0 me-1">{item?.status}</span>
+        : 
         <span className="badge badge-success light border-0 me-1">{item?.status}</span>
-
-
-      }
-      </span></td>
+  }
+</span></td>
      <td><span>{item.approved_by? item?.approved_by?.name:"-"}</span></td>
      
     
@@ -393,30 +398,34 @@ const statusCounts = requestleaves.reduce(
                   <div
                     style={{ maxHeight: '370px', overflowY: 'auto', padding: '10px'}}
                   >
-                    <div id="DZ_W_TimeLine1" className="widget-timeline dz-scroll style-1 ps--active-y">
+                    <div id="DZ_W_TimeLine" className="widget-timeline dz-scroll ps--active-y">
                       <ul className="timeline">
-                        {requestleaves.map((item, index) => {
+                        {sortedLeaves.map((item, index) => {
                           const color = colors[index % colors.length];
                           return (
                             <li key={item.id || index}>
                               <div className={`timeline-badge ${color}`}></div>
-                              <Link className="timeline-panel text-muted" to="/widget-basic">
-                                <span>{moment(item.createdAt).fromNow()}</span>
+                              <Link className="timeline-panel text-muted" to="">
+                                   <span>
+                                                          {item.status === "Pending"
+                                                            ? moment(item.createdAt).fromNow()
+                                                            : moment(item.updatedAt).fromNow()}
+                                                        </span>
                                 <h6 className="mb-0">{item.employee_id?.name}</h6>
-                                <span>
-                                  <h9>
-                                    {item?.leave_id?.leave_title?.length > 20
-                                      ? `${item?.leave_id?.leave_title.substring(0, 20)}...`
-                                      : item?.leave_id?.leave_title}
-                                  </h9>
-                                </span>
-                                <h8 className="mb-0">
-                                  <strong className={`text-${color}`}>
-                                    From {moment(item?.startDate).format('DD-MM-YYYY')} to{' '}
-                                    {moment(item?.endDate).format('DD-MM-YYYY')}
-                                  </strong>
-                                </h8>
-                                {item.status === 'Approved' || item.status === 'Rejected' ? (
+                                <div style={{ display: 'flex', gap: '2px', flexWrap: 'nowrap' }}>
+                                                         <span className={`badge text-white bg-${color}`} style={{ fontSize: '7px', padding: '4px 6px' }}>
+                                                           {item?.leave_id?.leave_title?.length > 20
+                                                             ? `${item?.leave_id?.leave_title.substring(0, 20)}...`
+                                                             : item?.leave_id?.leave_title}
+                                                         </span>
+                                                         <span className={`badge text-white bg-${color}`} style={{ fontSize: '7px', padding: '4px 6px' }}>
+                                                           {moment(item?.startDate).format('MMM DD, YYYY')}
+                                                         </span>
+                                                         <span className={`badge text-white bg-${color}`} style={{ fontSize: '7px', padding: '4px 6px' }}>
+                                                           {moment(item?.endDate).format('MMM DD, YYYY')}
+                                                         </span>
+                                                       </div>
+                                {item.status === 'Approved' || item.status === 'Rejected' || item.status === 'Cancelled' ? (
                                   <p className="mb-0">
                                     {item.status} by {item?.approved_by?.name}
                                   </p>

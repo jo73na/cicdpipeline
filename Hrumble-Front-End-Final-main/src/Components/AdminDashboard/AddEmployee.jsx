@@ -1,5 +1,5 @@
 import { Button, Form, Input, Select } from 'antd';
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import EmployeeContext from '../../Providers/EmployeeProvider';
 import UserManagementContext from '../../Providers/UserMangement';
 
@@ -42,7 +42,7 @@ const AddEmployee = ({ onClose }) => {
             name="employee_id"
             rules={[{ required: true, message: 'Please Enter Employee ID!' }]}
           >
-            <Input placeholder="Enter ID" />
+            <Input placeholder="Enter ID"  />
           </Form.Item>
         </div>
         <div className="col_2 g_30">
@@ -70,7 +70,7 @@ const AddEmployee = ({ onClose }) => {
             name="passwordHash"
             rules={[{ required: true, message: 'Please Enter Password!' }]}
           >
-            <Input.Password placeholder="Enter Password" />
+            <Input.Password placeholder="Enter Password" autoComplete="new-password" />
           </Form.Item>
         </div>
         <div className="col_2 g_30">

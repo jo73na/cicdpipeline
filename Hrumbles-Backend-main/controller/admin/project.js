@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const asyncHandler = require("express-async-handler");
-const { projects,projectemployess } = require("../../utils/schemaMaster");
+const { projects,projectemployess, employee } = require("../../utils/schemaMaster");
 const { workexperience } = require("../../utils/schemaMaster");
 const { success } = require("../../utils/response");
 const crud_service = require("../../utils/crud_service");
@@ -28,6 +28,53 @@ const methods ={authAdmin}
 
 router.post('/', upload.single("sow") , methods.add )
 
+router.patch('/:id/assignemployees', async (req, res) => {
+  try {
+    const projectId = req.params.id;
+    const employeesToAdd = req.body.employees; // Array of employees to add
+
+    const updatedProject = await projects.findByIdAndUpdate(
+      projectId,
+      { $push: { assignedEmployees: { $each: employeesToAdd } } },
+      { new: true, runValidators: true }
+    );
+
+    res.status(200).json(updatedProject);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+});
+
+router.patch('/:projectId/editAssignedEmployee/:employeeId', async (req, res) => {
+  try {
+    const { projectId, employeeId } = req.params;
+    const { status } = req.body; // New status to update
+
+    const updatedProject = await projects.findOneAndUpdate(
+      { 
+        _id: projectId, 
+        'assignedEmployees._id': employeeId 
+      },
+      {
+        $set: { 'assignedEmployees.$.status': status }
+      },
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedProject) {
+      return res.status(404).json({ message: 'Project or Employee not found' });
+    }
+
+    res.status(200).json(updatedProject);
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ message: error.message });
+  }
+});
+
+
+
+
 
 // get Sum functions
 const getEmployeesData = async (clientId) => {
@@ -36,52 +83,66 @@ const getEmployeesData = async (clientId) => {
 
 
 //getall
-methods.getAll=asyncHandler(async (req, res) => {
-    console.log("jjj",req?.query)
-    const projectsData=await crud.getDocument(projects, {...req.query},{},{populate:"client_id"})
-    
+methods.getAll = asyncHandler(async (req, res) => {
+  console.log("jjj", req?.query);
+  
+  // Populate both client_id and assignedEmployees
+  const projectsData = await crud.getDocument(projects, {...req.query}, {}, {
+    populate: [
+      { path: "client_id" },
+      { path: "assignedEmployees", populate: { path: "employee_id", select: "firstname lastname email employee_id user_role user_status department yearly_ctc" } }
+    ]
+  });
 
-    const senddataPromises = projectsData.map(async (project) => {
-      const [employees] = await Promise.all([
-       
-        getEmployeesData(project._id),
-      ]);
- 
-    
-      const totalRevenue = employees.reduce((accumulator, currentValue) => {
-        return accumulator +  Number( currentValue.clientbilling_salarytype == "Monthly" ? currentValue.client_billing :currentValue.clientbilling_salarytype == "Per Hour" ? currentValue.client_billing*160 :currentValue.client_billing/12);
-    
-      }, 0);
-    
-      const totalSalary = employees.reduce((accumulator, currentValue) => {
-        return accumulator + Number( currentValue.expected_Ctc_type == "Monthly" ? currentValue.expected_ctc :currentValue.expected_Ctc_type == "Per Hour" ? currentValue.expected_ctc*160 :currentValue.expected_ctc/12|| 0)
-      }, 0);
-    
-      return {
-        _id: project._id,
-        project_name:project?.project_name,
-        status:project?.status,
-        activeemployess:employees.length,
-        sow:project?.sow,
-        client_id:project?.client_id,
-      
-        revenue: totalRevenue,
-       
-        salary: totalSalary,
-      };
-    });
+  const senddataPromises = projectsData.map(async (project) => {
+    const [employees] = await Promise.all([
+      getEmployeesData(project._id),
+    ]);
 
-    const senddata = await Promise.all(senddataPromises);
+    const totalRevenue = employees.reduce((accumulator, currentValue) => {
+      return accumulator + Number(
+        currentValue.clientbilling_salarytype == "Monthly" ? currentValue.client_billing :
+        currentValue.clientbilling_salarytype == "Per Hour" ? currentValue.client_billing * 160 :
+        currentValue.client_billing / 12
+      );
+    }, 0);
 
+    const totalSalary = employees.reduce((accumulator, currentValue) => {
+      return accumulator + Number(
+        currentValue.expected_Ctc_type == "Monthly" ? currentValue.expected_ctc :
+        currentValue.expected_Ctc_type == "Per Hour" ? currentValue.expected_ctc * 160 :
+        currentValue.expected_ctc / 12 || 0
+      );
+    }, 0);
 
+    return {
+      _id: project._id,
+      project_name: project?.project_name,
+      status: project?.status,
+      activeemployess: employees.length,
+      sow: project?.sow,
+      client_id: project?.client_id,
+      startDate: project?.startDate,
+      endDate: project?.endDate,
+      duration: project?.duration,
+      employees_needed: project?.employees_needed,
+      assignedEmployees: project.assignedEmployees, // Now includes populated employee data
+      revenue: totalRevenue,
+      salary: totalSalary,
+    };
+  });
+
+  const senddata = await Promise.all(senddataPromises);
 
   try {
     success(res, 200, true, "Get Successfully", senddata);
   } catch (err) {
     throw new Error(err);
-  } 
-})
- router.get('/',methods.getAll );
+  }
+});
+
+router.get('/', methods.getAll);
+
 
 
 //  get status

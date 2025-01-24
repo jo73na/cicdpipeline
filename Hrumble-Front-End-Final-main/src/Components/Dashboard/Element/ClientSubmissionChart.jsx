@@ -29,7 +29,7 @@ const EarningChart = ({ Primarycolor, DetailHead }) => {
   const [xAxisCategories, setXAxisCategories] = useState([]);
   const [totalSubmissionCount, setTotalSubmissionCount] = useState(0);
   const [currentDate, setCurrentDate] = useState("");
-  const [maxCount, setMaxCount] = useState(0); // Added for dynamic Y-axis adjustment
+  const [maxCount, setMaxCount] = useState(0);
 
   const role = CookieUtil.get("role");
   const BASE_URL = import.meta.env.VITE_BASE_URL;
@@ -112,7 +112,7 @@ const EarningChart = ({ Primarycolor, DetailHead }) => {
         setXAxisCategories(categories);
         setChartData(chartValues);
         setTotalSubmissionCount(totalCount);
-        setMaxCount(calculatedMaxCount); // Update max count
+        setMaxCount(calculatedMaxCount);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -127,12 +127,31 @@ const EarningChart = ({ Primarycolor, DetailHead }) => {
       height: 300,
       toolbar: { show: false },
       zoom: { enabled: false },
+      stacked: true
     },
     colors: [Primarycolor || "#88a67e"],
     dataLabels: { enabled: false },
     stroke: {
       width: 2,
-      curve: "straight",
+      curve: "smooth",
+    },
+    markers: {
+      size: 3,
+      colors: [Primarycolor || "#88a67e"],
+      strokeColors: Primarycolor || "#88a67e",
+      strokeWidth: 2,
+      hover: {
+        size: 5,
+        sizeOffset: 2,
+      },
+    },
+    states: {
+      hover: {
+        filter: {
+          type: "darken",
+          value: 0.9,
+        },
+      },
     },
     grid: {
       borderColor: "#eee",
@@ -143,20 +162,17 @@ const EarningChart = ({ Primarycolor, DetailHead }) => {
       show: true,
       labels: { style: { fontSize: "12px" } },
       min: 0,
-      max: maxCount + Math.ceil(maxCount * 0.1), // Dynamic max value with padding
+      max: maxCount + Math.ceil(maxCount * 0.1),
     },
     xaxis: {
       categories: xAxisCategories,
       labels: { style: { fontSize: "12px" } },
     },
     fill: {
-      type: "gradient",
-      gradient: {
-        shadeIntensity: 1,
-        opacityFrom: 0.4,
-        opacityTo: 0,
-      },
+      type: "solid",
+      colors: ["#B0C4A5"], // A lighter shade of the primary color
     },
+
     tooltip: {
       y: { formatter: (val) => val },
     },

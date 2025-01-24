@@ -1,9 +1,13 @@
-import PersonalDetails from "./PersonalDetails";
+import PersonalDetails from "./Personaldetails";
 import { Card, Progress, Menu } from "antd";
-import { useState } from "react";
-import EducationalDetails from "./BankAccount";
+import { useEffect, useState } from "react";
+import EducationalDetails from "./Educationdetails";
 import BankAccount from "./BankAccount";
 import EmployeeDocuments from "./EmployeeDocuments";
+import { useParams, useNavigate } from "react-router-dom";
+import { ArrowLeft} from 'lucide-react'
+import CookieUtil from '../../Utils/Cookies';
+
  
 const items = [
   {
@@ -25,7 +29,17 @@ const items = [
 ];
  
 const MyProfile = () => {
+  const {id} = useParams();
+  let role = CookieUtil.get("role");
   const [current, setCurrent] = useState("profile");
+  const navigate = useNavigate();
+ 
+  useEffect(()=>{
+    if(id) {
+      console.log("params:", id)
+    }
+ 
+  }, [id]);
  
   // Completion status for each section
   const [completion, setCompletion] = useState({
@@ -35,12 +49,23 @@ const MyProfile = () => {
     bankaccount: 0,
   });
  
+  console.log("Real login ID :", id)
+ 
   // Calculate the overall progress
   const overallProgress = Object.values(completion).reduce((a, b) => a + b, 0) / items.length;
  
   const onClick = (e) => {
     setCurrent(e.key);
   };
+
+  const handleBackClick = () => {
+    if (id) {
+      navigate(`/ViewProfile/${id}`); // Replace :id with the actual value of id
+    } else {
+      console.error("ID not found");
+    }
+  };
+  
  
   // Callback to update completion status
   const updateCompletion = (key, value) => {
@@ -53,21 +78,39 @@ const MyProfile = () => {
   const renderContent = () => {
     switch (current) {
       case "profile":
-        return <PersonalDetails updateCompletion={(value) => updateCompletion("profile", value)} />;
+        return (
+          <PersonalDetails id={id}
+            onNextTab={() => setCurrent("education")} // Move to the next tab
+          />
+        );
       case "education":
-        return <EducationalDetails updateCompletion={(value) => updateCompletion("education", value)} />;
+        return (
+          <EducationalDetails id={id}
+            onNextTab={() => setCurrent("document")} // Move to the next tab
+          />
+        );
       case "document":
-        return <EmployeeDocuments updateCompletion={(value) => updateCompletion("document", value)} />;
+        return (
+          <EmployeeDocuments id={id}
+            onNextTab={() => setCurrent("bankaccount")} // Move to the next tab
+          />
+        );
       case "bankaccount":
-        return <BankAccount updateCompletion={(value) => updateCompletion("bankaccount", value)} />;
+        return <BankAccount id={id} />;
       default:
-        return <PersonalDetails />;
+        return null;
     }
   };
  
+ 
   return (
     <>
-      <h4>MyProfile</h4>
+
+    
+<h4 style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}>
+      <ArrowLeft size={20} onClick={handleBackClick} />
+      MyProfile
+    </h4>
  
       {/* Card with Progress Bar */}
       <Card

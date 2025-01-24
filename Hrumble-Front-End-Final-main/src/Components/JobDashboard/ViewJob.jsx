@@ -55,8 +55,10 @@ const ViewJob = () => {
   console.log("permission", permission);
   let filter = permission?.find((item) => item?.name == "Jobs");
  
-     const {setViewCandidateDrawer,AddInterView,handleInterviewClose,viewInterviewDrawer,viewall,handleClickjobTable,Loading,jobSingle,viewjobCount,allCandidates,handleStatusEdit,addButtonCan,setAddButtonCan,showEmployeModal,setEditButtonJob,showEmployeModalEdit,editButtonJob,editButtonCanEmploy,viewCandidateDrawer,handleCloseviewDrawer,showCandidateModalEdit,setEditButtonCanEmploy,handleopenCandidateDrawer, handleClick}=useContext(ViewJobContext)
+     const {setViewCandidateDrawer,AddInterView,handleInterviewClose,viewInterviewDrawer,viewall,handleClickjobTable,Loading,jobSingle,viewjobCount,allCandidates,handleStatusEdit,addButtonCan,setAddButtonCan,showEmployeModal,setEditButtonJob,showEmployeModalEdit,editButtonJob,editButtonCanEmploy,viewCandidateDrawer,handleCloseviewDrawer,showCandidateModalEdit,setEditButtonCanEmploy,handleopenCandidateDrawer, handleClick,}=useContext(ViewJobContext)
     
+console.log("CandidateView:::", CandidateView);
+
      const numberBoxStyle = {
       backgroundColor: '#e6f2ff', // Light blue background
       padding: '4px 8px',
@@ -175,12 +177,13 @@ const ViewJob = () => {
             ]
  
       const profit =(item)=>{
+        console.log("Profit:::", item);
        
        let result;
        if (item?.job_id?.client_id[0]?.currency === "USD") {
-         if (item?.job_id?.job_type === "Full Time") {
+         if (item?.job_id?.secondarySelected === "External Staffing") {
         //    console.log("ddddUSD", item?.client_billing);
-           result = Number(item?.expected_ctc * (item?.job_id?.client_id[0]?.fulltime_commission ? item?.job_id?.client_id[0]?.fulltime_commission / 100 : 0.0833));
+           result = Number(item?.expected_ctc * (item?.job_id?.client_id[0]?.fulltime_commission  / 100));
          } else {
            if (item?.job_id?.salaryType === "Monthly") {
              if (item.salary_type === "LPA") {
@@ -203,9 +206,9 @@ const ViewJob = () => {
            }
          }
        } else {
-         if (item?.job_id?.job_type === "Full Time") {
+         if (item?.job_id?.secondarySelected === "External Staffing") {
         //    console.log("ddddUSD", item?.client_billing);
-           result = Number(item?.expected_ctc * (item?.job_id?.client_id[0]?.fulltime_commission ? item?.job_id?.client_id[0]?.fulltime_commission / 100 : 0.0833));
+           result = Number(item?.expected_ctc * (item?.job_id?.client_id[0]?.fulltime_commission/ 100));
          } else {
            if (item?.job_id?.salaryType === "Monthly") {
              
@@ -613,7 +616,7 @@ const ViewJob = () => {
                 >
                   <ul className="timeline">
                   {allCandidates
-  .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)) // Sort by updatedAt in descending order
+  .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)) 
   .map((item, index) => {
     const color = colors[index % colors.length];
     return (
@@ -628,16 +631,17 @@ const ViewJob = () => {
           <h6 className="mb-0">
             {item.first_name} {item.last_name}
           </h6>
-          <p className="mb-0">Submitted by {item?.candidate_owner?.name}</p>
-          <h8 className="mb-0">
-            <strong className={`text-${color}`}>
-              {moment(item?.createdAt).format("MMM DD, YYYY, h:mm A")}
-            </strong>
-          </h8>
+        
           <p className="mt-1">Current Status {item.status}</p>
-          <h8 className="mb-0">
+          <h8 className="">
             <strong className={`text-${color}`}>
               {moment(item?.updatedAt).format("MMM DD, YYYY, h:mm A")}
+            </strong>
+          </h8>
+          <p className="mt-1">Submitted by {item?.candidate_owner?.name}</p>
+          <h8 className="">
+            <strong className={`text-${color}`}>
+              {moment(item?.createdAt).format("MMM DD, YYYY, h:mm A")}
             </strong>
           </h8>
         </Link>
@@ -800,17 +804,46 @@ const ViewJob = () => {
                                                         </Dropdown>    
                                                 </td>
                                             <td>
-                                            <div className='d_f g_10 a_i_c'>
-                                             <i class="fa-solid fa-eye text-primary"
-                                             onClick={(e)=>handleOpenDrawer(e,item?._id)}
-                                               style ={{
-                                                cursor:"pointer"
-                                              }}></i>
-                                             <i class="fa-solid fa-pen-to-square text-primary"
+                                            <div
+  className="d_f g_10 a_i_c"
+  onClick={() => navigate(`/jobs/${item?._id}`)}
+  onMouseEnter={(e) => (e.target.style.cursor = "pointer")}
+  onMouseLeave={(e) => (e.target.style.cursor = "default")}
+>
+  <div
+    className="icon-box icon-box-xs"
+    style={{
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      height: "30px", // Adjust the height as needed
+      width: "30px", // Adjust the width as needed
+      borderRadius: "20%",
+      backgroundColor:"#321F69",
+      // Optional: makes the background circular
+    }}
+  >
+    <i className="fa-solid fa-eye " style={{color:"white" }}></i>
+  </div>
+                                            <div
+                                                className="icon-box icon-box-xs"
+                                                style={{
+                                                  display: "flex",
+                                                  justifyContent: "center",
+                                                  alignItems: "center",
+                                                  height: "30px", // Adjust the height as needed
+                                                  width: "30px", // Adjust the width as needed
+                                                  borderRadius: "20%",
+                                                  backgroundColor:"#321F69",
+                                                  // Optional: makes the background circular
+                                                }}>
+                                             <i class="fa-solid fa-pen-to-square "
                                               style ={{
+                                                color:"white",
                                                 cursor:"pointer"
                                               }}
                                               onClick={(e) => showCandidateModalEdit(item?._id)}></i>
+                                             </div>
                                              </div>
                                            </td>
                                            

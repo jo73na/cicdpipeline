@@ -15,6 +15,7 @@ const sendMail = require('../../utils/sendMail');
 const { register } = require('../../utils/email_template');
 const mongoose = require('mongoose');
 
+
 const methods = { authAdmin };
 
 // Function to generate the employee data
@@ -49,13 +50,20 @@ methods.add = asyncHandler(async (req, res) => {
     _id: id, // Reuse the same _id
     name: `${generatedData["firstname"]} ${generatedData["lastname"]}`,
     email_id: generatedData["email"],
-    role: generatedData["user_role"],
+    role: generatedData["department"],
     password: generatedData["passwordHash"],
   };
 
   console.log("Generated Data:", generatedData);
 
   try {
+    // Check if email already exists in the admin collection
+    const existingAdmin = await crud.getDocument(admin, { email_id: generatedData.email });
+
+    if (existingAdmin.length > 0) {
+      throw new Error("Email is already registered in the admin system.");
+    }
+
     // Insert employee data
     const create = await crud.insertOne(employee, generatedData);
 
@@ -94,9 +102,10 @@ methods.add = asyncHandler(async (req, res) => {
     }
   } catch (err) {
     console.log("Error:", err);
-    throw new Error(err);
+    res.status(400).json({ error: err.message });
   }
 });
+
 
 // Define the route
 router.post("/", methods.add);
@@ -123,7 +132,8 @@ methods.select=asyncHandler(async (req, res) => {
     "form_completion":1,"billing_type":1,
     'designation':1,'job_type':1,
     'user_status':1,'salary_type':1,
-    'yearly_ctc':1  
+    'yearly_ctc':1, 'department':1,
+    'employee_id':1,
   }
 
   console.log("req.body:",req?.body)
@@ -286,25 +296,23 @@ const projectionGenerator  = (urlQuery) => {
     if(projType===""){
       return {}
     }else if(projType==="bank"){
-      projectionObj["name_as_in_bank"]=1
-      projectionObj["bank_name"]=1
-      projectionObj["account_num"]=1
-      projectionObj["ifsc_code"]=1
-      projectionObj["branch_name"]=1
-      projectionObj["branch_addr"]=1
-      projectionObj["cheque_file"]=1
-      projectionObj["form_completion"]=1
-      projectionObj["bank_country"]=1
-      projectionObj["bank_state"]=1
-      projectionObj["bank_city"]=1
-      projectionObj["bank_zipcode"]=1
+      projectionObj["bankName"]=1
+      projectionObj["fullname"]=1
+      projectionObj["accountNumber"]=1
+      projectionObj["ifscCode"]=1
+      projectionObj["branchName"]=1
+      projectionObj["branchAddress"]=1
+      projectionObj["country"]=1
+      projectionObj["state"]=1
+      projectionObj["city"]=1
+      projectionObj["zipcode"]=1
+      projectionObj["supportingDocuments"]=1
 
     }else if(projType==="education"){
-      projectionObj["ssc_file"]=1
-      projectionObj["hsc_file"]=1
-      projectionObj["degree_file"]=1
-      projectionObj["educationDetails"]=1
-      projectionObj["form_completion"]=1
+      projectionObj["education.ssc_file"] = 1;
+      projectionObj["education.hsc_file"] = 1;
+      projectionObj["education.degree_file"] = 1;
+      projectionObj["education.additional_degree"] = 1;
     }else if(projType==="bgv"){
 
       projectionObj["authorization_form"]=1
@@ -351,6 +359,8 @@ const projectionGenerator  = (urlQuery) => {
       projectionObj["familyDetails"]=1
       projectionObj["form_completion"]=1
       projectionObj["billing_type"] = 1
+      projectionObj["backgroundCheckForm"] = 1
+      projectionObj["authorizationForm"] = 1
       projectionObj["_id"]=1
 
     }else if(projType==="edit"){
@@ -362,12 +372,16 @@ const projectionGenerator  = (urlQuery) => {
       projectionObj["monthly_ctc"] = 1
       projectionObj["salary_type"] = 1
       projectionObj["designation"] = 1
+      projectionObj["department"] = 1
       projectionObj["user_role"] = 1
       projectionObj["user_status"] = 1
       projectionObj["yearly_ctc"] = 1
       projectionObj["reportsTo"] = 1
       projectionObj["passwordHash"] = 1
       projectionObj["user_id"] = 1
+      projectionObj["employee_id"] = 1
+
+      
     }
   }
 
@@ -412,43 +426,108 @@ const generateCompleteObject = (employeeObj,mapObj) => {
 }
 
 //Get Employee By Id for detailed expansion view
-methods.getOneComplete=asyncHandler(async (req, res) => {
+///
+methods.getOneComplete = asyncHandler(async (req, res) => {
   const { user_id } = req.params;
 
-  let responseBody = {}
+  let responseBody = {};
 
-  
-  let bankDetails = projectionGenerator({"projtype":"bank"})
-  let bgvDetails = projectionGenerator({"projtype":"bgv"})
-  let personalDetails = projectionGenerator({"projtype":"personal"})
-  let educationDetails = projectionGenerator({"projtype":"education"})
-  // console.log("education---------",educationDetails)
+  // Define projections for different details
+  let bankDetailsProj = projectionGenerator({ "projtype": "bank" });
+  let bgvDetailsProj = projectionGenerator({ "projtype": "bgv" });
+  let personalDetailsProj = projectionGenerator({ "projtype": "personal" });
+  let educationDetailsProj = projectionGenerator({ "projtype": "education" });
 
-  personalDetails["job_type"] = 1
-  personalDetails["designation"] = 1
-  personalDetails["user_status"] = 1
+  // Add specific fields to personal details projection
+  personalDetailsProj["job_type"] = 1;
+  personalDetailsProj["designation"] = 1;
+  personalDetailsProj["employee_id"] = 1;
+  personalDetailsProj["department"] = 1;
+  personalDetailsProj["user_status"] = 1;
 
-  let basicProj = {...bankDetails,...bgvDetails,...personalDetails} 
-  let eduProj = educationDetails
-  let totalProj = {...basicProj,...eduProj}
+  // Combine projections for basic details
+  let basicProj = { ...bankDetailsProj, ...bgvDetailsProj, ...personalDetailsProj,"experience": 1 };
+  let eduProj = educationDetailsProj;
 
-  console.log("basic-proj",bankDetails)
-  console.log("total-proj",totalProj)
+  // Fetch employee document
+  const check = await crud.getDocument(employee, { "_id": user_id }, { ...basicProj, ...eduProj }, {});
 
-  const check = await crud.getDocument(employee,{"_id":user_id}, {...totalProj}, {});
-  let workExperienceDetails = await crud.getDocument(workexperience, {"employee_id":user_id},{},{})
 
-  responseBody["basic"] = generateCompleteObject(check[0],basicProj)
-  responseBody["education"] = generateCompleteObject(check[0],eduProj)
-  responseBody["experience"] = workExperienceDetails
-  
-  if(!check || !check.length) throw new Error('Data not Found!')
-  try{
-    success(res, 200, true, "Get Successfully",responseBody );
-  }catch(err) {
-    throw new Error(err);
+  // Check if employee data is found
+  if (!check || !check.length) {
+    return error(res, 404, "Data not Found!");
   }
-})
+
+  // Extract the first employee document
+  const employeeDoc = check[0];
+
+  // Construct response body
+  responseBody["basic"] = generateCompleteObject(employeeDoc, basicProj);
+
+  if (Array.isArray(employeeDoc.experience)) {
+    responseBody["experience"] = employeeDoc.experience.map(exp => ({
+      _id: exp._id,
+      designation: exp.designation,
+      company: exp.company,
+      startDate: exp.startDate,
+      endDate: exp.endDate,
+      description: exp.description,
+      jobType: exp.jobType,
+      location: exp.location,
+      offer_letter: exp.offer_letter,
+      separation_letter: exp.separation_letter,
+      pay_slip_01: exp.pay_slip_01,
+      pay_slip_02: exp.pay_slip_02,
+      pay_slip_03: exp.pay_slip_03,
+      hike_letter: exp.hike_letter,
+      separation_reason: exp.separation_reason,
+      payslip_reason: exp.payslip_reason,
+      internship_certificate:exp.internship_certificate,
+      stipend:exp.stipend
+    }));
+  } else {
+    responseBody["experience"] = []; // Default to empty array if no experience data
+  }
+
+
+  // Check if education exists and is an array
+  if (Array.isArray(employeeDoc.education)) {
+    responseBody["education"] = employeeDoc.education.map(edu => ({
+      ssc_file: edu.ssc_file,
+      hsc_file: edu.hsc_file,
+      degree_file: edu.degree_file,
+      additional_degree: edu.additional_degree // Include the entire array of additional degrees
+    }));
+  } else {
+    responseBody["education"] = []; // Default to an empty array if no education data
+  }
+
+
+
+  // Extract bank details separately
+  const bankDetails = {
+    name_as_in_bank: employeeDoc.name_as_in_bank,
+    bankName: employeeDoc.bankName,
+    fullname: employeeDoc.fullname,
+    accountNumber: employeeDoc.accountNumber,
+    ifscCode: employeeDoc.ifscCode,
+    branchName: employeeDoc.branchName,
+    branchAddress: employeeDoc.branchAddress,
+    country: employeeDoc.country,
+    state: employeeDoc.state,
+    city: employeeDoc.city,
+    zipcode: employeeDoc.zipcode,
+    supportingDocuments: employeeDoc.supportingDocuments,
+  };
+
+  responseBody["bankDetails"] = bankDetails; // Add bank details to the response
+
+  try {
+    success(res, 200, true, "Get Successfully", responseBody);
+  } catch (err) {
+    return error(res, 500, err.message);
+  }
+});
 router.get('/complete/:user_id', methods.getOneComplete)
 
 const checkFileBody = (fileBody,fieldName) => {
@@ -565,48 +644,135 @@ const updateFormCompletion = async (user_id) => {
   await crud.updateOne(employee, {"_id":user_id}, {"form_completion":form_percentage}, {})
 }
 
-//Edit Employee
-methods.edit =asyncHandler(async (req, res) => {
+methods.edit = asyncHandler(async (req, res) => {
   const { user_id } = req.params;
-  console.log("req.query",req.query)
 
-  console.log("reqq",req.files)
-  // if(req?.query?.edittype==="bank"){
-  //   fileUpdateMngr(req.body,req.files,["cheque_file"])
-  // }
-
-  // if(req?.query?.edittype==="bgv"){
-  // console.log("req.query",req.query)
-
-  //   fileUpdateMngr(req.body,req.files,["authorization_form","verification_form"])
-  // }
-
-  // if(req?.query?.edittype==="education"){
-  //   let required_files = ["ssc_file","hsc_file","degree_file"]
-  //   fileUpdateMngr(req.body,req.files,required_files)
-  //   let additionalObject = additionalEducationMngr(req.body,req.files,required_files)
-  //   if(additionalObject)
-  //     req.body["educationDetails"] = additionalObject
-  // }
-
-  if(req?.files?.length > 0){
-    req.files.map((file)=> {
-      req.body[file.fieldname]=file.path
-    })
+  if (req?.files?.length > 0) {
+    req.files.forEach((file) => {
+      req.body[file.fieldname] = file.path;
+    });
   }
 
-  const check = await crud.getDocument(employee,{"user_id":user_id},{},{});
-  if (!check) throw new Error('Data not Found!')
-  try{
-    console.log("rrrr",req.body)
-    let updateResponse = await crud.updateOne(employee, {"_id":user_id}, req.body, {})
-    await updateFormCompletion(user_id)
+  // Parse education data
+  if (req.body.education) {
+    const educationData = JSON.parse(req.body.education)[0];
+    req.body.education = [{
+      ssc_file: req.body.ssc_file || educationData.ssc_file,
+      hsc_file: req.body.hsc_file || educationData.hsc_file,
+      degree_file: req.body.degree_file || educationData.degree_file,
+      additional_degree: educationData.additional_degree.map((degree, index) => ({
+        exam: degree.exam,
+        additional_certificate: req.body[`additional_certificate_${index}`] || degree.additional_certificate
+      }))
+    }];
+  }
+  
+
+  const check = await crud.getDocument(employee, { "user_id": user_id }, {}, {});
+  if (!check) throw new Error('Data not Found!');
+
+  try {
+    let updateResponse = await crud.updateOne(employee, { "_id": user_id }, req.body, {});
+    await updateFormCompletion(user_id);
     success(res, 200, true, 'Update Successfully', updateResponse);
-  }catch(err) {
-    console.log("file err:",err)
+  } catch (err) {
     throw new Error(err);
   }
-})
-router.put('/:user_id',upload.any(),methods.edit )
+});
+
+router.put('/:user_id', upload.any(), methods.edit);
+
+methods.addExperience = asyncHandler(async (req, res) => {
+  console.log(req.body); // Log the entire request body
+  console.log(req.files); // Log the uploaded files
+
+  const { user_id } = req.params;
+
+  // Access experience data from req.body.experience
+  const experienceData = {
+    designation: req.body.experience.designation,
+    company: req.body.experience.company,
+    startDate: req.body.experience.startDate,
+    endDate: req.body.experience.endDate,
+    jobType: req.body.experience.jobType,
+    location: req.body.experience.location,
+    offer_letter: req.body.experience.offer_letter,
+    separation_letter: req.body.experience.separation_letter,
+    pay_slip_01: req.body.experience.pay_slip_01,
+    pay_slip_02: req.body.experience.pay_slip_02,
+    pay_slip_03: req.body.experience.pay_slip_03,
+    description: req.body.experience.description,
+    hike_letter: req.body.experience.hike_letter,
+    internship_certificate: req.body.experience.internship_certificate,
+    separation_reason: req.body.experience.separation_reason,
+    payslip_reason: req.body.experience.payslip_reason,
+    stipend:req.body.experience.payslip_stipend,
+
+  };
+
+  console.log('Experience Data:', experienceData); // Log the experience data
+
+  const updateResponse = await crud.updateOne(
+    employee,
+    { "_id": user_id },
+    { $push: { experience: experienceData } },
+    {}
+  );
+
+  if (updateResponse.modifiedCount === 1) {
+    success(res, 201, true, 'Experience Added Successfully', updateResponse);
+  } else {
+    throw new Error('Experience update failed');
+  }
+});
+
+
+router.post('/:user_id/experience', upload.fields([{ name: 'experience[offer_letter]' }, { name: 'experience[separation_letter]' },{ name: 'experience[hike_letter]' },{ name: 'experience[pay_slip_01]' },{ name: 'experience[pay_slip_02]' },{ name: 'experience[pay_slip_03]' },{name:'experience[internship_certificate]'}]), methods.addExperience);
+
+
+
+methods.editExperience = asyncHandler(async (req, res) => {
+  const { user_id, experience_id } = req.params; // Get user_id and experience_id from request parameters
+  const updateData = req.body; // Get the updated data from the request body
+
+  // Find the employee by user_id and update the specific experience entry
+  const updatedEmployee = await employee.findOneAndUpdate(
+    { _id: user_id, "experience._id": experience_id },
+    { $set: { "experience.$": updateData } }, // Use positional operator to update the specific experience
+    { new: true } // Return the updated document
+  );
+
+  // Check if the employee was found and updated
+  if (!updatedEmployee) {
+    return error(res, 404, "Employee or Experience not found!");
+  }
+
+  success(res, 200, true, "Experience updated successfully", updatedEmployee.experience);
+});
+
+router.put('/:user_id/experience/:experience_id', methods.editExperience);
+
+
+
+methods.deleteExperience = asyncHandler(async (req, res) => {
+  const { user_id, experience_id } = req.params; // Get user_id and experience_id from request parameters
+
+  // Find the employee by user_id and remove the specific experience entry
+  const updatedEmployee = await employee.findOneAndUpdate(
+    { _id: user_id },
+    { $pull: { experience: { _id: experience_id } } }, // Use $pull to remove the experience entry
+    { new: true } // Return the updated document
+  );
+
+  // Check if the employee was found and updated
+  if (!updatedEmployee) {
+    return error(res, 404, "Employee not found!");
+  }
+
+  success(res, 200, true, "Experience deleted successfully", updatedEmployee.experience);
+});
+
+router.delete('/:user_id/experience/:experience_id', methods.deleteExperience);
+
 
 module.exports = router;

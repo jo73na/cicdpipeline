@@ -351,9 +351,9 @@ const DefaultPermissions = ({input}) => {
       ]
     },
     {
-      module:"Profile",
-       url:"/myprofiles/:id",
-       component:"ProfilesEmployee",
+      module:"MyProfile",
+       url:"/ViewProfile/:id",
+       component:"ViewProfile",
        icon:"candidatesLogo",
       
       permissions:[

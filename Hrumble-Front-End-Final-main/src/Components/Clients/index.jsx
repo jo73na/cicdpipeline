@@ -234,7 +234,7 @@ const Clients = () => {
                                                     <div className="d-flex align-items-center">
                                                         {/* <img src={item.image} className="avatar avatar-xl" alt="" /> */}
                                                         <div className="ms-2 cat-name">
-                                                            <Link to ={`/clients/${client?._id}`} className="mb-0">{`${client.name}${client.parent ? `( ${client.parent.name} )` : ""}`}</Link>	
+                                                            <Link to ={`/myprojects/${client?._id}`} className="mb-0">{`${client.name}${client.parent ? `( ${client.parent.name} )` : ""}`}</Link>	
                                                             {/* <span>{item.subtitle}</span> */}
                                                         </div>	
                                                     </div>

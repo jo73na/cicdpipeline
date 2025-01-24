@@ -277,6 +277,8 @@ import ViewJobContext from '../../Providers/ViewJob';
       form.setFieldsValue({ offered_salary: offeredSalary });
     };
 
+
+    
      
   return (
     <div className='m_t_5'>
@@ -329,7 +331,7 @@ import ViewJobContext from '../../Providers/ViewJob';
             {
                status =="Client submission" &&
                
-                CandidateView?.job_id?.job_type !=="Full Time" &&
+                // CandidateView?.job_id?.job_type !=="Full Time" &&
                 <Form.Item label="Client Billable" name="client_billing"
                 rules={[{ required: true, message: "Client Billable is required" }]}
                 getValueFromEvent={(e) => {

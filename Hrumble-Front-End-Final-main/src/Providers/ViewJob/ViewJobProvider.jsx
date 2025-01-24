@@ -163,10 +163,7 @@ const ViewJobProvider = (props) => {
             .then((response)=>{
                 if(response.status===200){
                    handleClickjobTable(id)
-                   notification.success({
-                     message: response?.data?.message,
-                     duration:1,
-                   });
+                   
                    showEmployeModalEdit()
                    
                 }

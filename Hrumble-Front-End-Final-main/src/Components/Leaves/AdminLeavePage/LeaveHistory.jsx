@@ -2,7 +2,7 @@ import React, {useState,useContext, useEffect} from 'react';
 import {Link} from 'react-router-dom';
 import { CSVLink } from 'react-csv';
 import { IMAGES } from '../../../Utils/SVGICON';
-import { Button, Input, Table, Select, Tooltip } from 'antd';
+import { Button, Input, Table, Select, Tooltip, Modal, Form, notification } from 'antd';
 import LeaveContext from '../../../Providers/Leaves';
 import { useNavigate } from 'react-router-dom';
 import moment from 'moment';
@@ -33,12 +33,14 @@ const LeaveHistory = () => {
     const { requestleaves, fetchrequestleaves, handleChangeStatus } = useContext(LeaveContext);
     const navigate = useNavigate();
     const [editingId, setEditingId] = useState(null);
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    const [selectedStatus, setSelectedStatus] = useState('');
   
     useEffect(() => {
       fetchrequestleaves();
     }, []);
     const approvedLeaves = requestleaves?.filter(
-      (leave) => leave.status === 'Approved' || leave.status === 'Rejected'
+      (leave) => leave.status === 'Approved' || leave.status === 'Rejected' || leave.status === 'Cancelled'
     );
 
     const [currentPage , setCurrentPage] = useState(1);
@@ -73,42 +75,97 @@ const LeaveHistory = () => {
     }
     
 
+    // const handleStatusChange = async (id, newStatus) => {
+    //   if (newStatus === "Approved" || newStatus === "Rejected") {
+    //     try {
+    //       await handleChangeStatus(id, newStatus);
+    //       notification.success({
+    //         message: `Leave request ${newStatus} successfully!`,
+    //         duration: 2,
+    //       });
+    //       setEditingId(null); // Reset editing state after successful update
+    //     } catch (error) {
+    //       // Check if the error message is "Already Approved"
+    //       if (error.response && error.response.data.message === "Error: Already Approved") {
+    //         notification.error({
+    //           message: 'Update Failed',
+    //           description: 'This leave request has already been approved.',
+    //           duration: 2,
+    //         });
+    //       } else {
+    //         notification.error({
+    //           message: 'Failed to update leave request',
+    //           description: error.message,
+    //           duration: 2,
+    //         });
+    //       }
+    //     }
+    //   } else {
+    //     notification.warning({
+    //       message: 'Invalid status',
+    //       description: 'Please select either "Approved" or "Rejected".',
+    //       duration: 2,
+    //     });
+    //   }
+    // };
+
+    const handleEditClick = (id) => {
+      setEditingId(id);
+      setIsModalVisible(true);
+    };
+  
+    const handleModalCancel = () => {
+      setIsModalVisible(false);
+      setEditingId(null);
+    };
+  
+    const handleFormSubmit = async () => {
+      if (selectedStatus) {
+        await handleStatusChange(editingId, selectedStatus);
+        setIsModalVisible(false);
+      }
+    };
+  
     const handleStatusChange = async (id, newStatus) => {
-      if (newStatus === "Approved" || newStatus === "Rejected") {
-        try {
-          await handleChangeStatus(id, newStatus);
-          notification.success({
-            message: `Leave request ${newStatus} successfully!`,
-            duration: 2,
-          });
-          setEditingId(null); // Reset editing state after successful update
-        } catch (error) {
-          // Check if the error message is "Already Approved"
-          if (error.response && error.response.data.message === "Error: Already Approved") {
-            notification.error({
-              message: 'Update Failed',
-              description: 'This leave request has already been approved.',
-              duration: 2,
-            });
-          } else {
-            notification.error({
-              message: 'Failed to update leave request',
-              description: error.message,
-              duration: 2,
-            });
-          }
-        }
-      } else {
-        notification.warning({
-          message: 'Invalid status',
-          description: 'Please select either "Approved" or "Rejected".',
+      try {
+        await handleChangeStatus(id, newStatus);
+        notification.success({
+          message: `Leave request ${newStatus} successfully!`,
+          duration: 2,
+        });
+        setEditingId(null);
+      } catch (error) {
+        notification.error({
+          message: 'Failed to update leave request',
+          description: error.message,
           duration: 2,
         });
       }
     };
 
+
     return (
         <>
+        <Modal
+        title="Edit Leave Status"
+        visible={isModalVisible}
+        onCancel={handleModalCancel}
+        onOk={handleFormSubmit}
+        width={300}
+      >
+        <Form>
+          <Form.Item label="Status" name="status">
+            <Select onChange={(value) => setSelectedStatus(value)} value={selectedStatus}>
+              <Option value="Approved">Approve</Option>
+              <Option value="Rejected">Reject</Option>
+              <Option value="Cancelled">Cancel</Option>
+
+            </Select>
+          </Form.Item>
+        </Form>
+      </Modal>
+
+        
           <div className="card">
                 <div className="card-body p-0">
                     <div className="table-responsive active-projects style-1">
@@ -188,6 +245,8 @@ const LeaveHistory = () => {
           ? "Approved"
           : item.status === "Rejected"
           ? "Rejected"
+          : item.status === "Cancelled"
+          ? "Cancelled"
           : "Pending"}
       </Dropdown.Toggle>
       <Dropdown.Menu className="task-drop-menu">
@@ -207,6 +266,14 @@ const LeaveHistory = () => {
         >
           Reject
         </Dropdown.Item>
+        <Dropdown.Item
+          onClick={() => {
+            handleStatusChange(item._id, "Cancelled");
+            setEditingId(null);
+          }}
+        >
+          Cancelled
+        </Dropdown.Item>
       </Dropdown.Menu>
     </Dropdown>
   ) : (
@@ -214,7 +281,7 @@ const LeaveHistory = () => {
       className={`badge ${
         item.status === "Approved"
           ? "badge-success"
-          : item.status === "Rejected"
+          : item.status === "Rejected" || item.status === "Cancelled"
           ? "badge-danger"
           : "badge-warning"
       } light border-0 me-1`}
@@ -223,6 +290,8 @@ const LeaveHistory = () => {
         ? "Approved"
         : item.status === "Rejected"
         ? "Rejected"
+        : item.status === "Cancelled"
+          ? "Cancelled"
         : "Pending"}
     </span>
   )}
@@ -232,23 +301,20 @@ const LeaveHistory = () => {
                                             </td> 
                                             <td className="pe-0 table-number" style={{ textAlign: "center", verticalAlign: "middle" }}>
                                             <EditOutlined
-    className="icon-box icon-box-xs hover-effect"
-    style={{
-     
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-      height: "30px", // Adjust the height as needed
-      width: "30px", // Adjust the width as needed
-      borderRadius: "10%", // Makes the icon circular
-      backgroundColor: "#321F69", // Set your desired background color
-      color: "white", // Icon color
-      cursor: "pointer", // Pointer cursor for interactivity
-      transition: "background-color 0.3s, color 0.3s",
-      // Optional: Add a border
-    }}
-    onClick={() => setEditingId(item._id)} // Set the editing ID when clicked
-  />
+                          className="icon-box icon-box-xs hover-effect"
+                          style={{
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            height: "30px",
+                            width: "30px",
+                            borderRadius: "10%",
+                            backgroundColor: "#321F69",
+                            color: "white",
+                            cursor: "pointer",
+                          }}
+                          onClick={() => handleEditClick(item._id)}
+                        />
                                             </td>
                                         </tr>
                                     ))}

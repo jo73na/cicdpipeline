@@ -22,7 +22,7 @@ const EditDirectHiring = ({ jobId, closeForm }) => {
   const [job_description, setjob_description] = useState("");
   const [displaySalary, setDisplaySalary] = useState('');
   const [job_type, setjob_type] = useState("");
-  const { jobSingle, handleClickjobTable, skill,clients, init, handleClientChange } = useContext(JobContext);
+  const { jobSingle, handleClickjobTable, skill,clients, init, handleClientChange,fetchJob } = useContext(JobContext);
   const {editJob} = useContext(ViewJobContext);
   const [primarySelected, setPrimarySelected] = useState(jobSingle.primarySelected);
   const [secondarySelected, setSecondarySelected] = useState(jobSingle.secondarySelected);
@@ -167,7 +167,7 @@ const EditDirectHiring = ({ jobId, closeForm }) => {
     'skils'
   ];
 
-    const clientFields = ["client_id", "vendor_clientbillable", "end_client", "poc"];
+    const clientFields = ["client_id", "salary", "end_client", "poc"];
  
   const descriptionFields = ['job_description'];
  
@@ -281,20 +281,22 @@ const EditDirectHiring = ({ jobId, closeForm }) => {
         };
   
   
-        // Call editJob with the finalData
-        const updatedJob = await editJob(finalData, jobSingle._id); // Ensure you're passing the jobId here
+        
+        const updatedJob = await editJob(finalData, jobSingle._id); 
   
-        // Update the local state with the updated job data
-        setFormData(updatedJob); // Update the local state with the new job data
+       
+        setFormData(updatedJob); 
   
-        // Optionally, refresh the job table if needed
-        await handleClickjobTable(jobSingle._id); // This might still be useful for other parts of the UI
-        message.success("Job updated successfully!");
+      
         closeForm();
+        fetchJob();
+        message.success("Job updated successfully!");
       } catch (error) {
-        // message.error("Failed to update job: " + error.message);
       }
+
     }
+   
+
   };
 
   useEffect(() => {
@@ -638,7 +640,7 @@ const EditDirectHiring = ({ jobId, closeForm }) => {
                 <Col span={8}>
                   <Form.Item
                     label="Client Budget"
-                    name="vendor_clientbillable"
+                    name="salary"
                     rules={[
                       {
                         required: true,

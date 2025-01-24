@@ -191,7 +191,7 @@ import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 
 const { Text } = Typography;
 
-function CalenderData() {
+function CalenderData({height}) {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [holidays, setHolidays] = useState([]);
 
@@ -336,9 +336,9 @@ function CalenderData() {
       style={{
         backgroundColor: "#fff",
         borderRadius: "12px",
-        padding: "30px",
+        padding: "20px",
         boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-        height: "470px",
+        height: height,
         width: "420px",
         marginBottom:"14px"
         

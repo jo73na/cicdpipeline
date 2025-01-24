@@ -43985,9 +43985,9 @@ background: "#ebc1c1"
 .employeeForm.ant-select-selector,
 .employeeForm.ant-input-number,
 .employeeForm.ant-picker-input {
-  border-radius: 8px !important;
+  /* border-radius: 8px !important; */
   width: 100%; /* Ensure proper width in the layout */
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  /* box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); */
   height: 36px;
 }
  
@@ -44054,9 +44054,9 @@ background: "#ebc1c1"
 }
 
 .custom-task td .truncate {
-    white-space: nowrap; /* Prevent text from wrapping */
+    white-space: nowrap; 
     overflow: hidden;
-    text-overflow: ellipsis; /* Truncate overflowing text */
+    text-overflow: ellipsis;
     max-width: 100px;
 }
 
@@ -44088,3 +44088,154 @@ background: "#ebc1c1"
     display: flex;
     justify-content: center;
 }
+
+
+.document-section {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;  /* Space between each item */
+}
+
+.document-item {
+  display: flexbox;
+  align-items: center;
+  gap: 15px;
+  flex: 1;
+  /* min-width: 100px;   */
+  font-size: 14px;  
+}
+
+.document-item a {
+  display: d-flex;
+  align-items: center;
+}
+
+
+/* customStyles.css */
+
+
+
+
+.custom-ant-table .ant-table-tbody > tr > td {
+  padding: 4px 8px; /* Reduce padding to decrease row height */
+  font-size: 10px; /* Adjust font size */
+}
+
+/* Optional: Adjust line height for better fit */
+.custom-ant-table .ant-table-tbody > tr {
+  line-height: 1.2; 
+}
+
+/* Ensure the expanded row content is fully visible */
+.custom-ant-table .ant-table-expanded-row {
+  padding: 8px 0; /* Add padding to the expanded row */
+}
+
+
+/* In your CSS file */
+.row-color-1 {
+  background-color: #2A2E33 !important;
+}
+
+.row-color-2 {
+  background-color: #ff7f0e !important;
+}
+
+.row-color-3 {
+  background-color: #2ca02c !important;
+}
+
+
+/* Task */
+.custom-ant-table .ant-table-thead > tr > th {
+  font-size: 13px; /* Adjust the font size */
+  height: 18px; /* Adjust the header height */
+  background-color: #88A67E !important; /* Optional: Add a background color */
+
+  text-align: left; /* Align text to the left */
+  white-space: nowrap; /* Prevent text from wrapping */
+}
+
+.custom-ant-table .ant-table-tbody > tr > td {
+  text-align: left; /* Align text to the left for body cells */
+  white-space: nowrap; /* Prevent text from wrapping */
+  font-size: 13px; /* Match font size with the header */
+}
+
+.parent-task-row {
+  background-color: #f0f0f0 !important; /* Light grey background for parent tasks */
+}
+
+.custom-subtask-table .ant-table-thead > tr > th {
+  font-size: 13px; /* Adjust the font size */
+  height: 18px; /* Adjust the header height */
+  background-color: #88A67E !important; /* Optional: Add a background color */
+
+  text-align: left; /* Align text to the left */
+  white-space: nowrap; /* Prevent text from wrapping */
+}
+
+.custom-subtask-table .ant-table-tbody > tr > td {
+  text-align: left; /* Align text to the left for body cells */
+  /* white-space: nowrap;  */
+  font-size: 13px; /* Match font size with the header */
+}
+
+
+
+.custom-table .ant-table-thead > tr > th {
+  font-size: 12px; /* Adjust the font size */
+  height: 15px; /* Adjust the header height */
+  background-color: "#88A67E" !important;  /* Optional: Add a background color */
+  color:"#ffffff" !important;
+  text-align: left; /* Optional: Center-align the text */
+}
+
+.custom-row {
+  height: 10px !important; /* Adjust the height as needed */
+}
+.custom-row th {
+  height: 30px !important;
+  background-color: rgb(124, 58, 237) !important;
+  text-align: left !important;
+  padding: 5px 5px 5px 20px  !important;
+}
+.custom-row td {
+ /* Adjust padding for better spacing */
+  /* text-align: left !important; */
+  padding: 5px 0px 5px 17px  !important;
+}
+/* Hide vertical scrollbar while keeping scroll functionality */
+.custom-table .ant-table-body {
+  overflow-y: scroll !important; /* Ensure scrolling is still enabled */
+}
+
+/* Hide scrollbar in webkit browsers (Chrome, Safari) */
+.custom-table .ant-table-body::-webkit-scrollbar {
+  display: none; /* Hide scrollbar */
+}
+
+/* Hide scrollbar in Firefox */
+.custom-table .ant-table-body {
+  scrollbar-width: none; /* Hide scrollbar */
+}
+
+/* Hide scrollbar in IE */
+.custom-table .ant-table-body {
+  -ms-overflow-style: none;
+}
+
+
+.custom-upload-button {
+  color: black; /* Default text color */
+}
+
+.custom-upload-button:hover {
+  color: var(--primary) !important; /* Change this to your desired hover color */
+}
+
+.masked-input {
+  -webkit-text-security: disc; /* For WebKit-based browsers like Chrome, Safari */
+  text-security: disc; /* For other browsers */
+}
+

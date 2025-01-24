@@ -1870,6 +1870,7 @@ router.get('/joinedCount', authAdmin, asyncHandler(async (req, res) => {
 }));
 
 
+
 router.get('/DatabaseAdded/:query', asyncHandler(async (req, res) => {
   let query=req.params.query;
   let aggregateweekQuery=[]
@@ -3920,6 +3921,9 @@ router.get('/owner-select/',authAdmin, asyncHandler(async (req, res) => {
             throw new Error(error);
           }
           }))
+
+
+          ////
 
           router.get('/totalEarningsChart/', authAdmin, asyncHandler(async (req, res) => {
             try {

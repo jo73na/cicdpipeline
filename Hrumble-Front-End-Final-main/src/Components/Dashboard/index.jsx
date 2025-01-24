@@ -363,7 +363,7 @@ const totalDataCount = (Array.isArray(invoicechart?.data1) && Array.isArray(invo
           
                 <div className='col-xl-2 col-xxl-4 col-lg-4 col-md-2 col-sm-2'>
                   <div>
-                    <CalenderData/>
+                    <CalenderData height='395px'/>
                   </div>
                 </div>
                 </div>
@@ -688,7 +688,7 @@ const totalDataCount = (Array.isArray(invoicechart?.data1) && Array.isArray(invo
 <div className="col-xl-3">
 <div className="row">
    <div className="col-xl-8">
-       <CalenderData/>
+       <CalenderData height='465px'/>
    </div>
    <div className="col-xl-12">
        {/* <AllProjectBlog /> */}

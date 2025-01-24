@@ -210,7 +210,6 @@ const FetchEmployeeTable = async () => {
 
   const fetchEmployFull = async (id) => {
 
-    console.log("getID----->",id)
 
     let employeeApi = `${BASE_URL}/employee`
     let employeebyIdApi = `${BASE_URL}/employee/${id}`
@@ -260,10 +259,7 @@ const FetchEmployeeTable = async () => {
                  }
                  else{
                     setAddButton(false)
-                    notification.error({
-                      message: response?.data?.message?.split(":")[1],
-                      duration:1,
-                    });
+                    
                     onClose();
 
                     
@@ -283,7 +279,7 @@ const FetchEmployeeTable = async () => {
     }
 
     const addExper =(values,id)=>{
-       console.log("valuesssssss",values)
+
       const apiCreate=`${BASE_URL}/work-experience`
 
       axios.post(apiCreate,values,{
@@ -451,10 +447,7 @@ const FetchEmployeeTable = async () => {
           )
           .then((response) => {
             if (response.status === 200) {
-              notification.success({
-                message: response?.data?.message,
-                duration: 1,
-              });
+              
               onClose();
               handleClickjobTable();
               setOpenaddEmply(!openaddEmply)
@@ -462,6 +455,85 @@ const FetchEmployeeTable = async () => {
           })
           .catch((err) => console.log("error", err));
       };
+
+      const addExperience = (values, id) => {
+        console.log("id", id);
+      
+        const apiCreate = `${BASE_URL}/employee/${id}/experience`;
+      
+        axios
+          .post(
+            apiCreate,
+            values, // include the values directly in the request body
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+                // Other headers if needed
+              },
+            }
+          )
+          .then((response) => {
+            if (response.status === 201) {
+              
+             
+              handleClickjobTable();
+             
+            }
+          })
+          .catch((err) => console.log("error", err));
+      };
+
+      const editExperience = (values, userId, experienceId) => {
+        console.log("userId", userId, "experienceId", experienceId);
+      
+        const apiEdit = `${BASE_URL}/employee/${userId}/experience/${experienceId}`;
+      
+        axios
+          .put(
+            apiEdit,
+            values, // include the updated values directly in the request body
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+                // Other headers if needed
+              },
+            }
+          )
+          .then((response) => {
+            if (response.status === 200) {
+             
+      
+              handleClickjobTable(); // Call your function to refresh the job table or experience list
+            }
+          })
+          .catch((err) => console.log("error", err));
+      };
+
+      const deleteExperience = (userId, experienceId) => {
+        console.log("userId", userId, "experienceId", experienceId);
+      
+        const apiDelete = `${BASE_URL}/employee/${userId}/experience/${experienceId}`;
+      
+        axios
+          .delete(apiDelete, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              // Other headers if needed
+            },
+          })
+          .then((response) => {
+            if (response.status === 200) {
+              notification.success({
+                message: response?.data?.message,
+                duration: 1,
+              });
+      
+              handleClickjobTable(); 
+            }
+          })
+          .catch((err) => console.log("error", err));
+      };
+      
 
       const editPersonal = (values,id,onClose,onClose2) => {
         let params = {
@@ -516,10 +588,7 @@ const FetchEmployeeTable = async () => {
         )
         .then((response) => {
           if (response.status === 200) {
-            notification.success({
-              message: response?.data?.message,
-              duration: 1,
-            });
+            
             fetchEducation(EducationEmp?._id)
             setOpenaddEmply(!openaddEmply)
           }
@@ -756,7 +825,10 @@ const FetchEmployeeTable = async () => {
                 handleClickjobTable,
                 employeeCompleteFetch,
                 editExperienceInfo,
+                addExperience,
                 // fetchExper,
+                editExperience,
+                deleteExperience,
             
                 Loading
             }}

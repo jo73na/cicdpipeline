@@ -193,7 +193,9 @@ const SideBar = ({collapsed}) => {
             <HailOutlined style={{fontSize: '18px'}}/>
           ):  item.icon === "TaskLogo" ? (
             <TaskAltOutlined style={{fontSize: '18px'}}/>
-          )  : (
+          ) :  item.icon === "candidatesLogo" ? (
+            <TaskAltOutlined style={{fontSize: '18px'}}/>
+          ) : (
             <img
               style={{
                 width: "24px",

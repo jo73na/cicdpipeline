@@ -74,23 +74,27 @@ const ClientProvider = (props) => {
       console.log("error", error);
     }
   };
-  const handleSelectChangeProject = async (e, record) => {
-    let projectapi = `${BASE_URL}/projects/${record.action}`;
-
-    try {
-      await axios.put(projectapi, { status: e }).then((resp) => {
-        if (resp) {
-          notification.success({
-            message: `Status Changed Successfully`,
-            duration: 1,
-          });
-          handleClientTable(resp?.data?.data?.client_id, false);
-        }
+  const handleSelectChangeProject = async (status, record) => {
+  
+  const projectId = record.key; 
+  
+  let projectapi = `${BASE_URL}/projects/${projectId}`; 
+  
+  try {
+    const resp = await axios.put(projectapi, { status });
+    
+    if (resp) {
+      notification.success({
+        message: `Status Changed Successfully`,
+        duration: 1,
       });
-    } catch (error) {
-      console.log("error", error);
+      handleClientTable(resp?.data?.data?.client_id, false); 
     }
-  };
+  } catch (error) {
+    console.log("error", error);
+  }
+};
+
 
   const handleopenDrawer = () => {
     setOpenDrawer(!openDrawer);
@@ -187,6 +191,38 @@ const ClientProvider = (props) => {
         console.log(err);
         setEditButtonClient(false);
         notification.error("Something Went Wrong!");
+      });
+  };
+
+  const handleEditProject = (newStatus, record) => {
+    const apiUpdate = `${BASE_URL}/projects/${record._id}`; 
+
+    axios
+      .put(apiUpdate, { status: newStatus }, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((response) => {
+        if (response.status === 200) {
+          notification.success({
+            message: response?.data?.message || 'Status updated successfully!',
+            duration: 1,
+          });
+          handleClientTable(); // Refresh the project list
+        } else {
+          notification.error({
+            message: "Something Went Wrong!",
+            duration: 1,
+          });
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+        notification.error({
+          message: "Something Went Wrong!",
+          duration: 1,
+        });
       });
   };
 
@@ -289,30 +325,103 @@ const ClientProvider = (props) => {
     setOpenDrawerEdit(false);
   };
 
-  const handleAssignEmployee = async (values, form, prams) => {
-    let apiAssign = `${BASE_URL}/projectemployess`;
+  // const handleAssignEmployees = async (projectId, employees, form) => {
+  //   let assignEmployeesUrl = `${BASE_URL}/projects/${projectId}/assignemployees`;
+  
+  //   await axios
+  //     .patch(assignEmployeesUrl, { employees }, {
+  //       headers: {
+  //         Authorization: `Bearer ${token}`,
+  //         // Other headers if needed
+  //       },
+  //     })
+  //     .then((response) => {
+  //       if (response.status === 200) {
+  //         notification.success({
+  //           message: "Employees assigned successfully",
+  //           duration: 1,
+  //         });
+  //         setOpenDrawer(false);
+  //         handleClientTable();
+  //         form.resetFields();
+  //       }
+  //     })
+  //     .catch((err) => {
+  //       console.log("Error", err);
+  //       notification.error({
+  //         message: "Failed to assign employees",
+  //         description: err.response?.data?.message || err.message,
+  //       });
+  //     });
+  // };
+  
+  const handleAssignEmployees = async ({ projectId, employees }) => {
+    let assignEmployeesUrl = `${BASE_URL}/projects/${projectId}/assignemployees`;
+  
     try {
-      await axios.post(apiAssign, values).then((resp) => {
-        console.log("clientbillable", resp.data.data);
-
+      const response = await axios.patch(assignEmployeesUrl, { employees }, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          // Other headers if needed
+        },
+      });
+  
+      if (response.status === 200) {
         notification.success({
-          message: resp?.data?.message,
+          message: "Employees assigned successfully",
           duration: 1,
         });
-        form.resetFields();
-        handleopenDrawer();
-        handleClickProjectTable(projectSingle?._id);
-
-        // setLoading(false);
+        // Add any additional actions needed on success
+        setOpenDrawer(false);
+          handleClientTable();
+          form.resetFields();
+      }
+    } catch (err) {
+      console.log("Error", err);
+      notification.error({
+        message: "Failed to assign employees",
+        description: err.response?.data?.message || err.message,
       });
-    } catch (error) {
-      console.log("error", error);
     }
   };
+  
+  const handleEditAssignedEmployee = async ({ projectId, employeeId, status }) => {
+    try {
+      const editEmployeeUrl = `${BASE_URL}/projects/${projectId}/editAssignedEmployee/${employeeId}`;
+      
+      const response = await axios.patch(
+        editEmployeeUrl, 
+        { status },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+  
+      if (response.status === 200) {
+        notification.success({
+          message: "Assigned employee updated successfully",
+          duration: 1,
+        });
+        setOpenDrawer(false);
+        handleClientTable();  // Reload table data if necessary
+      }
+    } catch (err) {
+      console.log("Error", err);
+      notification.error({
+        message: "Failed to update assigned employee",
+        description: err.response?.data?.message || err.message,
+      });
+    }
+  };
+  
+  
+  
   const handleAssignEmployeeEdit = async (values, form, prams) => {
     let apiAssign = `${BASE_URL}/projectemployess/${assignSingle?._id}`;
     try {
-      await axios.put(apiAssign, values).then((resp) => {
+      await axios.put(apiAssign, {values}).then((resp) => {
         console.log("clientbillable", resp.data.data);
 
         notification.success({
@@ -418,7 +527,7 @@ const ClientProvider = (props) => {
         employeejobdata,
         clientbillable,
         handlechangeJob,
-        handleAssignEmployee,
+      
         setLoading,
         handleAssignEdit,
         assignSingle,
@@ -427,7 +536,10 @@ const ClientProvider = (props) => {
         handleAssignEmployeeEdit,
         assignLoading,
         handleAssignDelete,
-        clientSelect
+        clientSelect,
+        handleEditProject,
+        handleAssignEmployees,
+        handleEditAssignedEmployee,
       
       }}
     >

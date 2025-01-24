@@ -736,7 +736,7 @@ const JobDashboard = () => {
       >
         <EditDirectHiring
         // jobId={editDrawer}
-        // closeForm={() => handleEditJob()}
+        closeForm={() => handleEditJob()}
         />
       </Modal>
 

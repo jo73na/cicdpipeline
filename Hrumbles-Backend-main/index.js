@@ -55,11 +55,48 @@ app.use('/resumeparser', (req, res) => {
 
 })
 
-app.use("/test",(req,res)=>{
-     res.json({
-       message:"Hii Welcome to.........."
-     })
-})
+// app.use("/test",(req,res)=>{
+//      res.json({
+//        message:"Hii Welcome to.........."
+//      })
+// })
+
+app.post('/test', upload.single('file'), (req, res) => {
+  try {
+    // Check if file was uploaded
+    if (!req.file) {
+      return res.status(400).json({ message: 'No file uploaded' });
+    }
+
+    // Generate the relative file path (excluding the base URL)
+    const filePath = `uploads/${req.file.filename}`;
+
+    // Respond with the relative file path
+    res.json({
+      message: 'File uploaded successfully',
+      url: filePath,  // Send only the relative file path
+    });
+  } catch (error) {
+    console.error('Error uploading file:', error);
+    res.status(500).json({ message: 'Error uploading file', error: error.message });
+  }
+});
+
+
+/////
+
+// app.post('/upload', upload.single('file'), (req, res) => {
+//   if (!req.file) {
+//       return res.status(400).json({ success: false, message: 'No file uploaded' });
+//   }
+
+//   // Construct the file path
+//   const filePath = path.join(DIR, req.file.filename); // Adjust the path as needed
+
+//   // Respond with the file path
+//   res.json({ success: true, filePath: filePath });
+// });
+
 app.get("/skillexample",(req,res)=>{
   const options = {
     method: 'GET',
