@@ -3,7 +3,7 @@ import { useContext,useEffect,lazy, useState } from 'react';
 import Loader from '../../Utils/Loader';
 import CookieUtil from '../../Utils/Cookies';
 const GraphDashboard = lazy(() => import("./GraphDashboard"));
-const Interview = lazy(() => import("./Interview"));
+// const Interview = lazy(() => import("./Interview"));
  
 const ClientBarChart = lazy(() => import("./ClientBarChart"));
 import DashboardContext from '../../Providers/DashboardProvider';

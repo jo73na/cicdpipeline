@@ -1,4 +1,4 @@
-import PersonalDetails from "./Personaldetails";
+import PersonalDetails from "./PersonalDetails";
 import { Card, Progress, Menu } from "antd";
 import { useEffect, useState } from "react";
 import EducationalDetails from "./Educationdetails";

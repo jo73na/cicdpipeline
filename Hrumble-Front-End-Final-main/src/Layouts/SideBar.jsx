@@ -20,7 +20,6 @@ import ProfileLogo from "/images/Profile.svg";
 import Invoicelogo from "/images/Invoice.svg";
 import Settingslogo from "/images/Settings.svg";
 import Companylogo from "/images/CompanyIcon.svg";
-import InvoiceLogo from "/images/InvoiceIcon.svg";
 import ExpenseLogo from "/images/ExpenseIcon.svg";
 import TeamLogo from "/images/Teamicon.svg";
 import GoalLogo from "/images/target-account.svg";
@@ -145,7 +144,6 @@ const SideBar = ({collapsed}) => {
       GoalLogo,
       TaskLogo,
       UsermanagementLogo,
-      Invoicelogo,
       ContactsLogo
     };
   
