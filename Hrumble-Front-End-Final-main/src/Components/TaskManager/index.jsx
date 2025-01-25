@@ -74,12 +74,17 @@ const [expandedRowKeys, setExpandedRowKeys] = useState([]);
         fetchUsers();
 	}, []);
     useEffect(() => {
-        setTableData(tasks.filter(task => !task.parent_id));
+        // Filter parent tasks (tasks without parent_id) and sort by createdAt descending
+        const sortedParentTasks = tasks
+            .filter(task => !task.parent_id)
+            .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    
+        setTableData(sortedParentTasks);
+    
         // Create a mapping of tasks to their subtasks
         const taskMap = {};
         tasks.forEach(task => {
             if (task.parent_id) {
-                // If the task has a parent_id, add it to the parent's subtasks
                 if (!taskMap[task.parent_id]) {
                     taskMap[task.parent_id] = [];
                 }
@@ -88,25 +93,29 @@ const [expandedRowKeys, setExpandedRowKeys] = useState([]);
         });
         setSubtasks(taskMap); // Store the mapping in state
     }, [tasks]);
-
-
+    
     useEffect(() => {
         // Filter tasks based on user role
-        const filteredTasks = role === "SuperAdmin" 
+        const filteredTasks = role === "SuperAdmin"
             ? tasks // Do not filter tasks for SuperAdmin
-            : tasks.filter(task => 
+            : tasks.filter(task =>
                 task.assignedTo?.some(assigned => assigned.email === employeeEmail)
             );
-
-        // Group tasks and subtasks
+    
+        // Group parent tasks and subtasks
         const parentTasks = filteredTasks.filter(task => !task.parent_id);
-        const tasksWithSubtasks = parentTasks.map(parent => ({
-            ...parent,
-            subtasks: filteredTasks.filter(subtask => subtask.parent_id === parent._id)
-        }));
-
+        const tasksWithSubtasks = parentTasks
+            .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)) // Sort by createdAt descending
+            .map(parent => ({
+                ...parent,
+                subtasks: filteredTasks
+                    .filter(subtask => subtask.parent_id === parent._id)
+                    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)), // Optionally sort subtasks too
+            }));
+    
         setTableData(tasksWithSubtasks);
     }, [tasks, role, employeeEmail]);
+    
 
 
    
