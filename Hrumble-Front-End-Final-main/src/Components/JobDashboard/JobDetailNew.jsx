@@ -126,13 +126,15 @@ import  { useContext, useState } from 'react'
 
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import ViewJobContext from '../../Providers/ViewJob';
-import { Button, Drawer, Popover } from 'antd';
+import JobContext from '../../Providers/JobProvider';
+import { Button, Drawer, Popover, Modal } from 'antd';
 // import ViewJobContext from '../../../context/ViewJobContext';
 import EditJobDetail from './EditJobDetail';
 import dayjs from 'dayjs';
 import {CopyToClipboard} from 'react-copy-to-clipboard';
 import { useEffect } from 'react';
 import CookieUtil from '../../Utils/Cookies';
+import EditVendorModal from "./EditVendorAssign";
 
 
 
@@ -142,13 +144,24 @@ import CookieUtil from '../../Utils/Cookies';
 
 const JobDetailNew = () => {
     const { jobSingle,editButtonJob,showEmployeModalEdit } = useContext(ViewJobContext);
+    const {
+        openAssign,
+        setOpenAssign, handleRemoveVendor
+      } = useContext(JobContext);
      const navigate =useNavigate()
    const [copy,setCopy]=useState(false)
    const [copyButton,setCopyButton]=useState(false)
    const role = CookieUtil.get("role");
    const admin_id = CookieUtil.get("admin_id");
+   const [selectedVendor, setSelectedVendor] = useState(null);
+   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
+   const handleEditVendor = (vendor) => {
+       setSelectedVendor(vendor);
+       setIsEditModalOpen(true);
+   };
 
+console.log("Jobsinle:::", jobSingle)
         let vendardata =jobSingle?.assigneddata?.find((e) => e.assign?._id === admin_id);
     console.log(("8byoukbh",vendardata))
 
@@ -161,46 +174,62 @@ const JobDetailNew = () => {
     <div className="description_content mt-2" dangerouslySetInnerHTML={{ __html: jobSingle?.job_description }} />
     
     </div>
-  
     
-  const aboutme = [
-   
-    ...(role !== "Vendor" && jobSingle?.client_id?.[0]?.name
-    ? [{ title: 'Company Name', icon: 'fa-solid fa-city', subtitle: jobSingle.client_id[0].name },
-    {title:'Job Type', icon:'fa-solid fa-book', subtitle:jobSingle?.job_type},
-
-    {title:'Client Budget', icon:'fa-solid fa-indian-rupee-sign', subtitle:`${jobSingle?.vendor_clientbillable} - ${jobSingle?.salaryType}` || '-'},
-    {title:'Budget', icon:'fa-solid fa-indian-rupee-sign', subtitle:`${jobSingle?.salary} - ${jobSingle?.salaryType}` || '-'},
-    { title: 'End Client', icon: 'fa-solid fa-building-user', subtitle: jobSingle?.end_client?.length > 0 ? jobSingle.end_client.join(', ') : "-" },    
-
-  ]
-    : [
-    {title:'Job Type', icon:'fa-solid fa-book', subtitle:jobSingle?.job_type},
-    {title:'Experience', icon:'fa-solid fa-hand-holding-heart', subtitle: `${jobSingle?.exp_from} Yrs   -  ${jobSingle?.exp_to} Yrs` || "-"},
-    {title:'Budget', icon:'fa-solid fa-indian-rupee-sign', subtitle:`${jobSingle.salary} - ${jobSingle?.salary_type ?? jobSingle?.salaryType}` || '-'},
-]),
-
-    {title:'Location', icon:'fa-solid fa-location-dot', subtitle:jobSingle?.job_location.map((item,i)=><span key={i} className=''>{item},&nbsp;</span>) || "-"},
-    {title:'Date posted:', icon:'fa-solid fa-clock', subtitle:dayjs(jobSingle?.createdAt).format("DD-MM-YYYY")||"-"},
-    // {title:'Blood Group', icon:'fa-solid fa-layer-group', subtitle:'A+'},
-    // {title:'Blood Group', icon:'fa-solid fa-layer-group', subtitle:'A+'},
-    // {title:'Blood Group', icon:'fa-solid fa-layer-group', subtitle:'A+'},
+  const aboutme = role === "Vendor" ? [
+    { title: 'Budget', icon: 'fa-solid fa-indian-rupee-sign', subtitle: `${vendardata?.vendor_clientbillable || "0"} - ${vendardata?.vendor_salary_type || ""}` },
+    { title: 'Location', icon: 'fa-solid fa-location-dot', subtitle: jobSingle?.job_location.map((item, i) => <span key={i}>{item},&nbsp;</span>) || "-" },
+    { title: 'Date posted:', icon: 'fa-solid fa-clock', subtitle: dayjs(jobSingle?.createdAt).format("DD-MM-YYYY") || "-" },
+] : [
+    { title: 'Company Name', icon: 'fa-solid fa-city', subtitle: Array.isArray(jobSingle?.client_id) && jobSingle.client_id.length > 0 
+        ? jobSingle.client_id[0]?.name 
+        : "-"  },
+    { title: 'Job Type', icon: 'fa-solid fa-book', subtitle: jobSingle?.job_type || "-" },
+    { title: 'Client Budget', icon: 'fa-solid fa-indian-rupee-sign', subtitle: `${jobSingle?.vendor_clientbillable} - ${jobSingle?.salaryType}` || '-' },
+    { title: 'Budget', icon: 'fa-solid fa-indian-rupee-sign', subtitle: `${jobSingle.salary} - ${jobSingle?.salaryType || jobSingle?.salaryType}` || '-' },
+    ...(() => {
+        const externalVendorData = jobSingle?.assigneddata?.filter(e => e.assign_type === "External") || [];
+        if (externalVendorData.length > 0) {
+            const firstVendor = externalVendorData[0]; 
+            return [{
+                title: 'Vendor Budget',
+                icon: 'fa-solid fa-indian-rupee-sign',
+                subtitle: `${firstVendor.vendor_clientbillable} - ${firstVendor.vendor_salary_type}`
+            }];
+        }
+        return []; 
+    })(),
+    { title: 'End Client', icon: 'fa-solid fa-building-user', subtitle: jobSingle?.end_client?.length > 0 ? jobSingle.end_client.join(', ') : "-" },
+    { title: 'Location', icon: 'fa-solid fa-location-dot', subtitle: Array.isArray(jobSingle?.job_location) && jobSingle.job_location.length > 0 
+        ? jobSingle.job_location.map((item, i) => <span key={i}>{item},&nbsp;</span>) 
+        : "-"  },
+    { title: 'Date posted:', icon: 'fa-solid fa-clock', subtitle: dayjs(jobSingle?.createdAt).format("DD-MM-YYYY") || "-" },
 ];
 function  PostComment(){
     return(
         <ul className="post-comment d-flex mt-1">
               <li>
-                <label className="me-3"><Link to={"#"}><i className=" fa-solid  fa-person-dress me-2"></i>{
-                     role == "Vendor" ?
-                      "Technoladders"
-                      :
-                      jobSingle?.client_id[0]?.name
-                }
+                <label className="me-3"><Link to={"#"}><i className=" fa-solid  fa-person-dress me-2"></i> {role === "Vendor" 
+            ? "Technoladders"
+            : (Array.isArray(jobSingle?.client_id) && jobSingle.client_id.length > 0 
+                ? jobSingle.client_id[0]?.name 
+                : "-") 
+        }
                 </Link></label>
             </li>
             <li>
-                <label className="me-3"><Link to={"#"}><i className=" fa-solid  fa-location-dot me-2"></i>{jobSingle?.job_location.map((item,i)=><span key={i} className=''>{item},&nbsp;</span>) || "-"}</Link></label>
-            </li>
+            <label className="me-3">
+    <Link to={"#"}>
+        <i className="fa-solid fa-location-dot me-2"></i>
+        {Array.isArray(jobSingle?.job_location) && jobSingle.job_location.length > 0 
+            ? jobSingle.job_location.map((item, i) => (
+                <span key={i}>{item},&nbsp;</span>
+              ))
+            : "-"
+        }
+    </Link>
+</label>
+
+                  </li>
          
          
           
@@ -319,15 +348,16 @@ function  PostComment(){
                      <div>
 								 {
                                      role =="SuperAdmin" &&
-                                     <div
-                                     className='p-3'>
-                                    <h4 className="text-primary mb-2 ">Assigned</h4>
-                              <div>
-                              {jobSingle?.assigneddata?.map((e,i)=>
-                                                      <Link key={i} to="" className="btn btn-primary light btn-xs mb-1 me-1"> {e?.assign?.name||""}</Link>
+                                     <div className='p-3'>
+                                     <h4 className="text-primary mb-2 ">Assigned</h4>
+                                     <div>
+                                     {jobSingle?.assigneddata?.map((e,i)=>
+                                                      <Link key={i} to="" className="btn btn-primary light btn-xs mb-1 me-1" onClick={() => handleEditVendor(e)}> {e?.assign?.name||""}</Link>
                                                       )}   
-                              </div>
-                                    </div>
+                                     
+                                     </div>
+                                 </div>
+                                 
                                  }
                      </div>
                     <div className="profile-skills  p-3">
@@ -574,6 +604,13 @@ function  PostComment(){
     >
     <EditJobDetail/>
   </Drawer>
+  <EditVendorModal
+                visible={isEditModalOpen}
+                onClose={() => setIsEditModalOpen(false)}
+                vendorData={selectedVendor}
+                jobId={jobSingle?._id}
+                width={200}
+            />
 </>		
   
 

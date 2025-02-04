@@ -33,6 +33,8 @@ const MyProfile = () => {
   let role = CookieUtil.get("role");
   const [current, setCurrent] = useState("profile");
   const navigate = useNavigate();
+
+  console.log("Params:", params);
  
   useEffect(()=>{
     if(id) {

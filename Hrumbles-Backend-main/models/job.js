@@ -41,10 +41,11 @@ const JOBSSCHEMA = {
       {
       
        assign:  {type:mongoose.Schema.Types.ObjectId, ref:"admin", default:null, },
-       budget:Number,
+      //  budget:Number,
        vendor_salary_type:String,
        vendor_job_type:String,
-      //  vendor_clientbillable:Number
+       vendor_clientbillable:Number,
+       assign_type:String
       }
      ],
      assign:[{

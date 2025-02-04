@@ -408,30 +408,29 @@ const JobProvider = (props) => {
         setopenvendor(!openvendor);
       }
 
-      const handleAssignVendor = (values, form) => {
+      const handleAssignVendor = async (values, form) => {
         setvendorbutton(true);
         const apiCreateVendor = `${BASE_URL}/assignvendor/${vendorjob}`;
-        
-        axios.put(apiCreateVendor, values, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        })
-        .then((response) => {
-            notification.success({
-                message: response?.data?.message,
-                duration: 1,
-            });
-            setvendorbutton(false);
-            setopenvendor(!openvendor);
-            form.resetFields();
-        })
-        .catch((err) => {
-            console.log(err);
-            setvendorbutton(false);
-            notification.error("Something Went Wrong!");
-        });
-    };
+      
+        try {
+          const response = await axios.put(apiCreateVendor, values, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+      
+          notification.success({
+            message: response?.data?.message,
+            duration: 1,
+          });
+      
+          setvendorbutton(false);
+          setopenvendor(!openvendor);
+          form.resetFields();
+        } catch (err) {
+          setvendorbutton(false);
+          notification.error({ message: err?.response?.data?.message || "Something Went Wrong!" });
+        }
+      };
+      
     const handleAssignVendorTeam=(values,form)=>{
       setvendorbutton(true)
      
@@ -466,6 +465,52 @@ const JobProvider = (props) => {
            }
            )
   }
+
+  const handleRemoveVendor = async (vendorId, jobId) => {
+    setvendorbutton(true);
+    const apiRemoveVendor = `${BASE_URL}/removevendor/${jobId}`;
+
+    try {
+        const response = await axios.put(apiRemoveVendor, { vendorId }, {
+            headers: { Authorization: `Bearer ${token}` },
+        });
+
+        notification.success({
+            message: response?.data?.message,
+            duration: 1,
+        });
+
+        setvendorbutton(false);
+        setopenvendor(!openvendor);
+    } catch (err) {
+        setvendorbutton(false);
+        notification.error({ message: err?.response?.data?.message || "Something Went Wrong!" });
+    }
+};
+
+const handleUpdateVendor = async (jobId, vendorId, updatedData) => {
+  setvendorbutton(true);
+  const apiUpdateVendor = `${BASE_URL}/updatevendor/${jobId}`;
+
+  try {
+      const response = await axios.put(apiUpdateVendor, { vendorId, ...updatedData }, {
+          headers: { Authorization: `Bearer ${token}` },
+      });
+
+      notification.success({
+          message: response?.data?.message,
+          duration: 1,
+      });
+
+      setvendorbutton(false);
+      setopenvendor(!openvendor);
+  } catch (err) {
+      setvendorbutton(false);
+      notification.error({ message: err?.response?.data?.message || "Something Went Wrong!" });
+  }
+};
+
+
     return (
         <Context.Provider
             value={{
@@ -535,6 +580,8 @@ const JobProvider = (props) => {
                 handleEditJob,
                 editDrawer,
                 handleAssign,
+                handleRemoveVendor,
+                handleUpdateVendor,
             }}
         >
             {props.children}

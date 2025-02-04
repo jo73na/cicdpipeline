@@ -51,6 +51,7 @@ const ViewJob = () => {
      const [modalVisible, setModalVisible] = useState(false);
      const [currentAnalysisResult, setCurrentAnalysisResult] = useState(null);
      const admin_id = CookieUtil.get("admin_id");
+     const role = CookieUtil.get("role");
  
   console.log("permission", permission);
   let filter = permission?.find((item) => item?.name == "Jobs");
@@ -476,6 +477,8 @@ console.log("CandidateView:::", CandidateView);
                 </span>
               </h4>
               </div>
+              {role !== "Vendor" && (
+                <>
               <div className="card-body px-3 py-2">
               <h4 className="d-flex justify-content-between align-items-center mb-2">
                 <div className="d-flex align-items-center">
@@ -518,6 +521,8 @@ console.log("CandidateView:::", CandidateView);
                 </span>
               </h4>
               </div>
+              </>
+              )}
               <div className="card-body px-3 py-2">
               <h4 className="d-flex justify-content-between align-items-center mb-2">
                 <div className="d-flex align-items-center">
@@ -717,7 +722,10 @@ console.log("CandidateView:::", CandidateView);
                                  filter?.options?.includes("View Profit") &&
                                          <th>Profit</th>
                                        }
+                                       {role !== "Vendor" && (
                                         <th>Progress</th>
+
+                                       )}
                                         <th>Status</th>
                                         <th>Action</th>
                                     </tr>
@@ -740,10 +748,10 @@ console.log("CandidateView:::", CandidateView);
                                             </td>
                                            
                                             <td>{ item?.candidate_owner?.name}</td>
-                                            {
-  filter?.options?.includes("View Profit") &&
-  <td><span>{profit(item)}</span></td>
-      }
+                                            {role !== "Vendor" && (
+                                              <>
+                                                                        <td><span>{profit(item)}</span></td>
+                                                                   
 <td>
             <Button
     style={{
@@ -788,7 +796,21 @@ console.log("CandidateView:::", CandidateView);
       </Tooltip>
     </div>
   )}
-          </td>                               <td>            
+          </td>  
+          </>
+           )}                             
+           <td>       
+            {role === 'Vendor' ? (
+        <span 
+        className={`badge ${
+            greeColor.includes(item.status) ? "badge-success" : 
+            redColor.includes(item.status) ? "badge-danger" : 
+            "badge-warning"
+        }`}
+    >
+        {item.status}
+    </span>
+    ) : (     
                                             <Dropdown className="task-dropdown-2"
                                             onClick={()=>AddInterView(item?._id)}
                                              >
@@ -802,6 +824,7 @@ console.log("CandidateView:::", CandidateView);
                                                             }>{item.status}</Dropdown.Toggle>
                                                          
                                                         </Dropdown>    
+    )}
                                                 </td>
                                             <td>
                                             <div

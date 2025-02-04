@@ -9,6 +9,7 @@ const TaskForm = ({ form, isModalOpen, handleCancel, handleSubmit, openJobs, per
         form.setFieldsValue({ tags: value }); // Update the form field dynamically
     };
 
+    console.log("Hrumble-Front-End-Final-main", openJobs)
     // Filter personal details based on the selected hiring mode
     const filteredPersonalDet = Array.isArray(personalDet)
         ? personalDet.filter((role) => {

@@ -38,6 +38,7 @@ export default function SignInCard() {
   const [form, setForm] = useState({ email_id: "", password: "", remember: true });
   const [showPassword, setShowPassword] = useState(false);
   const [isSessionValid, setIsSessionValid] = useState(false);
+  const role = CookieUtil.get("role");
 
   const {
     login,
@@ -84,7 +85,11 @@ export default function SignInCard() {
     // Validate email and password
     const isValid = await login(form);
     if (isValid) {
-      navigate("/dashboard");
+      if (role === "Vendor") {
+        navigate("/jobs");
+      } else {
+        navigate("/dashboard");
+      }
       window.location.reload();
     } else {
       setSnackbar({ open: true, message: "Login failed. Please check your credentials.", severity: "error" });

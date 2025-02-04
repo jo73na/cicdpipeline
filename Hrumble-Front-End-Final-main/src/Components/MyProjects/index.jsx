@@ -50,7 +50,7 @@ const toggleFilterDrawer = () => {
 };
 const filteredProjects = projects.filter(project => {
   // First, check if the project matches the client_id
-  const matchesClientId = project.client_id._id === projectSingle._id;
+  const matchesClientId = project.client_id?._id === projectSingle?._id;
 
   // Then, check the selected filters
   const matchesFilters = selectedFilters.includes('All') || 
@@ -87,9 +87,17 @@ const ongoing = filteredProjects.map(project => {
 });
 
 useEffect(() => {
-        handleClickProjectTable(params?.id, true);
-        handleClientTable();
-      }, []);
+  console.log("Params:", params);
+  console.log("Effect Triggered!");
+
+  if (params?.id) {
+    console.log("Fetching data for:", params.id);
+    handleClickProjectTable(params.id, true);
+    handleClientTable();
+  }
+}, [params]);
+
+
 
 
     const onSearch = (value,_e, info) => console.log(info?.source, value);
@@ -268,7 +276,7 @@ useEffect(() => {
       const clientId = params.id; 
 
       const mappedData = projects
-        .filter(project => project.client_id._id === clientId) 
+        .filter(project => project.client_id?._id === clientId) 
         .flatMap(project =>
           project.assignedEmployees.map(employee => ({
             name: employee.name,

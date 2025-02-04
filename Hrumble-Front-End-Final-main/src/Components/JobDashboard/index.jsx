@@ -241,6 +241,7 @@ const JobDashboard = () => {
                   <div></div>
                   <div></div>
                 </div>
+                {role !== "Vendor" && (
                 <div className="flex align-items-center justify-content-around">
                   <Link
                     to
@@ -258,6 +259,7 @@ const JobDashboard = () => {
                     <i className="fa-solid fa-file-excel" /> Export Report
                   </CSVLink>
                 </div>
+                )}
               </div>
               <div className="card">
                 <div className="card-body p-0">
@@ -275,7 +277,7 @@ const JobDashboard = () => {
                             <th>Job Title</th>
                             {role !== "Client" ||
                               (role !== "Vendor" && <th>Client</th>)}
-                            <th>Client Name</th>
+                             {role !== "Vendor" && <th>Client Name</th>}
                             <th>Created on</th>
                             {role !== "Vendor" ? (
                               <th
@@ -296,310 +298,305 @@ const JobDashboard = () => {
                                 </div>
                               </th>
                             ) : (
-                              <th>Total Submissions</th>
+                              <>
+        <th>Internal Submissions</th>
+        <th>Client Submissions</th>
+      </>
                             )}
                             <th style={{ textAlign: "left" }}>Status</th>
-                            {role === "SuperAdmin" && (
+                            { (role === "SuperAdmin" || role === "Vendor") && (
                               <th className="text-center">Actions</th>
                             )}
                           </tr>
                         </thead>
                         <tbody>
-                          {records?.map((item, index) => {
-                            const {
-                              submission,
-                              interview,
-                              joined,
-                              offered,
-                              ClientSubmission,
-                            } = calculateCounts(item.screening, item._id);
-                            tableData.push({
-                              submission,
-                              interview,
-                              joined,
-                              offered,
-                              ClientSubmission,
-                              job_id: item._id,
-                              job_title: item.job_title,
-                              client: item?.Clients[0]?.name,
-                              contractType: item.contractType,
-                              secondarySelected: item.secondarySelected,
-                              job_context: stripHtml(item?.job_description),
-                              salary: item?.salary,
-                              location: item?.location,
-                              min_experience: item?.exp_from,
-                              max_experience: item?.exp_to,
-                              created_at: dayjs(item?.createdAt).format(
-                                "DD-MM-YYYY"
-                              ),
-                              status: item?.status,
-                              done_by: item?.done_by[0]?.name,
-                            });
+  {records?.map((item, index) => {
+    const {
+      submission,
+      interview,
+      joined,
+      offered,
+      ClientSubmission,
+    } = calculateCounts(item.screening, item._id);
+    tableData.push({
+      submission,
+      interview,
+      joined,
+      offered,
+      ClientSubmission,
+      job_id: item._id,
+      job_title: item.job_title,
+      client: item?.Clients[0]?.name,
+      contractType: item.contractType,
+      secondarySelected: item.secondarySelected,
+      job_context: stripHtml(item?.job_description),
+      salary: item?.salary,
+      location: item?.location,
+      min_experience: item?.exp_from,
+      max_experience: item?.exp_to,
+      created_at: dayjs(item?.createdAt).format("DD-MM-YYYY"),
+      status: item?.status,
+      done_by: item?.done_by[0]?.name,
+    });
 
-                            return (
-                              <tr key={index}>
-                                <td>
-                                  <div className="products">
-                                    <div>
-                                      <h6
-                                        style={{ cursor: "pointer" }}
-                                        onClick={() =>
-                                          navigate(`/jobs/${item?._id}`)
-                                        }
-                                      >
-                                        {item.job_title}
-                                      </h6>
-                                      <div
-                                        style={{
-                                          alignItems: "center",
-                                          display: "inline-flex",
-                                        }}
-                                      >
-                                        <span
-                                          style={{
-                                            marginTop: "3px",
-                                            cursor: "pointer",
-                                            fontSize: "9px",
-                                          }}
-                                        >
-                                          <Flex gap="4px">
-                                            <Tag
-                                              style={{
-                                                borderRadius: "4px",
-                                                fontSize: "8px",
-                                              }}
-                                              color="#77ab59"
-                                            >
-                                              {item?.job_id}
-                                            </Tag>
-                                            <Tag
-                                              style={{
-                                                borderRadius: "4px",
-                                                fontSize: "8px",
-                                              }}
-                                              color="#36802d"
-                                            >
-                                              {item?.contractType}
-                                            </Tag>
-                                            <Tag
-                                              style={{
-                                                borderRadius: "4px",
-                                                fontSize: "8px",
-                                              }}
-                                              color="#526E48"
-                                            >
-                                              {item?.secondarySelected}
-                                            </Tag>
-                                          </Flex>
-                                        </span>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </td>
-                                {role !== "Client" ||
-                                  (role !== "Vendor" && (
-                                    <td>
-                                      <span>{`${item?.Clients[0]?.name} ${
-                                        item.poc?.length > 0
-                                          ? `(${item.poc[0]})`
-                                          : ""
-                                      }`}</span>
-                                    </td>
-                                  ))}
-                                <td>
-                                  <span>{item?.Clients[0]?.name}</span>
-                                </td>
-                                <td>
-                                  <span>
-                                    {dayjs(item?.createdAt).format(
-                                      "DD-MM-YYYY"
-                                    )}
-                                  </span>
-                                </td>
-                                {role !== "Vendor" ? (
-                                  <>
-                                     <td className="text-center border-end">
-          <div style={getStyles(submission)}>
-            {submission}
+    // Check if the role is Vendor and if the job is assigned to the vendor
+    const isVendor = role === "Vendor";
+    const isAssignedToVendor = isVendor && item.assign.includes(admin_id);
+
+    // Only render the job if it's assigned to the vendor or if the role is not Vendor
+    if (isVendor && !isAssignedToVendor) {
+      return null; // Skip rendering this job if it's not assigned to the vendor
+    }
+
+    return (
+      <tr key={index}>
+        <td>
+          <div className="products">
+            <div>
+              <h6
+                style={{ cursor: "pointer" }}
+                onClick={() => navigate(`/jobs/${item?._id}`)}
+              >
+                {item.job_title}
+              </h6>
+              <div
+                style={{
+                  alignItems: "center",
+                  display: "inline-flex",
+                }}
+              >
+                <span
+                  style={{
+                    marginTop: "3px",
+                    cursor: "pointer",
+                    fontSize: "9px",
+                  }}
+                >
+                  <Flex gap="4px">
+                    <Tag
+                      style={{
+                        borderRadius: "4px",
+                        fontSize: "8px",
+                      }}
+                      color="#77ab59"
+                    >
+                      {item?.job_id}
+                    </Tag>
+                    {role !== "Vendor" && (
+                      <>
+                        <Tag
+                          style={{
+                            borderRadius: "4px",
+                            fontSize: "8px",
+                          }}
+                          color="#36802d"
+                        >
+                          {item?.job_type}
+                        </Tag>
+                        <Tag
+                          style={{
+                            borderRadius: "4px",
+                            fontSize: "8px",
+                          }}
+                          color="#526E48"
+                        >
+                          {item?.secondarySelected}
+                        </Tag>
+                      </>
+                    )}
+                  </Flex>
+                </span>
+              </div>
+            </div>
           </div>
+        </td>
+        {role !== "Vendor" && (
+          <>
+            {role !== "Client" && (
+              <td>
+                <span>{`${item?.Clients[0]?.name} ${
+                  item.poc?.length > 0 ? `(${item.poc[0]})` : ""
+                }`}</span>
+              </td>
+            )}
+          </>
+        )}
+        <td>
+          <span>
+            {dayjs(item?.createdAt).format("DD-MM-YYYY")}
+          </span>
+        </td>
+        {role !== "Vendor" ? (
+          <>
+            <td className="text-center border-end">
+              <div style={getStyles(submission)}>
+                {submission}
+              </div>
+            </td>
+            <td className="text-center">
+              <div style={getStyles(ClientSubmission)}>
+                {ClientSubmission}
+              </div>
+            </td>
+          </>
+        ) : (
+          <>
+            <td>
+              <div style={getStyles(submission)}>
+                {submission}
+              </div>
+            </td>
+            <td>
+              <div style={getStyles(ClientSubmission)}>
+                {ClientSubmission}
+              </div>
+            </td>
+          </>
+        )}
+        <td style={{ textAlign: "left" }}>
+          {role === "SuperAdmin" ? (
+            <Dropdown className="task-dropdown-2">
+              <Dropdown.Toggle
+                as="div"
+                className={
+                  item.status === "opened"
+                    ? "Complete"
+                    : item.status === "closed"
+                    ? "Pending"
+                    : "Testing"
+                }
+              >
+                {item.status === "opened"
+                  ? "OPEN"
+                  : item.status === "closed"
+                  ? "CLOSE"
+                  : "HOLD"}
+              </Dropdown.Toggle>
+              <Dropdown.Menu className="task-drop-menu">
+                <Dropdown.Item
+                  onClick={() =>
+                    handleChangestatus(item._id, "opened")
+                  }
+                >
+                  OPEN
+                </Dropdown.Item>
+                <Dropdown.Item
+                  onClick={() =>
+                    handleChangestatus(item._id, "closed")
+                  }
+                >
+                  CLOSE
+                </Dropdown.Item>
+                <Dropdown.Item
+                  onClick={() =>
+                    handleChangestatus(item._id, "Hold")
+                  }
+                >
+                  HOLD
+                </Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown>
+          ) : (
+            <span
+              className={`badge badge-${
+                item.status === "opened"
+                  ? "success"
+                  : item.status === "closed"
+                  ? "danger"
+                  : "warning"
+              } light border-0 me-1`}
+            >
+              {item.status === "opened"
+                ? "Opened"
+                : item.status === "closed"
+                ? "Closed"
+                : "Hold"}
+            </span>
+          )}
         </td>
         <td className="text-center">
-          <div style={getStyles(ClientSubmission)}>
-            {ClientSubmission}
+          <div className="d-flex justify-content-center gap-2">
+            {(role === "SuperAdmin" || role === "Vendor") && (
+              <span
+                style={{
+                  ...numberBoxStyle,
+                  cursor: "pointer",
+                }}
+                onClick={() => navigate(`/jobs/${item?._id}`)}
+                onMouseEnter={(e) => (e.target.style.cursor = "pointer")}
+                onMouseLeave={(e) => (e.target.style.cursor = "default")}
+              >
+                <div
+                  className="icon-box icon-box-xs"
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    height: "30px",
+                    width: "30px",
+                    borderRadius: "50%",
+                  }}
+                >
+                  <i className="fa-solid fa-eye text-white "></i>
+                </div>
+              </span>
+            )}
+            {role === "SuperAdmin" && (
+              <>
+                <span
+                  style={{
+                    ...numberBoxStyle,
+                    cursor: "pointer",
+                  }}
+                  onClick={(e) => handleEditJob(item?._id)}
+                  onMouseEnter={(e) => (e.target.style.cursor = "pointer")}
+                  onMouseLeave={(e) => (e.target.style.cursor = "default")}
+                >
+                  <div
+                    className="icon-box icon-box-xs"
+                    style={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      height: "30px",
+                      width: "30px",
+                      borderRadius: "50%",
+                    }}
+                  >
+                    <i className="fa-solid fa-pencil text-white"></i>
+                  </div>
+                </span>
+                <span
+                  style={{
+                    ...numberBoxStyle,
+                    cursor: "pointer",
+                  }}
+                  onClick={(e) => handleClickAssign(item?._id)}
+                  onMouseEnter={(e) => (e.target.style.cursor = "pointer")}
+                  onMouseLeave={(e) => (e.target.style.cursor = "default")}
+                >
+                  <div
+                    className="icon-box icon-box-xs"
+                    style={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      height: "30px",
+                      width: "30px",
+                      borderRadius: "50%",
+                    }}
+                  >
+                    <i className="fa-solid fa-person text-white "></i>
+                  </div>
+                </span>
+              </>
+            )}
           </div>
         </td>
-      </>
-                                ) : (
-                                  <td>
-        <div style={getStyles(ClientSubmission)}>
-          {ClientSubmission}
-        </div>
-      </td>
-                                )}
-                                <td style={{ textAlign: "left" }}>
-                                  {role === "SuperAdmin" ? (
-                                    <Dropdown className="task-dropdown-2">
-                                      <Dropdown.Toggle
-                                        as="div"
-                                        className={
-                                          item.status === "opened"
-                                            ? "Complete"
-                                            : item.status === "closed"
-                                            ? "Pending"
-                                            : "Testing"
-                                        }
-                                      >
-                                        {item.status === "opened"
-                                          ? "OPEN"
-                                          : item.status === "closed"
-                                          ? "CLOSE"
-                                          : "HOLD"}
-                                      </Dropdown.Toggle>
-                                      <Dropdown.Menu className="task-drop-menu">
-                                        <Dropdown.Item
-                                          onClick={() =>
-                                            handleChangestatus(
-                                              item._id,
-                                              "opened"
-                                            )
-                                          }
-                                        >
-                                          OPEN
-                                        </Dropdown.Item>
-                                        <Dropdown.Item
-                                          onClick={() =>
-                                            handleChangestatus(
-                                              item._id,
-                                              "closed"
-                                            )
-                                          }
-                                        >
-                                          CLOSE
-                                        </Dropdown.Item>
-                                        <Dropdown.Item
-                                          onClick={() =>
-                                            handleChangestatus(item._id, "Hold")
-                                          }
-                                        >
-                                          HOLD
-                                        </Dropdown.Item>
-                                      </Dropdown.Menu>
-                                    </Dropdown>
-                                  ) : (
-                                    <span
-                                      className={`badge badge-${
-                                        item.status === "opened"
-                                          ? "success"
-                                          : item.status === "closed"
-                                          ? "danger"
-                                          : "warning"
-                                      } light border-0 me-1`}
-                                    >
-                                      {item.status === "opened"
-                                        ? "Opened"
-                                        : item.status === "closed"
-                                        ? "Closed"
-                                        : "Hold"}
-                                    </span>
-                                  )}
-                                </td>
-                                {role === "SuperAdmin" && (
-                                  <td className="text-center">
-                                    <div className="d-flex justify-content-center  gap-2">
-                                      <span
-                                        style={{
-                                          ...numberBoxStyle,
-                                          cursor: "pointer",
-                                        }}
-                                        onClick={() =>
-                                          navigate(`/jobs/${item?._id}`)
-                                        }
-                                        onMouseEnter={(e) =>
-                                          (e.target.style.cursor = "pointer")
-                                        }
-                                        onMouseLeave={(e) =>
-                                          (e.target.style.cursor = "default")
-                                        }
-                                      >
-                                        <div
-                                          className="icon-box icon-box-xs"
-                                          style={{
-                                            display: "flex",
-                                            justifyContent: "center",
-                                            alignItems: "center",
-                                            height: "30px", // Adjust the height as needed
-                                            width: "30px", // Adjust the width as needed
-                                            borderRadius: "50%", // Optional: makes the background circular
-                                          }}
-                                        >
-                                          <i className="fa-solid fa-eye text-white "></i>
-                                        </div>
-                                      </span>
-                                      <span
-                                        style={{
-                                          ...numberBoxStyle,
-                                          cursor: "pointer",
-                                        }}
-                                        onClick={(e) =>
-                                          handleEditJob(item?._id)
-                                        }
-                                        onMouseEnter={(e) =>
-                                          (e.target.style.cursor = "pointer")
-                                        }
-                                        onMouseLeave={(e) =>
-                                          (e.target.style.cursor = "default")
-                                        }
-                                      >
-                                        <div
-                                          className="icon-box icon-box-xs"
-                                          style={{
-                                            display: "flex",
-                                            justifyContent: "center",
-                                            alignItems: "center",
-                                            height: "30px", // Adjust the height as needed
-                                            width: "30px", // Adjust the width as needed
-                                            borderRadius: "50%", // Optional: makes the background circular
-                                          }}
-                                        >
-                                          <i className="fa-solid fa-pencil text-white"></i>
-                                        </div>
-                                      </span>
-                                      <span
-                                        style={{
-                                          ...numberBoxStyle,
-                                          cursor: "pointer",
-                                        }}
-                                        onClick={(e) =>
-                                          handleClickAssign(item?._id)
-                                        }
-                                        onMouseEnter={(e) =>
-                                          (e.target.style.cursor = "pointer")
-                                        }
-                                        onMouseLeave={(e) =>
-                                          (e.target.style.cursor = "default")
-                                        }
-                                      >
-                                        <div
-                                          className="icon-box icon-box-xs"
-                                          style={{
-                                            display: "flex",
-                                            justifyContent: "center",
-                                            alignItems: "center",
-                                            height: "30px", // Adjust the height as needed
-                                            width: "30px", // Adjust the width as needed
-                                            borderRadius: "50%", // Optional: makes the background circular
-                                          }}
-                                        >
-                                          <i className="fa-solid fa-person text-white "></i>
-                                        </div>
-                                      </span>
-                                    </div>
-                                  </td>
-                                )}
-                              </tr>
-                            );
-                          })}
-                        </tbody>
+      </tr>
+    );
+  })}
+</tbody>
                       </table>
                       <div className="d-sm-flex text-center justify-content-end align-items-center">
   {/* Move the dataTables_info div to the start */}

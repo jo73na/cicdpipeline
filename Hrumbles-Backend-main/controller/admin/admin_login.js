@@ -3314,6 +3314,59 @@ router.get('/owner-select/',authAdmin, asyncHandler(async (req, res) => {
       }
       }))
 
+      router.put('/updatevendor/:id', authAdmin, asyncHandler(async (req, res) => {
+        const { id } = req.params;
+        const { vendorId, vendor_clientbillable, vendor_salary_type } = req.body;
+    
+        try {
+            const check = await crud.getOneDocumentById(job, id, {}, {});
+            if (!check) throw new Error('Job not found!');
+    
+            // Update assigned data
+            const updatedAssignedData = check.assigneddata.map(data => 
+                data.assign.toString() === vendorId
+                    ? { ...data, vendor_clientbillable, vendor_salary_type }
+                    : data
+            );
+    
+            let data = { assigneddata: updatedAssignedData };
+    
+            let updatedJob = await crud.updateById(job, id, data, { new: true });
+    
+            success(res, 200, true, "Vendor updated successfully", updatedJob);
+        } catch (error) {
+            res.status(500).json({ success: false, message: error.message || "Error updating vendor" });
+        }
+    }));
+    
+
+
+      router.put('/removevendor/:id', authAdmin, asyncHandler(async (req, res) => {
+        const { id } = req.params;
+        const { vendorId } = req.body;
+    
+        try {
+            const check = await crud.getOneDocumentById(job, id, {}, {});
+            if (!check) throw new Error('Job not found!');
+    
+            // Filter out the vendor being removed
+            const updatedAssign = check.assign.filter(assignedId => assignedId.toString() !== vendorId);
+            const updatedAssignedData = check.assigneddata.filter(data => data.assign.toString() !== vendorId);
+    
+            let data = {
+                assign: updatedAssign,
+                assigneddata: updatedAssignedData
+            };
+    
+            let updatedJob = await crud.updateById(job, id, data, { new: true });
+    
+            success(res, 200, true, "Vendor removed successfully", updatedJob);
+        } catch (error) {
+            res.status(500).json({ success: false, message: error.message || "Error removing vendor" });
+        }
+    }));
+    
+
       router.put('/assignvendor/:id',authAdmin, asyncHandler(async (req, res) => {
 
         const { id } = req.params;
@@ -3328,7 +3381,8 @@ router.get('/owner-select/',authAdmin, asyncHandler(async (req, res) => {
                assign:item,
               vendor_salary_type:req.body.vendor_salary_type||"",
               vendor_job_type:req.body.vendor_job_type||"",
-              vendor_clientbillable:req.body.vendor_clientbillable||0
+              vendor_clientbillable:req.body.vendor_clientbillable||0,
+              assign_type:req.body.assign_type,
             })
           })
           let data ={

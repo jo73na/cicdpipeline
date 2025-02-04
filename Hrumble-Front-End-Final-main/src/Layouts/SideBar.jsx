@@ -1,7 +1,7 @@
 import { lazy, useContext, useState, useEffect } from "react";
 import {HeatMapOutlined, PoweroffOutlined, PlusOutlined, ReconciliationOutlined, UserOutlined, FolderOpenOutlined } from "@ant-design/icons";
 import { Layout, Menu, theme, Dropdown, Avatar } from "antd";
-import { Link, Outlet, useLocation } from "react-router-dom";
+import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import logo from "/images/Hricon.svg" ;
 import Male from  "/images/male.png" ;
 import SpaceLogo from  "/images/Space.png" ;
@@ -50,6 +50,7 @@ const MobileMenu = lazy(() => import("../Layouts/MobileMenu"));
 
 const SideBar = ({collapsed}) => {
     const location = useLocation();
+    const navigate = useNavigate();
     const currentPath = location.pathname; 
     const {  body,       
         sidebarposition,        
@@ -89,7 +90,12 @@ const SideBar = ({collapsed}) => {
       window.addEventListener("resize", updateView);
       return () => window.removeEventListener("resize", updateView);
     }, []);
-  
+    useEffect(() => {
+      const role = CookieUtil.get("role");
+      if (role === "Vendor") {
+          navigate("/jobs"); // Navigate to /jobs if role is Vendor
+      }
+  }, [navigate]);
     // Function to handle sidebar toggle in mobile view
     const handleToggle = () => {
       toggleSideBar(!isSidebarOpen);
@@ -109,7 +115,7 @@ const SideBar = ({collapsed}) => {
   
     const menu = [];
   
-    if (role !== "Vendor" && role !== "Client") {
+    if ( role !== "Vendor" && role !== "Client") {
       menu.push(
         getItem(
           <Link to="/dashboard">

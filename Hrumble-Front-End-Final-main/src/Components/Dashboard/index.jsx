@@ -131,23 +131,58 @@ const totalDataCount = (Array.isArray(invoicechart?.data1) && Array.isArray(invo
     : 0;
     
     return(
-     <>
-     {
-        Loading ? <Loader />
- 
-     :
-     <>
-      <p className='heading_text' style={{paddingBottom:'15px', paddingLeft:'3px', paddingTop:'10px'}}>  {role === "SuperAdmin"?" Admin Dashboard":"Dashboard"} </p>
+      <>
       {
-         role  == "Employee" ?
-         // <EmployeeHoursTracker/>
-          <EmployeeDashboard/>
-          // <p> Welcome to Employee Dashboard</p>
-         :
-         <div>
-           
-      {
-         role === "SuperAdmin" ?
+          Loading ? <Loader />
+          :
+          <>
+              <p className='heading_text' style={{ paddingBottom: '15px', paddingLeft: '3px', paddingTop: '10px' }}>
+                  {role === "SuperAdmin" ? "Admin Dashboard" : "Dashboard"}
+              </p>
+              {
+                  role === "Vendor" ? (
+                    <div className="container-fluid">
+                   
+                    {/* <Row className="mb-4">
+                        <Col xl={4} md={6} sm={12}>
+                            <Card className="text-center upgrade">
+                                <Card.Body>
+                                    <div className="text-center">
+                                        <img src={Items} alt="Welcome" style={{ width: '80px', height: '80px' }} />
+                                    </div>
+                                    <h4 className="mt-3">Hii, Welcome to Your Dashboard</h4>
+                                </Card.Body>
+                            </Card>
+                        </Col>
+                        <Col xl={4} md={6} sm={12}>
+                            <Card className="text-center">
+                                <Card.Body style={{ padding: '0' }}>
+                                    <h4>Calendar</h4>
+                                    <div style={{ height: '400px', overflow: 'auto' }}>
+                                        <CalenderData height='100%' />
+                                    </div>
+                                </Card.Body>
+                            </Card>
+                        </Col>
+                        <Col xl={4} md={6} sm={12}>
+                            <Card className="text-center">
+                                <Card.Body>
+                                    <h4>Coming Soon!</h4>
+                                    <p>New features and updates are on the way. Stay tuned!</p>
+                                </Card.Body>
+                            </Card>
+                        </Col>
+                    </Row> */}
+                </div>
+                  ) : (
+                      <>
+                          {
+                              role === "Employee" ?
+                                  <EmployeeDashboard />
+                                  :
+                                  <div>
+                                      {
+                                          role === "SuperAdmin" ?
          <>
       <div className="container-fluid">
         <div className="row ">
@@ -795,15 +830,15 @@ const totalDataCount = (Array.isArray(invoicechart?.data1) && Array.isArray(invo
               </div>
               </div>
           </div>
-         </>
-      }
- 
-         </div>
-       
-      }
-       </>
-     
-   }  
+          </>
+                                            }
+                                        </div>
+                                }
+                            </>
+                        )
+                    }
+                </>
+            }
    <Modal
     title="Add Manualy Goal"
     open={Opengoal}  onCancel={handleCancel}
