@@ -7,6 +7,12 @@ const EditVendorModal = ({ visible, onClose, vendorData, jobId }) => {
     const [form] = Form.useForm();
     const [salaryType, setSalaryType] = useState("Monthly");
 
+    console.log("vemdor_assign_id::",vendorData.assign._id)
+
+    console.log("Vendor Data::", vendorData);
+if (!vendorData || !vendorData.assign) {
+    console.error("Invalid vendorData! Ensure it's passed correctly.");
+}
 
     useEffect(() => {
         if (vendorData) {
@@ -19,16 +25,31 @@ const EditVendorModal = ({ visible, onClose, vendorData, jobId }) => {
         }
     }, [vendorData, form]);
 
-    const handleFinish = (values) => {
+    const handleFinish = async (values) => {
+        if (!vendorData || !vendorData._id) { 
+            console.error("Invalid vendor data! Cannot proceed.");
+            return;
+        }
+    
         let updatedData = {
-            ...values,
-            vendor_clientbillable: Number(values.vendor_clientbillable.replace(/,/g, "")),
-            vendor_salary_type: salaryType,
+            _id: vendorData._id, // ✅ Ensure correct assigneddata._id is sent
+            vendor_clientbillable: Number(values.vendor_clientbillable.replace(/,/g, "")), 
+            vendor_salary_type: salaryType
         };
-
-        handleUpdateVendor(jobId, vendorData.assign._id, updatedData);
-        onClose(); // Close modal after submission
+    
+        console.log("Payload being sent::", updatedData); // ✅ Debugging
+    
+        await handleUpdateVendor(jobId, updatedData);
+    
+        setTimeout(() => {
+            onClose();
+        }, 500);
     };
+    
+    
+    
+    
+    
 
     return (
         <Modal

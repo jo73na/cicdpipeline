@@ -3316,28 +3316,39 @@ router.get('/owner-select/',authAdmin, asyncHandler(async (req, res) => {
 
       router.put('/updatevendor/:id', authAdmin, asyncHandler(async (req, res) => {
         const { id } = req.params;
-        const { vendorId, vendor_clientbillable, vendor_salary_type } = req.body;
+        const { _id, vendor_clientbillable, vendor_salary_type } = req.body; 
     
         try {
-            const check = await crud.getOneDocumentById(job, id, {}, {});
-            if (!check) throw new Error('Job not found!');
+            // ✅ Ensure the Job is found
+            const existingJob = await job.findById(id);
+            if (!existingJob) {
+                return res.status(404).json({ success: false, message: "Job not found!" });
+            }
     
-            // Update assigned data
-            const updatedAssignedData = check.assigneddata.map(data => 
-                data.assign.toString() === vendorId
-                    ? { ...data, vendor_clientbillable, vendor_salary_type }
-                    : data
+            // ✅ Update the assigneddata array where _id matches
+            const updatedJob = await job.findOneAndUpdate(
+                { _id: id, "assigneddata._id": _id }, // ✅ Find the correct entry in assigneddata
+                { 
+                    $set: { 
+                        "assigneddata.$.vendor_clientbillable": vendor_clientbillable,
+                        "assigneddata.$.vendor_salary_type": vendor_salary_type
+                    } 
+                },
+                { new: true } // ✅ Return the updated document
             );
     
-            let data = { assigneddata: updatedAssignedData };
-    
-            let updatedJob = await crud.updateById(job, id, data, { new: true });
+            if (!updatedJob) {
+                return res.status(400).json({ success: false, message: "Vendor update failed!" });
+            }
     
             success(res, 200, true, "Vendor updated successfully", updatedJob);
         } catch (error) {
             res.status(500).json({ success: false, message: error.message || "Error updating vendor" });
         }
     }));
+    
+    
+    
     
 
 

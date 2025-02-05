@@ -155,11 +155,17 @@ const JobDetailNew = () => {
    const admin_id = CookieUtil.get("admin_id");
    const [selectedVendor, setSelectedVendor] = useState(null);
    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+   console.log("selecteted Vendor", selectedVendor)
 
    const handleEditVendor = (vendor) => {
-       setSelectedVendor(vendor);
-       setIsEditModalOpen(true);
-   };
+    if (!vendor || !vendor.assign) {
+        console.error("Invalid vendor data", vendor);
+        return;
+    }
+    setSelectedVendor(vendor);
+    setIsEditModalOpen(true);
+};
+
 
 console.log("Jobsinle:::", jobSingle)
         let vendardata =jobSingle?.assigneddata?.find((e) => e.assign?._id === admin_id);
@@ -348,15 +354,28 @@ function  PostComment(){
                      <div>
 								 {
                                      role =="SuperAdmin" &&
-                                     <div className='p-3'>
+                                     <div className="p-3">
                                      <h4 className="text-primary mb-2 ">Assigned</h4>
                                      <div>
-                                     {jobSingle?.assigneddata?.map((e,i)=>
-                                                      <Link key={i} to="" className="btn btn-primary light btn-xs mb-1 me-1" onClick={() => handleEditVendor(e)}> {e?.assign?.name||""}</Link>
-                                                      )}   
-                                     
+                                         {jobSingle?.assigneddata?.length > 0 ? (
+                                             jobSingle?.assigneddata?.map((e, i) => (
+                                                 e.assign ? (
+                                                     <Link
+                                                         key={i}
+                                                         to="#"
+                                                         className="btn btn-primary light btn-xs mb-1 me-1"
+                                                         onClick={() => handleEditVendor(e)}
+                                                     >
+                                                         {e?.assign?.name || "Unknown"}
+                                                     </Link>
+                                                 ) : null
+                                             ))
+                                         ) : (
+                                             <p>No assigned vendors</p>
+                                         )}
                                      </div>
                                  </div>
+                                 
                                  
                                  }
                      </div>
@@ -604,13 +623,15 @@ function  PostComment(){
     >
     <EditJobDetail/>
   </Drawer>
-  <EditVendorModal
-                visible={isEditModalOpen}
-                onClose={() => setIsEditModalOpen(false)}
-                vendorData={selectedVendor}
-                jobId={jobSingle?._id}
-                width={200}
-            />
+  {isEditModalOpen && selectedVendor && (
+    <EditVendorModal
+        visible={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        vendorData={selectedVendor}
+        jobId={jobSingle?._id}
+    />
+)}
+
 </>		
   
 

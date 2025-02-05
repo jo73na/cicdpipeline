@@ -488,27 +488,37 @@ const JobProvider = (props) => {
     }
 };
 
-const handleUpdateVendor = async (jobId, vendorId, updatedData) => {
+const handleUpdateVendor = async (jobId, updatedData) => {
+  console.log("Updating Vendor:", jobId, updatedData);
+
   setvendorbutton(true);
   const apiUpdateVendor = `${BASE_URL}/updatevendor/${jobId}`;
 
   try {
-      const response = await axios.put(apiUpdateVendor, { vendorId, ...updatedData }, {
+      const response = await axios.put(apiUpdateVendor, updatedData, {
           headers: { Authorization: `Bearer ${token}` },
       });
+
+      console.log("API Response:", response.data);
 
       notification.success({
           message: response?.data?.message,
           duration: 1,
       });
 
+      setJobSingle(response.data.data); // ✅ Ensure UI updates with new data
+
       setvendorbutton(false);
       setopenvendor(!openvendor);
   } catch (err) {
+      console.error("API Error:", err);
       setvendorbutton(false);
       notification.error({ message: err?.response?.data?.message || "Something Went Wrong!" });
   }
 };
+
+
+
 
 
     return (
