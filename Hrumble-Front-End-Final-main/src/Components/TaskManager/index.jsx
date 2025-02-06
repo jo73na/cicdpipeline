@@ -36,7 +36,7 @@ const headersTitle = [
 const TaskManager = () => {
 	const {tasks, fetchTasks,fetchUsers,adminUsers, addTask, updateTask,patchTask,deleteTask} = useContext(TaskContext);
     // const cardCounter = calculateTaskCounts(tasks);
-	const {openJobs,fetchJob} = useContext(JobContext);
+	const {fetchJob, allJobs} = useContext(JobContext);
     const [tableData, setTableData] = useState(tasks);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [form] = Form.useForm();
@@ -1150,7 +1150,7 @@ const generateTaskId = () => {
                     isModalOpen={isModalOpen} 
                     handleCancel={handleCancel} 
                     handleSubmit={handleSubmit} 
-                    openJobs={openJobs} 
+                    openJobs={allJobs} 
                     personalDet={adminUsers} 
                 />
                                             

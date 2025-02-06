@@ -34,51 +34,28 @@ const JobDashboard = () => {
     openJobs,
     handleChangestatus,
 
-    handlePageChange,
+
     openaddjob,
     handleClickjobTable,
     editDrawer,
     handleEditJob,
     handleAssign,
+    totalJobs,
+    filteredJobs,
+    searchjob,
+    setSearchjob,
+    pagination,
+    setPagination,
   } = useContext(JobContext);
   const {} = useContext(ViewJobContext);
   const tableData = [];
-  const [searchjob, setSearchJob] = useState("");
+  const navigate = useNavigate();
+  const role = CookieUtil.get("role");
+  const admin_id = CookieUtil.get("admin_id");
+  const totalFilteredJobs = filteredJobs.length; // Count of jobs after search
+  const isSearching = searchjob.length > 2; // Check if user is searching
+  const totalPages = Math.ceil((isSearching ? totalFilteredJobs : totalJobs) / pagination.pageSize);
 
-  const [itemsPerPage, setItemsPerPage] = useState(20);
-
-  const [filteredOpenJobs, setFilteredOpenJobs] = useState([]);
-
-  useEffect(() => {
-    // Initialize filteredOpenJobs when openJobs is available
-    setFilteredOpenJobs(openJobs || []); // Fallback to empty array
-  }, [openJobs]);
-  console.log("Filter:::", filteredOpenJobs);
-  const [currentPage, setCurrentPage] = useState(1);
-  const handleChangeSearch = (e) => {
-    const searchValue = e.target.value.toLowerCase();
-    setSearchJob(searchValue);
-
-    const searchedJobs = (openJobs || []).filter(
-      (job) =>
-        job.job_title.toLowerCase().includes(searchValue.toLowerCase()) ||
-        job.job_id.toString().includes(searchValue.toUpperCase())
-    );
-
-    setFilteredOpenJobs(searchedJobs);
-    setCurrentPage(1); // Reset to the first page when filtering
-  };
-
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [itemsPerPage]);
-
-  // const recordsPerPage = 20;
-  const lastIndex = currentPage * itemsPerPage;
-  const firstIndex = lastIndex - itemsPerPage;
-  const npage = Math.ceil(filteredOpenJobs.length / itemsPerPage);
-  const number = [...Array(npage).keys()].map((_, idx) => idx + 1);
-  const records = filteredOpenJobs.slice(firstIndex, lastIndex);
 
   const headers = [
     { label: "Job Title", key: "job_title" },
@@ -98,35 +75,39 @@ const JobDashboard = () => {
 
   const csvlink = {
     headers: headers,
-    data: tableData,
+    data: openJobs, // Use records for CSV export
     filename: "csvfile.csv",
   };
 
+
+  
   const changeCPage = (id) => {
-    setCurrentPage(id);
+      if (id >= 1 && id <= totalPages) {
+          setPagination((prev) => ({ ...prev, current: id }));
+      }
   };
-
+  
   const prePage = () => {
-    if (currentPage !== 1) {
-      setCurrentPage(currentPage - 1);
-    }
+      if (pagination.current > 1) {
+          setPagination((prev) => ({ ...prev, current: prev.current - 1 }));
+      }
   };
-
+  
   const nextPage = () => {
-    if (currentPage !== npage) {
-      setCurrentPage(currentPage + 1);
-    }
+      if (pagination.current < totalPages) {
+          setPagination((prev) => ({ ...prev, current: prev.current + 1 }));
+      }
   };
 
-  useEffect(() => {
-    fetchJob();
-  }, []);
 
-  console.log("searchjob:", searchjob);
 
-  const navigate = useNavigate();
-  const role = CookieUtil.get("role");
-  const admin_id = CookieUtil.get("admin_id");
+
+
+const handleSearch = (e) => {
+  setSearchjob(e.target.value);
+};
+
+
   const calculateCounts = (candidates, _id) => {
     let submission = 0;
     let ClientSubmission = 0;
@@ -200,6 +181,8 @@ const JobDashboard = () => {
     // Primary color text
   };
 
+  
+
   return (
     <>
       {Loading ? (
@@ -219,13 +202,13 @@ const JobDashboard = () => {
                 <div className="d-flex justify-content-between align-items-center mb-2">
                   <h4 className="heading mb-0">
                     <div className="input-group search-area">
-                      <input
-                        type="text"
-                        className="form-control"
-                        placeholder="Search Job Title/ Job ID..."
-                        onChange={handleChangeSearch}
-                        value={searchjob}
-                      />
+                    <input
+            type="text"
+            className="form-control"
+            placeholder="Search Job Title/ Job ID..."
+            value={searchjob}
+            onChange={handleSearch}
+        />
                       <span className="input-group-text">
                         <Link to={"#"}>
                           <i
@@ -310,7 +293,7 @@ const JobDashboard = () => {
                           </tr>
                         </thead>
                         <tbody>
-  {records?.map((item, index) => {
+  {filteredJobs?.map((item, index) => {
     const {
       submission,
       interview,
@@ -414,9 +397,7 @@ const JobDashboard = () => {
           <>
             {role !== "Client" && (
               <td>
-                <span>{`${item?.Clients[0]?.name} ${
-                  item.poc?.length > 0 ? `(${item.poc[0]})` : ""
-                }`}</span>
+                <span>{item?.Clients[0]?.name}</span>
               </td>
             )}
           </>
@@ -599,109 +580,88 @@ const JobDashboard = () => {
 </tbody>
                       </table>
                       <div className="d-sm-flex text-center justify-content-end align-items-center">
-  {/* Move the dataTables_info div to the start */}
-  <div className="dataTables_info">
-    Showing {lastIndex - itemsPerPage + 1} to {lastIndex} of {records.length} entries
-  </div>
-  
-  <div
-    className="dataTables_paginate paging_simple_numbers justify-content-center"
-    id="example2_paginate"
-  >
-    <Link
-      className={`paginate_button previous ${
-        currentPage === 1 ? "disabled" : ""
-      }`}
-      to="#"
-      onClick={prePage}
-    >
-      <i className="fa-solid fa-angle-left" />
-    </Link>
-    <span>
-      {number.length > 1 && (
-        <>
-          {/* Show first page */}
-          <Link
-            className={`paginate_button ${
-              currentPage === 1 ? "current" : ""
-            }`}
-            onClick={() => changeCPage(1)}
-          >
-            1
-          </Link>
+        <div className="dataTables_info">
+            Showing {(pagination.current - 1) * pagination.pageSize + 1} to 
+            {Math.min(pagination.current * pagination.pageSize, isSearching ? totalFilteredJobs : totalJobs)} of 
+            {isSearching ? totalFilteredJobs : totalJobs} entries
+        </div>
+        <div className="dataTables_paginate paging_simple_numbers justify-content-center">
+            <Link
+                className={`paginate_button previous ${pagination.current === 1 ? "disabled" : ""}`}
+                to="#"
+                onClick={prePage}
+            >
+                <i className="fa-solid fa-angle-left" />
+            </Link>
+            <span>
+                {totalPages <= 5 ? (
+                    Array.from({ length: totalPages }, (_, i) => (
+                        <Link
+                            key={i}
+                            className={`paginate_button ${pagination.current === i + 1 ? "current" : ""}`}
+                            onClick={() => changeCPage(i + 1)}
+                        >
+                            {i + 1}
+                        </Link>
+                    ))
+                ) : (
+                    <>
+                        <Link
+                            className={`paginate_button ${pagination.current === 1 ? "current" : ""}`}
+                            onClick={() => changeCPage(1)}
+                        >
+                            1
+                        </Link>
+                        {pagination.current > 3 && <span className="ellipsis">...</span>}
+                        {Array.from({ length: totalPages }, (_, i) => i + 1)
+                            .filter(
+                                (n) => n !== 1 && n !== totalPages && (n === pagination.current || n === pagination.current - 1 || n === pagination.current + 1)
+                            )
+                            .map((n) => (
+                                <Link
+                                    key={n}
+                                    className={`paginate_button ${pagination.current === n ? "current" : ""}`}
+                                    onClick={() => changeCPage(n)}
+                                >
+                                    {n}
+                                </Link>
+                            ))}
+                        {pagination.current < totalPages - 2 && <span className="ellipsis">...</span>}
+                        <Link
+                            className={`paginate_button ${pagination.current === totalPages ? "current" : ""}`}
+                            onClick={() => changeCPage(totalPages)}
+                        >
+                            {totalPages}
+                        </Link>
+                    </>
+                )}
+            </span>
+            <Link
+                className={`paginate_button next ${pagination.current === totalPages ? "disabled" : ""}`}
+                to="#"
+                onClick={nextPage}
+            >
+                <i className="fa-solid fa-angle-right" />
+            </Link>
+        </div>
+        <div className="dropdown-container no-arrow">
+            <select
+                id="itemsPerPage"
+                className="custom-dropdown1"
+                value={pagination.pageSize}
+                onChange={(e) => {
+                    setPagination((prev) => ({ ...prev, pageSize: parseInt(e.target.value, 20), current: 1 }));
+                }}
+            >
+                <option value={10}>10 / page</option>
+                <option value={20}>20 / page</option>
+                <option value={50}>50 / page</option>
+                <option value={100}>100 / page</option>
+            </select>
+        </div>
+    </div>
 
-          {/* Add ellipsis if needed */}
-          {currentPage > 2 && (
-            <span className="ellipsis">..</span>
-          )}
 
-          {/* Show range of pages around the current page, excluding 1 */}
-          {number
-            .filter(
-              (n) =>
-                n !== 1 &&
-                n !== number.length &&
-                (n === currentPage ||
-                  n === currentPage - 1 ||
-                  n === currentPage + 1)
-            )
-            .map((n, i) => (
-              <Link
-                className={`paginate_button ${
-                  currentPage === n ? "current" : ""
-                }`}
-                key={i}
-                onClick={() => changeCPage(n)}
-              >
-                {n}
-              </Link>
-            ))}
-
-          {/* Add ellipsis for pages at the end */}
-          {currentPage < number.length - 2 && (
-            <span className="ellipsis">..</span>
-          )}
-
-          {/* Show last page */}
-          <Link
-            className={`paginate_button ${
-              currentPage === number.length ? "current" : ""
-            }`}
-            onClick={() => changeCPage(number.length)}
-          >
-            {number.length}
-          </Link>
-        </>
-      )}
-    </span>
-    <Link
-      className={`paginate_button next ${
-        currentPage === number.length ? "disabled" : ""
-      }`}
-      to="#"
-      onClick={nextPage}
-    >
-      <i className="fa-solid fa-angle-right" />
-    </Link>
-  </div>
-
-  {/* Dropdown for items per page */}
-  <div className="dropdown-container no-arrow">
-    <select
-      id="itemsPerPage"
-      className="custom-dropdown1"
-      value={itemsPerPage}
-      onChange={(e) =>
-        setItemsPerPage(parseInt(e.target.value, 10))
-      }
-    >
-      <option value={10}>10 / page</option>
-      <option value={20}>20 / page</option>
-      <option value={50}>50 / page</option>
-      <option value={100}>100 / page</option>
-    </select>
-  </div>
-</div>
                     </div>
                   </div>
                 </div>

@@ -48,7 +48,7 @@ const JobProvider = (props) => {
     const [searchcandidates,setSearchcandidate]=useState("");
     const [viewCandidateDrawer,setViewCandidateDrawer]=useState(false);
     const [addbuttonJob,setAddButton]=useState(false);
-    const [pagination, setPagination] = useState({ current: 1, pageSize: 10, total:10 });
+    const [pagination, setPagination] = useState({ current: 1, pageSize: 20, total:0 });
     const [snackbarOpen, setSnackbarOpen] = useState(false); // State for Snackbar
     const [snackbarMessage, setSnackbarMessage] = useState(''); // Message to display in Snackbar
     const [snackbarSeverity, setSnackbarSeverity] = useState('success'); // Severity of the Snackbar
@@ -57,45 +57,75 @@ const JobProvider = (props) => {
         // Example: converting the searchjob to uppercase
         return searchjob.toUpperCase();
       }, [searchjob]); 
+      const [allJobs, setAllJobs] = useState([]); // Store all jobs
+    const [filteredJobs, setFilteredJobs] = useState([]); // Store jobs after filtering
+    const [totalJobs, setTotalJobs] = useState(0);
 
 
     const token =CookieUtil.get("admin_token")
     
 
-    const fetchJob = async (status) => {
-      console.log("pagination", pagination);
-      let api = `${BASE_URL}/job`;
-  
-      let params = {
-        ...(status?.checkedList ? { status: status?.checkedList } : { status: ["opened", "closed", "Hold"] }),
-        ...(status?.client_id && { client_id: status?.client_id }),
-        ...(status?.created_by && { created_by: status?.created_by }),
-        limit: 1000, // Arbitrary high number to fetch all jobs
-    };
     
-  
+
+    const fetchJob = async () => {
       try {
-          setLoading(true); // Set loading to true before the API call
+          setLoading(true);
+          const api = `${BASE_URL}/job?limit=10000`;
   
-          const resp = await axios.get(api, { params });
-          
-          // Assuming the response structure is as follows:
-          // resp.data.data.data contains the job data
-          // resp.data.data.total contains the total count for pagination
-          const jobs = resp.data.data.data; // Adjust this based on your actual response structure
-          const total = resp.data.data.total; // Adjust this based on your actual response structure
+          const resp = await axios.get(api, {
+              headers: { Authorization: `Bearer ${CookieUtil.get("admin_token")}` },
+          });
   
-          setOpenJobs(jobs); // Set the jobs in context or state
-          // Update pagination state
-          setLoading(false); // Set loading to false after the API call
-  
-          return jobs; // Return the jobs for further use
+          setAllJobs(resp.data.data.data);
+          setTotalJobs(resp.data.data.total);
+          // setOpenJobs(resp.data.data.total)
+          setLoading(false);
+          applyFilters(resp.data.data.data);
       } catch (error) {
-          setLoading(false); // Ensure loading is set to false on error
-          console.log('Error fetching jobs:', error);
-          return []; // Return an empty array on error
+          setLoading(false);
+          console.error("Error fetching jobs:", error);
+  
+          if (error.response?.status === 500 && error.response?.data?.message.includes("token expired")) {
+              console.log("Token expired. Refreshing token...");
+  
+              try {
+                  await refreshToken(); // Call refresh token function
+                  fetchAllJobs(); // Retry fetching jobs after refresh
+              } catch (refreshError) {
+                  console.error("Token refresh failed. Logging out user.");
+                  handleLogout(); // Redirect to login if refresh fails
+              }
+          }
       }
   };
+  
+  useEffect(() => {
+      fetchJob();
+  }, []);
+
+  // Function to filter and paginate jobs locally
+  const applyFilters = (jobs) => {
+      let filtered = jobs;
+
+      if (searchjob.length > 2) {
+          filtered = filtered.filter(job =>
+              job.job_title.toLowerCase().includes(searchjob.toLowerCase()) ||
+              job.job_id.toString().includes(searchjob)
+          );
+      }
+
+      setFilteredJobs(filtered.slice(
+          (pagination.current - 1) * pagination.pageSize,
+          pagination.current * pagination.pageSize
+      ));
+      setPagination((prev) => ({ ...prev, total: filtered.length }));
+  };
+
+  useEffect(() => {
+      applyFilters(allJobs);
+  }, [searchjob, pagination.current, pagination.pageSize]);
+
+
 
     const handleChangeSearch= async(e)=>{
         let api=`${BASE_URL}/job`
@@ -591,7 +621,11 @@ const handleUpdateVendor = async (jobId, updatedData) => {
                 editDrawer,
                 handleAssign,
                 handleRemoveVendor,
-                handleUpdateVendor,
+                handleUpdateVendor, 
+                 setSearchjob,
+                 totalJobs,
+                 filteredJobs,
+                 allJobs,
             }}
         >
             {props.children}

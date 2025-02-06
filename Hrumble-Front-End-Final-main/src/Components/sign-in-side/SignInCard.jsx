@@ -85,11 +85,11 @@ export default function SignInCard() {
     // Validate email and password
     const isValid = await login(form);
     if (isValid) {
-      if (role === "Vendor") {
-        navigate("/jobs");
-      } else {
-        navigate("/dashboard");
-      }
+       if (role === "Vendor") {
+      navigate("/jobs");
+    } else {
+      navigate("/dashboard");
+    }
       window.location.reload();
     } else {
       setSnackbar({ open: true, message: "Login failed. Please check your credentials.", severity: "error" });

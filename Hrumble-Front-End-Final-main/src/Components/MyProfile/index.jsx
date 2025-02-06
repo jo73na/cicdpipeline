@@ -34,7 +34,7 @@ const MyProfile = () => {
   const [current, setCurrent] = useState("profile");
   const navigate = useNavigate();
 
-  console.log("Params:", params);
+  // console.log("Params:", params);
  
   useEffect(()=>{
     if(id) {

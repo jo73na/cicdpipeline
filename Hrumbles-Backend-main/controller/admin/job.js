@@ -82,25 +82,26 @@ methods.add = asyncHandler(async (req, res) => {
 router.post('/', methods.authAdmin, methods.add);
 
 // Get All Jobs
+const createIndexes = async () => {
+  await mongoose.connection.collection('jobs').createIndex({ status: 1 });
+  await mongoose.connection.collection('jobs').createIndex({ job_title: 1 });
+  await mongoose.connection.collection('totallogs').createIndex({ job_id: 1 });
+  await mongoose.connection.collection('clients').createIndex({ _id: 1 });
+};
+
 methods.getAll = asyncHandler(async (req, res) => {
   const company_id = req?.user?.company_id || null;
 
-  // Create indexes for faster queries
-  const createIndexes = async () => {
-    await mongoose.connection.collection('jobs').createIndex({ status: 1 });
-    await mongoose.connection.collection('jobs').createIndex({ job_title: 1 });
-    await mongoose.connection.collection('totallogs').createIndex({ job_id: 1 });
-    await mongoose.connection.collection('clients').createIndex({ _id: 1 });
-  };
+  // Ensure indexes exist
   await createIndexes();
 
   let filter = {};
   if (req.query.status) filter.status = { $in: req.query.status };
   if (req.query.job_title) {
-    filter.$or = [
-      { job_title: { $regex: new RegExp(req.query.job_title, 'i') } },
-      { job_id: { $regex: new RegExp(req.query.job_title, 'i') } }
-    ];
+      filter.$or = [
+          { job_title: { $regex: new RegExp(req.query.job_title, 'i') } },
+          { job_id: { $regex: new RegExp(req.query.job_title, 'i') } }
+      ];
   }
   if (req.query.client_id) filter.client_id = req.query.client_id;
   if (req.query.created_by) filter.created_by = req.query.created_by;
@@ -108,42 +109,52 @@ methods.getAll = asyncHandler(async (req, res) => {
 
   // Adjust filters based on user role
   if (req.user?.role === "Client") {
-    filter.client_id = { $in: [new mongoose.Types.ObjectId(req.user.client_id)] };
+      filter.client_id = { $in: [new mongoose.Types.ObjectId(req.user.client_id)] };
   } else if (req.user?.role === "Vendor" && !company_id) {
-    filter.assign = { $in: [new mongoose.Types.ObjectId(req.user._id)] };
+      filter.assign = { $in: [new mongoose.Types.ObjectId(req.user._id)] };
   }
 
   const aggregate = [
-    {
-      $lookup: {
-        from: "totallogs",
-        localField: req.user?.role === "Vendor" ? "assign" : "_id",
-        foreignField: req.user?.role === "Vendor" ? "created_by" : "job_id",
-        as: "screening"
-      }
-    },
-    { $lookup: { from: "clients", localField: "client_id", foreignField: "_id", as: "Clients" } },
-    { $lookup: { from: "admins", localField: "created_by", foreignField: "_id", as: "done_by" } },
-    { $sort: { createdAt: -1 } }
+      { $match: filter }, // Ensure filtering applies to the query
+      {
+          $lookup: {
+              from: "totallogs",
+              localField: req.user?.role === "Vendor" ? "assign" : "_id",
+              foreignField: req.user?.role === "Vendor" ? "created_by" : "job_id",
+              as: "screening"
+          }
+      },
+      { $lookup: { from: "clients", localField: "client_id", foreignField: "_id", as: "Clients" } },
+      { $lookup: { from: "admins", localField: "created_by", foreignField: "_id", as: "done_by" } },
+      { $sort: { createdAt: -1 } }
   ];
 
   if (company_id) {
-    aggregate.unshift({ $match: { company_id } });
+      aggregate.unshift({ $match: { company_id } });
   }
 
-  const page = parseInt(req.query.page) || 1;
-  const limit = parseInt(req.query.limit) || 10;
-  aggregate.push({ $skip: (page - 1) * limit }, { $limit: limit });
-
-  const data = await job.aggregate(aggregate);
   const totalCount = await job.countDocuments(filter);
 
+  let data;
+  if (req.query.limit === "all") {
+      // Fetch all jobs if limit is "all"
+      data = await job.aggregate(aggregate);
+  } else {
+      // Apply pagination when limit is defined
+      const page = parseInt(req.query.page) || 1;
+      const limit = Math.min(parseInt(req.query.limit) || 50, 500); // Increased limit to 500
+      aggregate.push({ $skip: (page - 1) * limit }, { $limit: limit });
+
+      data = await job.aggregate(aggregate);
+  }
+
   try {
-    success(res, 200, true, "Get Successfully", { total: totalCount, data });
+      success(res, 200, true, "Get Successfully", { total: totalCount, data });
   } catch (err) {
-    throw new Error(err);
+      throw new Error(err);
   }
 });
+
  router.get('/', authAdmin,methods.getAll ); 
 
  methods.AssignjobFetch=asyncHandler(async (req, res) => {
