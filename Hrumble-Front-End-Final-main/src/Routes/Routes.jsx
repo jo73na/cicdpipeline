@@ -77,293 +77,293 @@ import ViewProfile from "../Components/ViewProfile/index"
 
 const RoutesDynamic = [
   {
-    path: "/jobs",
+    path: "jobs",
     exact: true,
     component: <JobDashboard />,
   },
   {
-    path: "/jobs/:id",
+    path: "jobs/:id",
     exact: true,
 
     component: <ViewJob />,
   },
   {
-    path: "/clients",
+    path: "clients",
     exact: true,
 
     component: <Clients />,
   },
   {
-    path: "/clients/:id",
+    path: "clients/:id",
     exact: true,
 
     component: <AssignEmployess/>,
   },
   {
-    path: "/projects/",
+    path: "projects/",
     exact: true,
 
     component: <Units/>,
   },
 
   {
-    path: "/projects/:id",
+    path: "projects/:id",
     exact: true,
 
     component: <EditProjects/>,
   },
  
   {
-    path: "/candidates",
+    path: "candidates",
     exact: true,
 
     component: <AllCandidates />,
   },
   {
-    path: "/candidates/:id",
+    path: "candidates/:id",
     exact: true,
 
     component: <CandidateViewPage />,
   },
   {
-    path: "/addcandidate",
+    path: "addcandidate",
     exact: true,
 
     component: <AllCandidatesNew />,
   },
   {
-    path: "/Timesheet",
+    path: "Timesheet",
     exact: true,
 
     component: <EmployeeDashboard />,
   },
   {
-    path: "/leave",
+    path: "leave",
     exact: true,
 
     component: <EmployeeLevePage />,
   },
   {
-    path: "/leave-admin",
+    path: "leave-admin",
     exact: true,
 
     component: <AdminLevePage />,
   },
   {
-    path: "/leave-management",
+    path: "leave-management",
     exact: true,
 
     component: <LeaveMangement/>,
   },
 
   {
-    path: "/TimesheetAdmin",
+    path: "TimesheetAdmin",
     exact: true,
 
     component: <TimeSheetAdmin/>,
   },
   {
-    path: "/usermanagement",
+    path: "usermanagement",
     exact: true,
 
     component: <UserManageMent />,
   },
   {
-    path: "/pbf-report",
+    path: "pbf-report",
     exact: true,
 
     component: <PBFTable />,
   },
   {
-    path: "/recruiter-report",
+    path: "recruiter-report",
     exact: true,
 
     component: <RecriuterReport  />,
   },
   {
-    path: "/client-report",
+    path: "client-report",
     exact: true,
 
     component: <ClientReport/>,
   },
   {
-    path: "/client-report/:id",
+    path: "client-report/:id",
     exact: true,
 
     component: <ClientWiseJob/>,
   },
   {
-    path: "/invoice",
+    path: "invoice",
     exact: true,
 
     component: <InvoiceExpence/>,
   },
 
   {
-    path: "/expense",
+    path: "expense",
     exact: true,
 
     component: <ExpenseDashboard/>,
   },
   {
-    path: "/addrole",
+    path: "addrole",
     exact: true,
 
     component: <AddRole/>,
   },
   {
-    path: "/addinvoice",
+    path: "addinvoice",
     exact: true,
 
     component: <AddInvoice/>,
   },
   {
-    path: "/editinvoice",
+    path: "editinvoice",
     exact: true,
 
     component: <EditInvoice/>,
   },
   {
-    path: "/setting",
+    path: "setting",
     exact: true,
 
     component: <Settings/>,
   },
   {
-    path: "/company",
+    path: "company",
     exact: true,
 
     component: <Company/>,
   },
   {
-    path: "/account",
+    path: "account",
     exact: true,
 
     component: <Account/>,
   },
   {
-    path: "/account/:id",
+    path: "account/:id",
     exact: true,
 
     component: <AccountContactPage/>,
   },
   {
-    path: "/contacts",
+    path: "contacts",
     exact: true,
 
     component: <Contacts/>,
   },
   {
-    path: "/company/:id/",
+    path: "company/:id/",
     exact: true,
 
     component: <CompanyUsers/>,
   },
   {
-    path: "/profileDetail",
+    path: "profileDetail",
     exact: true,
 
     component: <EmployeeDetailinfo />,
   },
   {
-    path: "/employetable",
+    path: "employetable",
     exact: true,
 
     component: <EmployeeTable />,
   },
   {
-    path: "/myprofiles/:id",
+    path: "myprofiles/:id",
     exact: true,
 
     component: <ProfilesEmployee />,
   },
   {
-    path: "/filemanager",
+    path: "filemanager",
     exact: true,
 
     component: <FileManager />,
   },
   {
-    path: "/employeeTabs/:id",
+    path: "employeeTabs/:id",
     exact: true,
 
     component: <EmployeeTabs />,
   }, 
   {
-    path: "/infopage",
+    path: "infopage",
     exact: true,
 
     component: <InfoPage />,
   },
   {
-    path: "/goal",
+    path: "goal",
     exact: true,
 
     component: <Goal/>,
   },
   {
-    path: "/teams",
+    path: "teams",
     exact: true,
 
     component: <AddGoal/>,
   },
   {
-    path: "/adddepartment",
+    path: "adddepartment",
     exact: true,
 
     component: <AddDepartment/>,
   },
   {
-    path: "/inerviewview",
+    path: "inerviewview",
     exact: true,
 
     component: <Interviewview/>,
   },
   {
-    path: "/jobdetail/:id",
+    path: "jobdetail/:id",
     exact: true,
 
     component: <JobDetailNew/>,
   },
   {
-    path: "/recentactivity",
+    path: "recentactivity",
     exact: true,
 
     component: <RecentActivity/>,
   },
   {
-    path: "/clientwsie",
+    path: "clientwsie",
     exact: true,
 
     component: <ClientReport/>,
   },
   {
-    path: "/accountview/:id",
+    path: "accountview/:id",
     exact: true,
 
     component: <AccountViewpage/>,
   },
 
   {
-    path: "/listcontacts/:id",
+    path: "listcontacts/:id",
     exact: true,
 
     component: <ListContacts/>,
   },
   {
-    path: "/space",
+    path: "space",
     exact: true,
 
     component: <Workspace/>,
   },
   {
-    path: "/space/:id",
+    path: "space/:id",
     exact: true,
 
     component: <SpaceList/>,
   },
   {
-    path: "/spaceList/:id",
+    path: "spaceList/:id",
     exact: true,
 
     component: <Board/>,
@@ -371,99 +371,99 @@ const RoutesDynamic = [
   
 
   {
-    path: "/attenence",
+    path: "attenence",
     exact: true,
 
     component: <Attenence/>,
   },
   {
-    path: "/expenseinfo/:id",
+    path: "expenseinfo/:id",
     exact: true,
 
     component: <ExpenceInfo/>,
   },
   {
-    path: "/new",
+    path: "new",
     exact: true,
 
     component: <NewDasign/>,
   },
   {
-    path: "/Construction/Clients",
+    path: "Construction/Clients",
     exact: true,
 
     component: <ConClients/>,
   },
   {
-    path: "/addjobs",
+    path: "addjobs",
     exact: true,
 
     component: <AddJobs/>,
   },
 
   {
-    path: "/leavehistory",
+    path: "leavehistory",
     exact: true,
 
     component: <LeaveHistory/>,
   },
   {
-    path: "/leaveapproval",
+    path: "leaveapproval",
     exact: true,
 
     component: <LeaveApproval/>,
   },
 
   {
-    path: "/leaveTimeline",
+    path: "leaveTimeline",
     exact: true,
 
     component: <TimelineLeave/>,
   },
   {
-    path: "/montlylogin",
+    path: "montlylogin",
     exact: true,
 
     component: <MonthlyLogin/>,
   },
   {
-    path: "/attendancereport",
+    path: "attendancereport",
     exact: true,
 
     component: <AttendanceDashboard/>,
   },
   {
-    path:"/task",
+    path:"task",
     exact:true,
 
     component:<TaskManager/>
   },
   {
-    path: "/Detailprofiles/:id",
+    path: "Detailprofiles/:id",
     exact: true,
     component: <MyProfile/>
   },
  
   {
-    path: "/ViewProfile",
+    path: "ViewProfile",
     exact: true,
     component: <ViewProfile/>
   },
   {
-    path: "/ViewProfile/:id",
+    path: "ViewProfile/:id",
     exact: true,
     component: <ViewProfile/>
   },
 
 
   {
-    path: "/myprojects/:id",
+    path: "myprojects/:id",
     exact: true,
     component: <MyProjects/>
   },
 
   {
-    path: "/singleproject/:id",
+    path: "singleproject/:id",
     exact: true,
     component: <SingleProjects/>
   }

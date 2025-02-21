@@ -75,7 +75,7 @@ const JobDashboard = () => {
 
   const csvlink = {
     headers: headers,
-    data: totalFilteredJobs, // Use records for CSV export
+    data: filteredJobs || [],// Use records for CSV export
     filename: "csvfile.csv",
   };
 

@@ -23,11 +23,13 @@ import JobApplay from "../Components/UtlilsComponent/JobApplay";
 import ApplayCandidateAdd from "../Components/UtlilsComponent/ApplayCandidateAdd";
 const SignInSide = lazy(() => import( "../Components/sign-in-side/SignInSide"))
 import SignUp from "../Components/sign-up/SignUp"
-
+import WebsiteLanding from "../WebsiteLandingPage";
+import RedirectToWebsite from "./RedirectToWebsite";
 
 const MainRoutes = () => {
 
   const { primaryColor, secondaryColor } = useContext(ThemeContext);
+  
   
   const Wrapper = ({ children }) => {
     const location = useLocation();
@@ -59,6 +61,7 @@ const MainRoutes = () => {
       }}
       >
         <Router>
+        <RedirectToWebsite />
           <Wrapper>
             <Suspense
               fallback={
@@ -128,6 +131,7 @@ const MainRoutes = () => {
                     }
                   />
                 </Route>
+                <Route path="/website" element={<WebsiteLanding />} />
                <Route path="/login" element={<SignInSide />} />
                 {/* <Route path="/login" element={<Login />} /> */}
                 <Route path="/signup" element={<SignUp />} />
