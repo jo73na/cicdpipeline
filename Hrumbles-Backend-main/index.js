@@ -25,7 +25,12 @@ const crud = new crud_service();
 const ResumeParser = require('resume-parser-extended');
 const resumeParser = require('resume-parser');
 
+// Hrumbles Website mail 
+const sendEmail = require("./utils/WebsiteSendMail"); // ✅ Fix for CommonJS
 
+
+
+ 
 //DataBase Connection
 dbConnect();
 app.use(morgon('dev'));
@@ -859,7 +864,11 @@ init()
 require("./routes/")(app);
 //Error Handler
 
-
+// Hrumbles Website Contact Mail Detailss
+app.post("/api/send-email", async (req, res) => {
+  const result = await sendEmail(req.body);
+  res.json(result);
+});
 
 app.use(notFound);
 app.use(errorHandler);
